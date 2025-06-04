@@ -1,23 +1,23 @@
 module.exports = {
     parser: '@typescript-eslint/parser',
     extends: [
-      'eslint:recommended', // Conjunto de reglas recomendadas por ESLint.
-      'plugin:react/recommended', // Reglas recomendadas para React.
-      'plugin:@typescript-eslint/recommended', // Reglas recomendadas para TypeScript.
-      'plugin:prettier/recommended' // Habilita Prettier y añade sus reglas recomendadas.
+      'eslint:recommended', // Recommended rules for ESLint.
+      'plugin:react/recommended', // Recommended rules for React.
+      'plugin:@typescript-eslint/recommended', // TypeScript rules.
+      'plugin:prettier/recommended' // Adds Prettier's recommended rules and its features.
     ],
-    plugins: ['react', '@typescript-eslint', 'prettier'], // Plugins que amplían ESLint.
+    plugins: ['react', '@typescript-eslint', 'prettier'], // Plugins for ESLint.
     parserOptions: {
-      ecmaVersion: 2020, // Sintaxis moderna de JS.
-      sourceType: 'module', // Permite importar y exportar.
-      ecmaFeatures: { jsx: true, tsx: true } // Soporte para JSX y TSX.
+      ecmaVersion: 2020, // JS's modern syntax.
+      sourceType: 'module', // Allows import and export.
+      ecmaFeatures: { jsx: true, tsx: true } // JSX and TSX support.
     },
     rules: {
-      'prettier/prettier': 'error' // Trata errores de Prettier como errores de ESLint.
+      'prettier/prettier': 'error' // Deals Prettier errors as ESLint errors.
     },
     settings: {
       react: {
-        version: 'detect' // Detecta automáticamente la versión de React.
+        version: 'detect' // Automaticaly detects React's version.
       }
     }
   }
