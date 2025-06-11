@@ -4,6 +4,7 @@ import React from 'react'
 import { Form, Input, Button } from 'antd'
 import type { Rule } from 'antd/lib/form'
 import { UserOutlined, LockOutlined } from '@ant-design/icons'
+import logo from '@/assets/Santa-Ana-logo.png'
 
 interface Props {
   onFinish: (v: { username: string; password: string }) => void
@@ -17,7 +18,7 @@ export const LoginCard: React.FC<Props> = ({ onFinish }) => {
 
     <div className='w-full h-1/2 pb-5 bg-white flex justify-center'>
       <img
-        src="src/assets/Santa-Ana-logo.png"
+        src={logo}
         className="h-full object-contain"
       />
     </div>
