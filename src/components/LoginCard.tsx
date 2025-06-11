@@ -1,89 +1,76 @@
 // src/components/LoginCard.tsx
 import React from 'react'
+
 import { Form, Input, Button } from 'antd'
-import type { FormInstance } from 'antd'
 import type { Rule } from 'antd/lib/form'
 import { UserOutlined, LockOutlined } from '@ant-design/icons'
 
-interface LoginCardProps {
-  onFinish: (values: { username: string; password: string }) => void
+interface Props {
+  onFinish: (v: { username: string; password: string }) => void
 }
 
-export const LoginCard: React.FC<LoginCardProps> = ({ onFinish }) => {
-  // Creamos una referencia al formulario de Ant Design
+export const LoginCard: React.FC<Props> = ({ onFinish }) => {
   const [form] = Form.useForm<{ username: string; password: string }>()
 
   return (
-    <div className="flex w-full max-w-4xl h-120 rounded-4xl overflow-hidden shadow-lg border-6 border-[#004600] ">
-      {/*  Panel izquierdo: fondo blanco + ilustración  */}
-      <div className="w-1/2 bg-white flex items-center justify-center">
-        {/* 
-          Aquí importas tu propia imagen desde /assets/images/login-illustration.svg 
-          Ajusta el src según tu proyecto.
-        */}
-        <img
-          src="/src/assets/1745631897587.jpg"
-          alt="Ilustración Agrícola"
-          className="object-contain h-full w-full p-0"
-        />
-      </div>
+    <div className="w-full max-w-md bg-white p-8 rounded-2xl shadow-2xl">
 
-      {/*  Panel derecho: fondo verde corporativo, formulario y textos en blanco  */}
-      <div className="w-1/2 bg-[#004600] h-full flex flex-col items-center justify-center p-8">
-        <h2 className="text-3xl font-bold text-white mb-6">Panel de Administración</h2>
+    <div className='w-full h-1/2 pb-5 bg-white flex justify-center'>
+      <img
+        src="src/assets/Santa-Ana-logo.png"
+        className="h-full object-contain"
+      />
+    </div>
 
-        <Form
-          form={form}
-          name="login"
-          layout="vertical"
-          onFinish={onFinish}
-          initialValues={{ username: '', password: '' }}
-          className="w-full px-4"
+      <Form
+        form={form}
+        name="login"
+        layout="vertical"
+        onFinish={onFinish}
+        initialValues={{ username: '', password: '' }}
+      >
+        <Form.Item
+          name="username"
+          rules={[{ required: true, message: 'Por favor ingresa tu usuario' } as Rule]}
         >
-          <Form.Item
-            label={<span className="text-white">Usuario</span>}
-            name="username"
-            rules={[{ required: true, message: 'Por favor ingresa tu usuario' } as Rule]}
+          <Input
+            size="large"
+            placeholder="Usuario"
+            prefix={<UserOutlined className="text-black" />}
+            // Los "!" sirven para forzar el important de Tailwind si lo tienes activado
+            className="!bg-transparent !border !border-black !text-black placeholder-gray-000"
+          />
+        </Form.Item>
+
+        <Form.Item
+          name="password"
+          rules={[{ required: true, message: 'Por favor ingresa tu contraseña' } as Rule]}
+        >
+          <Input.Password
+            size="large"
+            placeholder="Contraseña"
+            prefix={<LockOutlined className="text-black" />}
+            className="!bg-transparent !border !border-black !text-black placeholder-gray-000"
+          />
+        </Form.Item>
+
+        <Form.Item>
+          <Button
+            type="primary"
+            htmlType="submit"
+            block
+            className="bg-blue-500 hover:bg-blue-600 border-none text-black text-lg"
           >
-            <Input
-              size="large"
-              placeholder="Usuario"
-              prefix={<UserOutlined className="text-gray-400" />}
-              className="rounded-md"
-            />
-          </Form.Item>
+            Entrar
+          </Button>
+        </Form.Item>
 
-          <Form.Item
-            label={<span className="text-white">Contraseña</span>}
-            name="password"
-            rules={[{ required: true, message: 'Por favor ingresa tu contraseña' } as Rule]}
-          >
-            <Input.Password
-              size="large"
-              placeholder="Contraseña"
-              prefix={<LockOutlined className="text-gray-400" />}
-              className="rounded-md"
-            />
-          </Form.Item>
-
-
-          <Form.Item>
-            <Button
-              htmlType="submit"
-              block
-              color="yellow" variant="solid"
-            >
-              Entrar
-            </Button>
-          </Form.Item>
-
-          <div className="w-full text-center">
-            <a href="/reset-password" className="text-sm text-orange-200 hover:text-orange-100">
-              ¿Olvidaste tu contraseña?
-            </a>
-          </div>
-        </Form>
-      </div>
+        <div className="text-center">
+          <a href="/reset-password" className="text-sm text-gray-200 hover:underline">
+            ¿Olvidaste tu contraseña?
+          </a>
+        </div>
+      </Form>
     </div>
   )
 }
