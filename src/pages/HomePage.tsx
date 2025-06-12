@@ -9,12 +9,12 @@ export const HomePage: React.FC = () => {
   return (
     <div className="flex flex-col items-center justify-center h-screen w-screen bg-white">
       <div className="w-full h-16 bg-[#92D050]" >
-        <p>Pene xD</p>
+        <p className='font-sans'>Pene xD</p>
       </div>
 
       <div className='flex-1 flex items-center justify-center bg-amber-950'>
       <Card title="Bienvenido" className="w-72 bg-amber-950">
-        <p className='Open-Sans'>¡Ya estás logueado!</p>
+        <p className='font-sans'>¡Ya estás logueado!</p>
         <Button
           type="primary"
           block
