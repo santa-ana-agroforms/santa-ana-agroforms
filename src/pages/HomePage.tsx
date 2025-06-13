@@ -1,30 +1,33 @@
 // src/pages/HomePage.tsx
-import React from 'react'
+import React, { useState } from 'react'
 import { Card, Button } from 'antd'
 import { useNavigate } from 'react-router-dom'
+import { Layout } from 'antd/lib'
+import { AppHeader } from '@/components/AppHeader'
+import { AppSidebar } from '@/components/AppSideBar'
+
+const { Content, Sider } = Layout
 
 export const HomePage: React.FC = () => {
   const navigate = useNavigate()
 
+  const [collapsed, setCollapsed] = useState(false);
+  const toggle = () => setCollapsed(prev => !prev);
+
   return (
     <div className="flex flex-col items-center justify-center h-screen w-screen bg-white">
-      <div className="w-full h-16 bg-[#92D050]" >
-        <p className='font-sans'>Pene xD</p>
-      </div>
+      <Layout className='flex w-full'>
+        <AppHeader collapsed={collapsed} onToggle={toggle}/>
 
-      <div className='flex-1 flex items-center justify-center bg-amber-950'>
-      <Card title="Bienvenido" className="w-72 bg-amber-950">
-        <p className='font-sans'>¡Ya estás logueado!</p>
-        <Button
-          type="primary"
-          block
-          onClick={() => navigate('/')}
-          className="mt-4"
-        >
-          Cerrar sesión
-        </Button>
-      </Card>
-      </div>
+
+
+        <Content>
+          
+          <AppSidebar  navigate={navigate} collapsed={collapsed}/>
+       
+          {/* aquí tu contenido */}
+        </Content>
+      </Layout>
     </div>
   )
 }
