@@ -7,11 +7,12 @@ import { MenuFoldOutlined, MenuUnfoldOutlined } from '@ant-design/icons'
 const { Header } = Layout
 
 interface AppHeaderProps {
-  collapsed: boolean
-  onToggle: () => void
+  collapsed: boolean;
+  onToggle: () => void;
+  title: string;
 }
 
-export const AppHeader: React.FC<AppHeaderProps> = ({ collapsed, onToggle }) => (
+export const AppHeader: React.FC<AppHeaderProps> = ({ collapsed, onToggle, title }) => (
   <Header className="flex items-center !bg-[#92D050] px-6">
 
     <div className='flex items-center flex-row gap-4'>
@@ -33,7 +34,7 @@ export const AppHeader: React.FC<AppHeaderProps> = ({ collapsed, onToggle }) => 
 
         {/* Título */}
         <span className="font-sans text-white text-lg font-medium">
-            Formularios
+            {title || 'Santa Ana AgroForms'}
         </span>
     </div>
   </Header>

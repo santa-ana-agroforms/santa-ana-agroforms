@@ -13,17 +13,31 @@ export const HomePage: React.FC = () => {
 
   const [collapsed, setCollapsed] = useState(false);
   const toggle = () => setCollapsed(prev => !prev);
+  const [selectedKey, setSelected]  = useState<string>('1');
+
+  // Mapeo de keys de menú a títulos
+  const titles: Record<string,string> = {
+    '1': 'Dashboard',
+    '2': 'Formularios',
+    '3': 'Resultados en Excel',
+    '4': 'Ver WebDashboard',
+    '5': 'Ayuda',
+    '6': 'Sesión',
+    '7': 'Cerrar sesión'
+  };
+
+  const title  = titles[selectedKey] || '';
 
   return (
     <div className="flex flex-col items-center justify-center h-screen w-screen bg-white">
       <Layout className='flex w-full'>
-        <AppHeader collapsed={collapsed} onToggle={toggle}/>
+        <AppHeader collapsed={collapsed} onToggle={toggle} title={title}/>
 
 
 
         <Content>
           
-          <AppSidebar  navigate={navigate} collapsed={collapsed}/>
+          <AppSidebar  navigate={navigate} collapsed={collapsed} selectedKey={selectedKey} onSelect={setSelected}/>
        
           {/* aquí tu contenido */}
         </Content>

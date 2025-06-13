@@ -16,11 +16,13 @@ import { NavigateFunction } from 'react-router-dom'
 const { Sider } = Layout
 
 interface AppSideBarProps {
-    navigate: NavigateFunction
-    collapsed: boolean
+    navigate: NavigateFunction;
+    collapsed: boolean;
+    selectedKey: string;
+    onSelect: (key: string) => void;
 }
 
-export const AppSidebar: React.FC<AppSideBarProps> = ({ navigate, collapsed }) => (
+export const AppSidebar: React.FC<AppSideBarProps> = ({ navigate, collapsed, selectedKey, onSelect }) => (
   <Sider trigger={null} collapsible collapsed={collapsed} theme="dark" className='h-full' width={260}>
     <div className="logo p-4 flex flex-row items-center justify-self-start w-full text-white">
         {/* Avatar */}
@@ -43,7 +45,7 @@ export const AppSidebar: React.FC<AppSideBarProps> = ({ navigate, collapsed }) =
         
     </div>
 
-    <Menu theme="dark" mode="inline" defaultSelectedKeys={['1']}>
+    <Menu theme="dark" mode="inline" defaultSelectedKeys={['1']} selectedKeys={[selectedKey]} onSelect={({ key }) => onSelect(key)}>
       
       <Menu.Item key="1" icon={<DashboardOutlined />}>
         Dashboard
