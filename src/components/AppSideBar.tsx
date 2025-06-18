@@ -9,6 +9,13 @@ import {
   KeyOutlined,
   PoweroffOutlined,
   UserOutlined,
+  FormOutlined,
+  DatabaseOutlined,
+  AuditOutlined,
+  ThunderboltOutlined,
+  UserAddOutlined,
+  CloudDownloadOutlined,
+  FileExcelOutlined,
   // …tus íconos
 } from '@ant-design/icons'
 import { NavigateFunction } from 'react-router-dom'
@@ -51,11 +58,17 @@ export const AppSidebar: React.FC<AppSideBarProps> = ({ navigate, collapsed, sel
         Dashboard
       </Menu.Item>
 
-      <Menu.Item key="2" icon={<TableOutlined />}>
-        Formularios
-      </Menu.Item>
+      <Menu.SubMenu key="2" icon={<TableOutlined />} title="Formularios">
+        <Menu.Item key="listado" icon={<FormOutlined />}>Listado</Menu.Item>
+        <Menu.Item key="datos" icon={<DatabaseOutlined/>}>Fuentes de Datos </Menu.Item>
+        <Menu.Item key="formularios" icon={<AuditOutlined />}>Asignación de Formularios</Menu.Item>
+        <Menu.Item key="proceso" icon={<ThunderboltOutlined />}>Asignaciones en proceso</Menu.Item>
+        <Menu.Item key="aprobacion" icon={<UserAddOutlined />}>Rutas de Aprobación</Menu.Item>
+        <Menu.Item key="exportacion" icon={<CloudDownloadOutlined />}>Procesos de Exportación</Menu.Item>
+        <Menu.Item key="excel" icon={<FileExcelOutlined />}>Crear desde Excel</Menu.Item>
+      </Menu.SubMenu>
       
-      <Menu.SubMenu key="sub1" icon={<BarChartOutlined />} title="Reportes">
+      <Menu.SubMenu key="sub2" icon={<BarChartOutlined />} title="Reportes">
         <Menu.Item key="3">Resultados en Excel</Menu.Item>
         <Menu.Item key="4">Ver WebDashboard</Menu.Item>
       </Menu.SubMenu>
