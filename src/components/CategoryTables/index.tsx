@@ -1,5 +1,5 @@
 // src/components/FormsLists/CategoryTables.tsx
-import React from 'react';
+import React, { useState } from 'react';
 import { Collapse, Table } from 'antd';
 import type { TableProps, TableColumnsType } from 'antd';
 import { CategoryType, ItemType } from './data';
@@ -11,6 +11,7 @@ interface Props {
   columns: TableColumnsType<ItemType>;
   onTableChange: TableProps<ItemType>['onChange'];
 }
+
 
 const CategoryTables: React.FC<Props> = ({ data, columns, onTableChange }) => (
   <>

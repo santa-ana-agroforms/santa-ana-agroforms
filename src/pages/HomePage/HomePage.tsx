@@ -8,6 +8,8 @@ import { AppSidebar } from '@/components/AppSideBar'
 import FormsLists from '@/features/forms-list'
 import { titles } from './data'
 import { Header } from 'antd/es/layout/layout'
+import PhoneMockup from '@/features/create-forms'
+import CreateForms from '@/features/create-forms'
 
 const { Content, Sider } = Layout
 
@@ -17,6 +19,9 @@ export const HomePage: React.FC = () => {
   const [collapsed, setCollapsed] = useState(false);
   const toggle = () => setCollapsed(prev => !prev);
   const [selectedKey, setSelected]  = useState<string>('1');
+
+  // Estado para saber si estoy viendo el detalle “móvil” de un formulario
+  const [activeFormId, setActiveFormId] = useState<number | null>(null)
 
   const title  = titles[selectedKey] || '';
 
@@ -47,7 +52,17 @@ export const HomePage: React.FC = () => {
 
         {/* CONTENIDO */}
         <Content className="bg-white p-6 overflow-auto">
-          {selectedKey === 'listado' && <FormsLists />}
+          {selectedKey === 'listado' && activeFormId === null && (
+              // Paso el callback onSelectForm
+              <FormsLists onSelectForm={setActiveFormId} />
+            )}
+
+            {activeFormId !== null && (
+              <CreateForms
+                formId={activeFormId}
+                onBack={() => setActiveFormId(null)}
+              />
+            )}
         </Content>
       </Layout>
     </Layout>

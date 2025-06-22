@@ -3,6 +3,7 @@ import { Button, Col, Collapse, Input, Table, TableColumnsType, TableProps, Typo
 import { FilterOutlined, ArrowUpOutlined } from '@ant-design/icons';
 import { getColumns, categories } from '@/components/CategoryTables/data';
 import CategoryTables from '@/components/CategoryTables';
+import NewFormModal, { NewFormValues } from '@/components/CategoryTables/components/NewFormModal';
 
 const { Panel } = Collapse;
 const { Title } = Typography;
@@ -24,22 +25,33 @@ interface CategoryType {
   items: ItemType[];
 }
 
+interface FormsListsProps {
+  onSelectForm: (id: number) => void
+}
+
 type OnChange = NonNullable<TableProps<ItemType>['onChange']>;
 type GetSingle<T> = T extends (infer U)[] ? U : never;
 type Sorts = GetSingle<Parameters<OnChange>[2]>;
 type Filters = Parameters<OnChange>[1];
 
-const FormsLists: React.FC = () => {
+const FormsLists: React.FC<FormsListsProps> = ({ onSelectForm }) => {
 
   const [filteredInfo, setFilteredInfo] = useState<Filters>({});
   const [sortedInfo, setSortedInfo] = useState<Sorts>({});
+  
+  const [open, setOpen] = useState(false)
 
   const handleChange: OnChange = (pagination, filters, sorter) => {
     setFilteredInfo(filters);
     setSortedInfo(sorter as Sorts);
   };
   
-  const columns = getColumns(sortedInfo, filteredInfo);
+  const columns = getColumns(sortedInfo, filteredInfo, () => setOpen(true), onSelectForm);
+
+  const handleCreate = (values: NewFormValues) => {
+    console.log('Nuevos valores:', values)
+    // aquí haces el post o actualización de estado…
+  }
 
   return (
     <div className="flex flex-col p-4 w-full gap-7 ">
@@ -63,6 +75,11 @@ const FormsLists: React.FC = () => {
         data={categories}
         columns={columns}
         onTableChange={handleChange}
+      />
+      <NewFormModal
+        visible={open}
+        onCancel={() => setOpen(false)}
+        onCreate={handleCreate}
       />
     </div>
   );
