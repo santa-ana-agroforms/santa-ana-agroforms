@@ -73,7 +73,8 @@ export const getColumns = (
   sortedInfo: any,
   filteredInfo: any,
   onAdd: () => void,
-  onIdClick: (id: number) => void 
+  onIdClick: (id: number) => void,
+  onEdit: (record: ItemType) => void
 ): ColumnType<ItemType>[] => [
   {
     title: (
@@ -88,7 +89,7 @@ export const getColumns = (
     align: 'center',
     render: (_: any, record: ItemType) => (
       <>
-        <FormOutlined onClick={() => console.log('Alta de nuevo ítem')}  />
+        <FormOutlined onClick={() => onEdit(record)} style={{ cursor: 'pointer' }}  />
       </>
     ),
   },

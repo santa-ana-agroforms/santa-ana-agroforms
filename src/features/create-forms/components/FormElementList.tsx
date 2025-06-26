@@ -1,6 +1,6 @@
 // src/components/FormElementsList.tsx
-import React from 'react'
-import { Menu } from 'antd'
+import React, { useState } from 'react'
+import { Menu, MenuProps } from 'antd'
 import {
   FontSizeOutlined,
   DatabaseOutlined,
@@ -23,6 +23,7 @@ import {
   FormOutlined,
   EnvironmentOutlined,
 } from '@ant-design/icons'
+import EditFieldModal, { FieldFormValues, VariantType } from './EditFieldModal'
 
 interface FormElementsListProps {
   onSelect: (key: string) => void
@@ -51,11 +52,41 @@ const items = [
   { key: 'geoLocalizacion',  icon: <EnvironmentOutlined />,  label: 'Geo Localización' },
 ]
 
-const FormElementsList: React.FC<FormElementsListProps> = ({ onSelect }) => (
-  <Menu
+
+
+const opciones = ['Decimal', 'Entero', 'Texto']
+const grupos   = ['Grupo A', 'Grupo B', 'Otro']
+
+const FormElementsList: React.FC<FormElementsListProps> = ({ onSelect }) => {
+
+  const [visible, setVisible] = useState(false)
+  const [selectedKey, setSelectedKey] = useState<VariantType>()
+  const [fieldData, setFieldData] = useState<Partial<FieldFormValues>>({})
+
+   // Cuando el usuario hace click en un item, guardamos la key y abrimos modal
+  const handleMenuClick: MenuProps['onClick'] = ({ key }) => {
+    setSelectedKey(key as VariantType)
+    
+
+    // aquí podrías hacer setFieldData(...) con datos por defecto según el tipo
+    setVisible(true)
+  }
+
+  const handleSave = (vals: FieldFormValues) => {
+    console.log('Guardado:', vals)
+    if (selectedKey) {
+      onSelect(selectedKey)
+    }
+    setVisible(false)
+  }
+
+
+  return(
+  <><Menu
     mode="inline"
     style={{ height: '100%', borderRight: 0 }}
-    onClick={e => onSelect(e.key)}
+    //onClick={e => onSelect(e.key)}
+    onClick={handleMenuClick}
   >
     {items.map(item => (
       <Menu.Item key={item.key} icon={item.icon}>
@@ -63,6 +94,18 @@ const FormElementsList: React.FC<FormElementsListProps> = ({ onSelect }) => (
       </Menu.Item>
     ))}
   </Menu>
-)
+  <EditFieldModal
+      visible={visible}
+      initialValues={fieldData}
+      variant={selectedKey}
+      opcionesList={opciones}
+      gruposList={grupos}
+      onSave={handleSave}
+      onCancel={() => setVisible(false)}
+    />
+  </>
+  )
+}
+    
 
 export default FormElementsList

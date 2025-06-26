@@ -1,5 +1,5 @@
 // src/components/NewFormModal.tsx
-import React, { FC } from 'react'
+import React, { FC, useEffect } from 'react'
 import { Form, Input, Checkbox, DatePicker, Select, Button } from 'antd'
 import type { ModalProps } from 'antd'
 import type { Moment } from 'moment'
@@ -30,15 +30,27 @@ export interface NewFormModalProps extends Omit<ModalProps, 'title'> {
   onCancel: () => void
   /** Callback con los valores al hacer submit */
   onCreate: (values: NewFormValues) => void
+  initialValues?: Partial<NewFormValues>;
 }
 
 const NewFormModal: FC<NewFormModalProps> = ({
   visible,
   onCancel,
   onCreate,
+  initialValues,
   ...modalProps
 }) => {
   const [form] = Form.useForm<NewFormValues>()
+
+  useEffect(() => {
+    if (visible) {
+      if (initialValues) {
+        form.setFieldsValue(initialValues);
+      } else {
+        form.resetFields();
+      }
+    }
+  }, [visible, initialValues, form]);
 
   const handleFinish = (values: NewFormValues) => {
     onCreate(values)

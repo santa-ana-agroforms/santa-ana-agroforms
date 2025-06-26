@@ -1,16 +1,22 @@
 // src/components/PhoneMockup.tsx
 import React from 'react'
 import { Button, Input, Typography } from 'antd'
+import { PageValues } from './PageEditModal'
+import signatureIcon from "@/assets/signature_icon.svg"
 const { Text } = Typography
 
 interface PhoneMockupProps {
   formId: number
-  selectedElement: string | null
+  selectedElements: string[]
   onBack: () => void
+  selectedPage: PageValues
 }
 
-const PhoneMockup: React.FC<PhoneMockupProps> = ({ formId, onBack, selectedElement}) => (
-  <div className="w-80 h-[600px] border border-gray-300 rounded-3xl shadow-lg flex flex-col overflow-hidden bg-white">
+
+const PhoneMockup: React.FC<PhoneMockupProps> = ({ formId, onBack, selectedElements, selectedPage}) => (
+  <div className="w-80 h-[600px] border border-gray-300 rounded-3xl shadow-lg flex flex-col overflow-hidden bg-white" 
+    style={{backgroundColor: selectedPage.bgColor}}
+  >
     {/* Header */}
     <div className="bg-red-600 text-white text-center py-3 font-semibold">
       Formulario de Reporte de Fungicidas
@@ -18,28 +24,44 @@ const PhoneMockup: React.FC<PhoneMockupProps> = ({ formId, onBack, selectedEleme
 
     {/* Subtítulo */}
     <div className="px-4 py-2 border-b">
-      <Text strong>Generales (ID: {formId})</Text>
+      <Text strong style={{color: selectedPage.textColor}}>{selectedPage.title} (ID: {formId})</Text>
     </div>
 
     {/* Aquí iría tu contenido dinámico */}
     <div className="flex-1 p-4 overflow-auto">
-      {!selectedElement && (
+      {selectedElements.length === 0 && (
         <p className="text-gray-500">Selecciona un elemento de la barra izquierda</p>
       )}
 
-      {selectedElement === 'texto' && (
-        <>
-          <Text>Campo de Texto:</Text>
-          <Input placeholder="Introduce texto..." />
-       </>
-      )}
+      {selectedElements.map((element, index) => (
+        <div key={index} className="mb-4">
+          {element === 'texto' && (
+            <>
+              <Text style={{color: selectedPage.textColor}}>Campo de Texto:</Text>
+              <Input placeholder="Introduce texto..." />
+            </>
+          )}
 
-      {selectedElement === 'fecha' && (
-        <>
-          <Text>Selecciona una Fecha:</Text>
-          <Input type="date" />
-        </>
-      )}
+          {element === 'fecha' && (
+            <>
+              <Text style={{color: selectedPage.textColor}}>Selecciona una Fecha:</Text>
+              <Input type="date" />
+            </>
+          )}
+
+          {element === 'firma' && (
+            <>
+              <Text style={{color: selectedPage.textColor}}>Firma:</Text>
+              <div className="border rounded bg-white p-2 w-full h-28 flex items-center justify-center">
+                <img src={signatureIcon} alt="Firma" className="max-h-full object-contain" />
+              </div>
+            </>
+          )}
+
+
+          {/* Aquí puedes seguir agregando el resto de tipos de elementos */}
+        </div>
+      ))}
     </div>
 
     {/* Footer con botones */}
