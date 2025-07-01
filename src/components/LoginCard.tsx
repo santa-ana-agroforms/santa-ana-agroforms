@@ -1,5 +1,5 @@
 // src/components/LoginCard.tsx
-import React from 'react'
+import React, { useState } from 'react'
 
 import { Form, Input, Button } from 'antd'
 import type { Rule } from 'antd/lib/form'
@@ -12,6 +12,14 @@ interface Props {
 
 export const LoginCard: React.FC<Props> = ({ onFinish }) => {
   const [form] = Form.useForm<{ username: string; password: string }>()
+  const [loading, setLoading] = useState(false)
+
+  const handleFinish = async (values: { username: string; password: string }) => {
+    setLoading(true);
+    await new Promise((resolve) => setTimeout(resolve, 1200))
+    setLoading(false);
+    onFinish(values);
+  }
 
   return (
     <div className="w-full max-w-md bg-white p-8 rounded-2xl shadow-2xl">
@@ -27,7 +35,7 @@ export const LoginCard: React.FC<Props> = ({ onFinish }) => {
         form={form}
         name="login"
         layout="vertical"
-        onFinish={onFinish}
+        onFinish={handleFinish}
         initialValues={{ username: '', password: '' }}
       >
         <Form.Item
@@ -60,6 +68,7 @@ export const LoginCard: React.FC<Props> = ({ onFinish }) => {
             type="primary"
             htmlType="submit"
             block
+            loading={loading}
             className="bg-blue-500 hover:bg-blue-600 border-none text-black text-lg"
           >
             Entrar

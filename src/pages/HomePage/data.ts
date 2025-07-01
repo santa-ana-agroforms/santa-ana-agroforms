@@ -1,0 +1,16 @@
+export const titles: Record<string, string> = {
+  '1': 'Dashboard',
+  '2': 'Formularios',
+  '3': 'Resultados en Excel',
+  '4': 'Ver WebDashboard',
+  '5': 'Ayuda',
+  '6': 'Sesión',
+  '7': 'Cerrar sesión',
+  'listado': "Listado de Formularios",
+  'datos': "Fuentes de Datos",
+  'formularios': "Asignación de Formularios",
+  'proceso': "Asignaciones en proceso",
+  'aprobacion': "Rutas de Aprobación",
+  'exportacion': "Procesos de Exportación",
+  'excel': "Crear desde Excel",
+};
