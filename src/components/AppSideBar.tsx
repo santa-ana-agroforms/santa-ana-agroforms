@@ -16,6 +16,8 @@ import {
   UserAddOutlined,
   CloudDownloadOutlined,
   FileExcelOutlined,
+  MobileOutlined,
+  TeamOutlined,
   // …tus íconos
 } from '@ant-design/icons'
 import { NavigateFunction } from 'react-router-dom'
@@ -73,13 +75,14 @@ export const AppSidebar: React.FC<AppSideBarProps> = ({ navigate, collapsed, sel
         <Menu.Item key="4">Ver WebDashboard</Menu.Item>
       </Menu.SubMenu>
 
-      <Menu.Item key="5" icon={<QuestionOutlined />}>
+      <Menu.Item key="5" icon={<QuestionOutlined />} >
         Ayuda
       </Menu.Item>
 
-      <Menu.Item key="6" icon={<KeyOutlined />}>
-        Sesión
-      </Menu.Item>
+      <Menu.SubMenu key="6" icon={<KeyOutlined />} title="Sesión">
+        <Menu.Item key="terminales" icon={<MobileOutlined />}>Terminales</Menu.Item>
+        <Menu.Item key="usuarios" icon={<TeamOutlined />}>Usuarios</Menu.Item>
+      </Menu.SubMenu>
 
       <Menu.Item key="7" icon={<PoweroffOutlined />}  onClick={() => navigate('/')}>
         Cerrar sesión

@@ -111,6 +111,7 @@ const PageSettings: React.FC<PageSettingsProps> = ({ onIconClick, onPageChange})
         initialValues={selectedPageData}
         onCancel={handleCancel}
         onUpdate={handleUpdate}
+        existingPages={pages} 
       />
 
       {/* Contenido del form */}

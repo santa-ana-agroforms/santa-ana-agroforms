@@ -1,15 +1,15 @@
 // src/pages/HomePage.tsx
-import React, { useState } from 'react'
-import { Card, Button } from 'antd'
+import React, { useCallback, useState } from 'react'
+import { Card, Button, TableProps } from 'antd'
 import { useNavigate } from 'react-router-dom'
 import { Layout } from 'antd/lib'
 import { AppHeader } from '@/components/AppHeader'
 import { AppSidebar } from '@/components/AppSideBar'
 import FormsLists from '@/features/forms-list'
 import { titles } from './data'
-import { Header } from 'antd/es/layout/layout'
-import PhoneMockup from '@/features/create-forms'
 import CreateForms from '@/features/create-forms'
+import FlatTable, { ItemType } from '@/components/DeviceTables'
+import { devices } from '@/features/devices-list/data'
 
 const { Content, Sider } = Layout
 
@@ -22,10 +22,44 @@ export const HomePage: React.FC = () => {
 
   // Estado para saber si estoy viendo el detalle “móvil” de un formulario
   const [activeFormId, setActiveFormId] = useState<number | null>(null)
+  const [filteredInfo, setFilteredInfo] = useState<Record<string, any>>({});
+  const [sortedInfo, setSortedInfo] = useState<any>({});
+  const [search, setSearch] = useState('');
 
   const title  = titles[selectedKey] || '';
 
   console.warn("selectedKey: ", selectedKey);
+
+  // 1) filtrar globalmente si quieres
+  const dataToShow = devices.filter(item =>
+    Object.values(item)
+      .join(' ')
+      .toLowerCase()
+      .includes(search.toLowerCase())
+  );
+
+  // 2) manejar cambio de tabla (filtros / orden)
+  const handleTableChange: TableProps<ItemType>['onChange'] = (
+    _pagination,
+    filters,
+    sorter
+  ) => {
+    setFilteredInfo(filters);
+    setSortedInfo(sorter);
+  };
+
+  // 3) callbacks de acción
+  const handleEdit = useCallback((rec: ItemType) => {
+    console.log('Editar', rec);
+  }, []);
+
+  const handleDelete = useCallback((rec: ItemType) => {
+    console.log('Borrar', rec);
+  }, []);
+
+  const handleIdClick = useCallback((id: string) => {
+    console.log('Ir a detalle de', id);
+  }, []);
 
   return (
   <div className="h-screen w-screen bg-white">
@@ -63,6 +97,16 @@ export const HomePage: React.FC = () => {
                 onBack={() => setActiveFormId(null)}
               />
             )}
+            {selectedKey === 'terminales' && activeFormId === null && (
+              <FlatTable
+                data={dataToShow}
+                onEdit={handleEdit}
+                onDelete={handleDelete}
+                onIdClick={handleIdClick}
+                onTableChange={handleTableChange}
+              />
+            )}
+
         </Content>
       </Layout>
     </Layout>

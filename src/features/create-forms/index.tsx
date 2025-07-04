@@ -12,11 +12,18 @@ interface CreateFormsProps {
 
 const CreateForms: React.FC<CreateFormsProps> = ({ formId, onBack }) => {
   // aquí guardamos la clave del elemento (texto, fecha, foto, etc.) que pinchó el usuario
-  const [selectedElements, setSelectedElements] = useState<string[]>([])
+  const [elementsByPage, setElementsByPage] = useState<Record<number, string[]>>({})
 
   const handleAddElement = (key: string) => {
-    setSelectedElements(prev => [...prev, key])
-  }
+  setElementsByPage(prev => {
+    const pageKey = selectedPage.sequence
+    const prevList = prev[pageKey] ?? []
+    return {
+      ...prev,
+      [pageKey]: [...prevList, key]
+    }
+  })
+}
 
   const [selectedPage, setSelectedPage] = useState<PageValues>({
     sequence: 1,
@@ -26,7 +33,10 @@ const CreateForms: React.FC<CreateFormsProps> = ({ formId, onBack }) => {
     textColor: '#000000',
   })
 
+  const currentElements = elementsByPage[selectedPage.sequence] ?? [];
 
+  console.warn("current: ", currentElements);
+  console.warn("selectedPage: ", selectedPage);
 
   return (
     <div className="flex h-full bg-gray-50">
@@ -42,7 +52,7 @@ const CreateForms: React.FC<CreateFormsProps> = ({ formId, onBack }) => {
           `selectedElement: string | null`
           para mostrar el input/form que corresponda. 
         */}
-        <PhoneMockup formId={formId} onBack={onBack} selectedElements={selectedElements} selectedPage={selectedPage}/>
+        <PhoneMockup formId={formId} onBack={onBack} selectedElements={currentElements} selectedPage={selectedPage}/>
       </div>
 
       <div>

@@ -21,6 +21,8 @@ export interface PageEditModalProps extends Omit<ModalProps, 'title'> {
   onCancel: () => void
   /** Se dispara al hacer click en “Guardar” */
   onUpdate: (values: PageValues) => void
+   /** Prop para validar existencia de paginas */
+  existingPages: PageValues[] 
 }
 
 const PageEditModal: FC<PageEditModalProps> = ({
@@ -28,6 +30,7 @@ const PageEditModal: FC<PageEditModalProps> = ({
   initialValues,
   onCancel,
   onUpdate,
+  existingPages,
   ...modalProps
 }) => {
   const [form] = Form.useForm<PageValues>()
@@ -70,7 +73,24 @@ const PageEditModal: FC<PageEditModalProps> = ({
           <Form.Item
             label="Secuencia"
             name="sequence"
-            rules={[{ required: true, message: 'Por favor ingresa la secuencia' }]}
+            rules={[
+              { required: true, message: 'Por favor ingresa la secuencia' },
+              {
+                // ⚠️ aquí va el validator correcto:
+                validator: (_rule, value: number) => {
+                  // buscamos conflicto con cualquier otra página (mismo sequence distinto title)
+                  const conflict = existingPages.find(
+                    p => p.sequence === value && p.title !== initialValues.title
+                  )
+                  if (conflict) {
+                    return Promise.reject(
+                      new Error(`La secuencia ${value} ya está en uso por "${conflict.title}"`)
+                    )
+                  }
+                  return Promise.resolve()
+                }
+              }
+            ]}
           >
             <InputNumber min={1} className="w-full" />
           </Form.Item>

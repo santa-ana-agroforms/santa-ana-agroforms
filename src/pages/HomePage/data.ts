@@ -13,4 +13,6 @@ export const titles: Record<string, string> = {
   'aprobacion': "Rutas de Aprobación",
   'exportacion': "Procesos de Exportación",
   'excel': "Crear desde Excel",
+  'terminales': "Terminales",
+  'usuarios': "Usuarios",
 };
