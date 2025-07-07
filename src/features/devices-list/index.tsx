@@ -6,6 +6,7 @@ import { FilterOutlined, ArrowUpOutlined } from '@ant-design/icons';
 
 import DevicesTable, { ItemType as DeviceType } from '@/components/DeviceTables';
 import { devices } from './data';
+import { EditUserValues } from '@/components/DeviceTables/components/EditUserModal';
 
 const DevicesList: React.FC = () => {
   // estados para búsqueda, filtros y orden
@@ -46,6 +47,13 @@ const DevicesList: React.FC = () => {
     // navegación o callback…
   }, []);
 
+  // 1) Creamos el handler para “Crear” (onCreate)
+  const handleCreate = useCallback((values: EditUserValues) => {
+    console.log('CREATE:', values);
+    // Aquí tu lógica para añadir el nuevo registro...
+    // por ejemplo: llamar a tu API o actualizar el estado local
+  }, []);
+
   return (
     <div className="flex flex-col p-4 w-full gap-7">
       <div className="flex justify-between items-center w-full">
@@ -72,6 +80,7 @@ const DevicesList: React.FC = () => {
         onDelete={handleDelete}
         onIdClick={handleIdClick}
         onTableChange={handleTableChange}
+        onCreate={handleCreate}
       />
     </div>
   );

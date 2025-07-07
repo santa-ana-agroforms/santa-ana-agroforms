@@ -1,9 +1,10 @@
 // src/components/FormsLists/FlatTable.tsx
-import React from 'react';
+import React, { useState } from 'react';
 import { Table } from 'antd';
 import type { TableProps } from 'antd';
 import type { ColumnsType } from 'antd/es/table';
-import { FormOutlined, DeleteOutlined } from '@ant-design/icons';
+import { FormOutlined, DeleteOutlined, PlusOutlined } from '@ant-design/icons';
+import EditUserModal, { EditUserValues } from './components/EditUserModal';
 
 export interface ItemType {
   key: string;
@@ -24,6 +25,7 @@ interface Props {
   onEdit: (record: ItemType) => void;
   onDelete: (record: ItemType) => void;
   onIdClick: (id: string) => void;
+  onCreate: (values: EditUserValues) => void; 
   onTableChange?: TableProps<ItemType>['onChange'];
 }
 
@@ -32,12 +34,39 @@ const DevicesTable: React.FC<Props> = ({
   onEdit,
   onDelete,
   onIdClick,
+  onCreate,
   onTableChange,
 }) => {
   // derive filtros únicos de cada columna
   const descripcionFilters = Array.from(new Set(data.map(i => i.descripcion))).map(t => ({ text: t, value: t }));
   const centroCostoFilters = Array.from(new Set(data.map(i => i.centroCosto))).map(t => ({ text: t, value: t }));
   const versionFilters = Array.from(new Set(data.map(i => i.version).filter(v => v))).map(v => ({ text: v!, value: v! }));
+
+  
+  const [open, setOpen] = useState(false);
+  const [selectedItem, setSelectedItem] = useState<ItemType | null>(null);
+
+  const handleAdd = () => {
+    setOpen(true);
+    setSelectedItem(null);
+  }
+
+  // Cuando cierras el modal sin guardar
+  const handleModalCancel = () => {
+    setOpen(false);
+  };
+
+  // Cuando el modal emite el submit (Guardar)
+  const handleModalSave = (values: EditUserValues) => {
+    if (selectedItem) {
+      // edición: fusionamos el resto de campos con los nuevos valores
+      onEdit({ ...selectedItem, ...values });
+    } else {
+      // creación: llamamos a onCreate
+      onCreate(values);
+    }
+    setOpen(false);
+  };
 
   // helper para ordenar fechas DD/MM/YYYY
   const parseDate = (s: string) => {
@@ -47,7 +76,12 @@ const DevicesTable: React.FC<Props> = ({
 
   const columns: ColumnsType<ItemType> = [
     {
-      title: '#',
+      title: (
+      <PlusOutlined
+        onClick={handleAdd} 
+        style={{ cursor: 'pointer', fontSize: 16 }}
+      />
+    ),
       key: 'actions',
       width: 80,
       align: 'center',
@@ -136,6 +170,7 @@ const DevicesTable: React.FC<Props> = ({
   ];
 
   return (
+    <>
     <Table<ItemType>
       rowKey="key"
       columns={columns}
@@ -143,6 +178,13 @@ const DevicesTable: React.FC<Props> = ({
       onChange={onTableChange}
       pagination={false}
     />
+    <EditUserModal
+        visible={open}
+        initialValues={selectedItem ?? undefined}
+        onCancel={handleModalCancel}
+        onSave={handleModalSave}
+      />
+    </>
   );
 };
 

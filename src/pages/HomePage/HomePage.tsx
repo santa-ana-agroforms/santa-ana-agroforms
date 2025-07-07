@@ -10,6 +10,7 @@ import { titles } from './data'
 import CreateForms from '@/features/create-forms'
 import FlatTable, { ItemType } from '@/components/DeviceTables'
 import { devices } from '@/features/devices-list/data'
+import DevicesTable from '@/components/DeviceTables'
 
 const { Content, Sider } = Layout
 
@@ -98,7 +99,7 @@ export const HomePage: React.FC = () => {
               />
             )}
             {selectedKey === 'terminales' && activeFormId === null && (
-              <FlatTable
+              <DevicesTable
                 data={dataToShow}
                 onEdit={handleEdit}
                 onDelete={handleDelete}
