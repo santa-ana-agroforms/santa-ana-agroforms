@@ -76,12 +76,6 @@ const DevicesTable: React.FC<Props> = ({
 
   const columns: ColumnsType<ItemType> = [
     {
-      title: (
-      <PlusOutlined
-        onClick={handleAdd} 
-        style={{ cursor: 'pointer', fontSize: 16 }}
-      />
-    ),
       key: 'actions',
       width: 80,
       align: 'center',

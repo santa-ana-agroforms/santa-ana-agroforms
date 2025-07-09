@@ -11,6 +11,8 @@ import CreateForms from '@/features/create-forms'
 import FlatTable, { ItemType } from '@/components/DeviceTables'
 import { devices } from '@/features/devices-list/data'
 import DevicesTable from '@/components/DeviceTables'
+import DevicesList from '@/features/devices-list'
+import UserList from '@/features/users-list'
 
 const { Content, Sider } = Layout
 
@@ -99,13 +101,10 @@ export const HomePage: React.FC = () => {
               />
             )}
             {selectedKey === 'terminales' && activeFormId === null && (
-              <DevicesTable
-                data={dataToShow}
-                onEdit={handleEdit}
-                onDelete={handleDelete}
-                onIdClick={handleIdClick}
-                onTableChange={handleTableChange}
-              />
+              <DevicesList/>
+            )}
+            {selectedKey === 'usuarios' && activeFormId === null && (
+              <UserList />
             )}
 
         </Content>
