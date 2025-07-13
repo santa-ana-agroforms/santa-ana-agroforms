@@ -1,10 +1,13 @@
 // src/components/FormsLists/UsersTable.tsx
-import React, { useState } from 'react';
-import { Table } from 'antd';
-import type { TableProps } from 'antd';
-import type { ColumnsType } from 'antd/es/table';
-import { FormOutlined, DeleteOutlined, PlusOutlined } from '@ant-design/icons';
-import EditUserModal, {EditUserValues} from '../DeviceTables/components/EditUserModal'; // un modal específico para usuarios
+import React, { useState } from "react";
+
+import { DeleteOutlined, FormOutlined, PlusOutlined } from "@ant-design/icons";
+import { Table, type TableProps } from "antd";
+import type { ColumnsType } from "antd/es/table";
+
+import EditUserModal, {
+  EditUserValues,
+} from "../DeviceTables/components/EditUserModal"; // un modal específico para usuarios
 
 export interface UserType {
   key: string;
@@ -21,7 +24,7 @@ interface Props {
   onEdit: (record: UserType) => void;
   onDelete: (record: UserType) => void;
   onCreate: (values: EditUserValues) => void;
-  onTableChange?: TableProps<UserType>['onChange'];
+  onTableChange?: TableProps<UserType>["onChange"];
 }
 
 const UsersTable: React.FC<Props> = ({
@@ -32,11 +35,12 @@ const UsersTable: React.FC<Props> = ({
   onTableChange,
 }) => {
   // filtros únicos
-  const perfilFilters = Array.from(new Set(data.map(u => u.perfil)))
-    .map(p => ({ text: p, value: p }));
+  const perfilFilters = Array.from(new Set(data.map((u) => u.perfil))).map(
+    (p) => ({ text: p, value: p })
+  );
   const activeFilters = [
-    { text: 'Sí', value: true },
-    { text: 'No', value: false },
+    { text: "Sí", value: true },
+    { text: "No", value: false },
   ];
 
   const [modalOpen, setModalOpen] = useState(false);
@@ -63,60 +67,63 @@ const UsersTable: React.FC<Props> = ({
       title: (
         <PlusOutlined
           onClick={handleAdd}
-          style={{ cursor: 'pointer', fontSize: 16 }}
+          style={{ cursor: "pointer", fontSize: 16 }}
         />
       ),
-      key: 'actions',
+      key: "actions",
       width: 80,
-      align: 'center',
+      align: "center",
       render: (_: any, record) => (
         <>
           <FormOutlined
-            onClick={() => { setSelected(record); setModalOpen(true); }}
-            style={{ cursor: 'pointer', marginRight: 8 }}
+            onClick={() => {
+              setSelected(record);
+              setModalOpen(true);
+            }}
+            style={{ cursor: "pointer", marginRight: 8 }}
           />
           <DeleteOutlined
             onClick={() => onDelete(record)}
-            style={{ cursor: 'pointer' }}
+            style={{ cursor: "pointer" }}
           />
         </>
       ),
     },
     {
-      title: 'Id',
-      dataIndex: 'id',
-      key: 'id',
+      title: "Id",
+      dataIndex: "id",
+      key: "id",
       sorter: (a, b) => a.id.localeCompare(b.id),
       ellipsis: true,
     },
     {
-      title: 'Nombre',
-      dataIndex: 'nombre',
-      key: 'nombre',
+      title: "Nombre",
+      dataIndex: "nombre",
+      key: "nombre",
       sorter: (a, b) => a.nombre.localeCompare(b.nombre),
       ellipsis: true,
     },
     {
-      title: 'Contraseña',
-      dataIndex: 'contraseña',
-      key: 'contraseña',
-      render: () => '•••••••',  // siempre oculto
+      title: "Contraseña",
+      dataIndex: "contraseña",
+      key: "contraseña",
+      render: () => "•••••••", // siempre oculto
       width: 120,
     },
     {
-      title: 'Activo',
-      dataIndex: 'activo',
-      key: 'activo',
+      title: "Activo",
+      dataIndex: "activo",
+      key: "activo",
       filters: activeFilters,
       onFilter: (val, rec) => rec.activo === val,
-      render: v => (v ? '✔️' : ''),
+      render: (v) => (v ? "✔️" : ""),
       sorter: (a, b) => Number(a.activo) - Number(b.activo),
       width: 100,
     },
     {
-      title: 'Perfil',
-      dataIndex: 'perfil',
-      key: 'perfil',
+      title: "Perfil",
+      dataIndex: "perfil",
+      key: "perfil",
       filters: perfilFilters,
       onFilter: (val, rec) => rec.perfil === val,
       sorter: (a, b) => a.perfil.localeCompare(b.perfil),
@@ -124,9 +131,9 @@ const UsersTable: React.FC<Props> = ({
       width: 140,
     },
     {
-      title: 'Email',
-      dataIndex: 'email',
-      key: 'email',
+      title: "Email",
+      dataIndex: "email",
+      key: "email",
       sorter: (a, b) => a.email.localeCompare(b.email),
       ellipsis: true,
     },

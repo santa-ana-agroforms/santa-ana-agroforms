@@ -1,0 +1,138 @@
+{
+  "parser": "@typescript-eslint/parser",
+  "parserOptions": {
+    "project": "tsconfig.json",
+    "sourceType": "module"
+  },
+  "extends": [
+    "expo",
+    "prettier",
+    "plugin:@typescript-eslint/recommended",
+    "plugin:import/errors",
+    "plugin:import/warnings",
+    "plugin:import/typescript",
+    "plugin:prettier/recommended"
+  ],
+  "plugins": ["prettier", "unused-imports", "@typescript-eslint", "import"],
+  "overrides": [
+    {
+      "files": ["*.ts", "*.tsx", "*.d.ts"],
+      "parserOptions": {
+        "project": "./tsconfig.json" // Utiliza la configuración de TypeScript definida en tsconfig.json
+      }
+    },
+    {
+      "files": ["*.jsx", "*.tsx"],
+      "rules": {
+        "func-style": [
+          "error",
+          "expression",
+          {
+            // Permitir el uso de funciones anonimas en lugar de funciones declaradas en archivos JSX y TSX
+            "allowArrowFunctions": true
+          }
+        ]
+      }
+    },
+    {
+      "files": ["*Saga*.ts", "./store/sagas/*"], // Desactiva para archivos *Saga.ts:
+      "rules": {
+        "func-style": "off", // funciones declarativas
+        "@typescript-eslint/no-unused-vars": "off", // variables no utilizadas
+        "no-console": "off" // console log
+      }
+    }
+  ],
+  "settings": {
+    "import/resolver": {
+      "typescript": {
+        "alwaysTryTypes": true,
+        "project": "./tsconfig.json"
+      },
+      "node": {
+        "moduleDirectory": ["node_modules", "./"] // ensure root and node_modules are included
+      }
+    },
+    "alias": {
+      "map": [
+        ["@assets", "./assets"],
+        ["@components", "./components"],
+        ["@store", "./store"],
+        ["@database", "./database"],
+        ["@util", "./util"],
+        ["@worlds", "./worlds"],
+        ["@hooks", "./hooks"],
+        ["@native", "./native"],
+        ["@missionGenerators", "./missionGenerators"],
+        ["@", "."]
+      ],
+      "extensions": [".js", ".jsx", ".ts", ".tsx"]
+    }
+  },
+  "rules": {
+    // Eliminated due to problems with imports
+    "import/no-unresolved": "off",
+    "import/no-duplicates": "off",
+    "import/no-named-as-default": "off",
+    "import/no-named-as-default-member": "off",
+    "import/default": "off",
+    "import/namespace": "off",
+    "@typescript-eslint/ban-types": "off",
+
+    "eqeqeq": ["error", "always"],
+    "@typescript-eslint/no-require-imports": "off",
+    "eslint-plugin-import/no-unresolved": "off",
+    "prettier/prettier": "error", // Enforzar las configuraciones de prettier
+    "no-console": "warn", // Advertir cuando se utilice console.log o similares
+    "@typescript-eslint/no-unused-vars": [
+      // No permitir declaración de variables sin utilizar
+      "error",
+      {
+        "argsIgnorePattern": "^_",
+        "varsIgnorePattern": "^_",
+        "ignoreRestSiblings": true
+      }
+    ],
+    "unused-imports/no-unused-imports": "error", // No permitir imports sin utilizar
+    "import/newline-after-import": [
+      // Dejar una línea en blanco después de los grupos de imports
+      "error",
+      { "count": 1 }
+    ],
+    "unused-imports/no-unused-vars": "off", // Desactiva la regla de no-unused-vars (para evitar conflictos con TS)
+    "linebreak-style": ["off"], // Permitir diferentes tipos de saltos de línea (LF o CRLF)
+    "react-hooks/exhaustive-deps": "off", // Desactivar la regla de advertencia de dependencias exhaustivas en React Hooks
+    "prefer-arrow-callback": [
+      // Forzar uso de arrow functions en lugar de funciones convencionales para callbacks
+      "error",
+      {
+        "allowNamedFunctions": false, // No permitir funciones nombradas
+        "allowUnboundThis": false // No permitir el uso de "this" sin enlazar
+      }
+    ],
+    "no-restricted-syntax": [
+      // Restringir el uso de FunctionExpression y preferir las arrow functions
+      "error",
+      {
+        "selector": "FunctionDeclaration:not([generator=true])",
+        "message": "Function declarations are not allowed, except for generator functions."
+      }
+    ],
+    "func-style": [
+      // Forzar el uso de funciones expresivas en lugar de funciones declarativas
+      "error",
+      "expression",
+      {
+        "allowArrowFunctions": true
+      }
+    ],
+    "no-var": "error", // No permitir el uso de var (usar let o const en su lugar)
+    "arrow-parens": ["error", "always"], // Forzar el uso de paréntesis en las arrow functions, incluso con un solo argumento
+    "arrow-body-style": ["error", "as-needed"], // Usar el cuerpo de las arrow functions solo cuando sea necesario (eliminar llaves si hay solo una expresión)
+    "@typescript-eslint/no-explicit-any": "off",
+    "@typescript-eslint/no-unnecessary-type-constraint": "off",
+    "@typescript-eslint/no-unused-expressions": "off",
+    "react-hooks/rules-of-hooks": "off",
+    "@typescript-eslint/no-empty-object-type": "off"
+  }
+}
