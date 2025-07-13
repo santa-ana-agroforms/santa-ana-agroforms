@@ -8,13 +8,13 @@ import { Layout } from "antd/lib";
 import { AppHeader } from "@/components/AppHeader";
 import { AppSidebar } from "@/components/AppSideBar";
 import { ItemType } from "@/components/DeviceTables";
-import CreateForms from "@/features/create-forms";
-import DevicesList from "@/features/devices-list";
 import { devices } from "@/features/devices-list/data";
-import FormsLists from "@/features/forms-list";
-import UserList from "@/features/users-list";
 
+import CreateFormsPage from "../CreateFormsPage";
 import DashboardPage from "../DashboardPage";
+import DevicesListPage from "../DevicesListPage";
+import FormListPage from "../FormListPage";
+import UserListPage from "../UserListPage";
 import { titles } from "./data";
 
 const { Content, Sider } = Layout;
@@ -88,20 +88,20 @@ export const HomePage: React.FC = () => {
           <Content className="bg-white p-6 overflow-auto">
             {selectedKey === "listado" && activeFormId === null && (
               // Paso el callback onSelectForm
-              <FormsLists onSelectForm={setActiveFormId} />
+              <FormListPage onSelectForm={setActiveFormId} />
             )}
 
             {activeFormId !== null && (
-              <CreateForms
+              <CreateFormsPage
                 formId={activeFormId}
                 onBack={() => setActiveFormId(null)}
               />
             )}
             {selectedKey === "terminales" && activeFormId === null && (
-              <DevicesList />
+              <DevicesListPage />
             )}
             {selectedKey === "usuarios" && activeFormId === null && (
-              <UserList />
+              <UserListPage />
             )}
 
             {selectedKey === "1" && activeFormId === null && <DashboardPage />}
