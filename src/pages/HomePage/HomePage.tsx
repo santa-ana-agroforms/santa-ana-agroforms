@@ -12,6 +12,7 @@ import { devices } from "@/features/devices-list/data";
 
 import CreateFormsPage from "../CreateFormsPage";
 import DashboardPage from "../DashboardPage";
+import DataSourcesPage from "../DataSourcesPage";
 import DevicesListPage from "../DevicesListPage";
 import FormListPage from "../FormListPage";
 import UserListPage from "../UserListPage";
@@ -89,6 +90,10 @@ export const HomePage: React.FC = () => {
             {selectedKey === "listado" && activeFormId === null && (
               // Paso el callback onSelectForm
               <FormListPage onSelectForm={setActiveFormId} />
+            )}
+
+            {selectedKey === "datos" && activeFormId === null && (
+              <DataSourcesPage />
             )}
 
             {activeFormId !== null && (

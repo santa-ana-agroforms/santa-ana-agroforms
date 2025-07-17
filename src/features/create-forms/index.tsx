@@ -1,42 +1,42 @@
 // src/components/CreateForms.tsx
-import React, { useState } from 'react'
-import FormElementsList from './components/FormElementList'
-import PhoneMockup from './components/PhoneMockup'
-import PageSettings from './components/Forms-Settings'
-import { PageValues } from './components/PageEditModal'
+import React, { useState } from "react";
+
+import FormElementsList from "./components/FormElementList";
+import PageSettings from "./components/Forms-Settings";
+import { PageValues } from "./components/PageEditModal";
+import PhoneMockup from "./components/PhoneMockup";
 
 interface CreateFormsProps {
-  formId: number
-  onBack: () => void
+  formId: number;
+  onBack: () => void;
 }
 
 const CreateForms: React.FC<CreateFormsProps> = ({ formId, onBack }) => {
   // aquí guardamos la clave del elemento (texto, fecha, foto, etc.) que pinchó el usuario
-  const [elementsByPage, setElementsByPage] = useState<Record<number, string[]>>({})
+  const [elementsByPage, setElementsByPage] = useState<
+    Record<number, string[]>
+  >({});
 
   const handleAddElement = (key: string) => {
-  setElementsByPage(prev => {
-    const pageKey = selectedPage.sequence
-    const prevList = prev[pageKey] ?? []
-    return {
-      ...prev,
-      [pageKey]: [...prevList, key]
-    }
-  })
-}
+    setElementsByPage((prev) => {
+      const pageKey = selectedPage.sequence;
+      const prevList = prev[pageKey] ?? [];
+      return {
+        ...prev,
+        [pageKey]: [...prevList, key],
+      };
+    });
+  };
 
   const [selectedPage, setSelectedPage] = useState<PageValues>({
     sequence: 1,
-    description: 'Generales',
-    title: 'Generales',
-    bgColor: '#FFFFFF',
-    textColor: '#000000',
-  })
+    description: "Generales",
+    title: "Generales",
+    bgColor: "#FFFFFF",
+    textColor: "#000000",
+  });
 
   const currentElements = elementsByPage[selectedPage.sequence] ?? [];
-
-  console.warn("current: ", currentElements);
-  console.warn("selectedPage: ", selectedPage);
 
   return (
     <div className="flex h-full bg-gray-50">
@@ -52,14 +52,19 @@ const CreateForms: React.FC<CreateFormsProps> = ({ formId, onBack }) => {
           `selectedElement: string | null`
           para mostrar el input/form que corresponda. 
         */}
-        <PhoneMockup formId={formId} onBack={onBack} selectedElements={currentElements} selectedPage={selectedPage}/>
+        <PhoneMockup
+          formId={formId}
+          onBack={onBack}
+          selectedElements={currentElements}
+          selectedPage={selectedPage}
+        />
       </div>
 
       <div>
-        <PageSettings onPageChange={setSelectedPage}/>
+        <PageSettings onPageChange={setSelectedPage} />
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default CreateForms
+export default CreateForms;
