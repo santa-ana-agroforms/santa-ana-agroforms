@@ -1,0 +1,225 @@
+// src/components/CategoryTables/data.tsx
+import { DeleteOutlined, FormOutlined, PlusOutlined } from "@ant-design/icons";
+import type { ColumnType } from "antd/es/table";
+
+export interface ItemType {
+  key: string;
+  codigo: string;
+  descripcion: string;
+  campo1?: string;
+  conexion?: string;
+  comando?: string;
+  intervalo?: string;
+  ultActualizacion?: string;
+  ultMensaje?: string;
+  datos?: string;
+}
+
+export interface CategoryType {
+  key: string;
+  name: string;
+  items: ItemType[];
+}
+
+// --- Tus datos estáticos de categoría + filas ---
+export const categories: CategoryType[] = [
+  {
+    key: "local",
+    name: "Local",
+    items: [
+      {
+        key: "1",
+        codigo: "Esso",
+        descripcion: "Esso",
+        campo1: "",
+      },
+      {
+        key: "2",
+        codigo: "Claro",
+        descripcion: "Claro",
+        campo1: "",
+        conexion: "",
+        comando: "",
+        intervalo: "",
+        ultActualizacion: "04/04/2020",
+        ultMensaje: "",
+        datos: "Contenido",
+      },
+      {
+        key: "3",
+        codigo: "Ejemplo",
+        descripcion: "Ejemplo",
+        campo1: "",
+        conexion: "",
+        comando: "",
+        intervalo: "",
+        ultActualizacion: "05/12/2020",
+        ultMensaje: "",
+        datos: "Contenido",
+      },
+      {
+        key: "4",
+        codigo: "Empresas",
+        descripcion: "Empresas Cliente",
+        campo1: "",
+        conexion: "",
+        comando: "",
+        intervalo: "",
+        ultActualizacion: "04/04/2020",
+        ultMensaje: "",
+        datos: "Contenido",
+      },
+    ],
+  },
+  {
+    key: "externa",
+    name: "Externa",
+    items: [
+      {
+        key: "E1",
+        codigo: "Lotes",
+        descripcion: "Listado de Lotes",
+        campo1: "",
+        conexion: "Data Source=165…",
+        comando: "SELECT 0 as IdDato…",
+        intervalo: "10,00",
+        ultActualizacion: "29/06/2021",
+        ultMensaje: "OK",
+        datos: "Contenido",
+      },
+    ],
+  },
+];
+
+// --- Función para generar las columnas, recibiendo estado de sort/filter y callbacks ---
+export const getColumns = (
+  sortedInfo: any,
+  filteredInfo: any,
+  onAdd: () => void,
+  onEdit: (record: ItemType) => void,
+  onDelete: (record: ItemType) => void,
+  onDatos?: (record: ItemType) => void
+): ColumnType<ItemType>[] => [
+  {
+    title: (
+      <PlusOutlined
+        onClick={onAdd}
+        style={{ cursor: "pointer", fontSize: 16 }}
+      />
+    ),
+    dataIndex: "actions",
+    key: "actions",
+    width: 70,
+    align: "center",
+    render: (_: any, record: ItemType) => (
+      <>
+        <FormOutlined
+          onClick={() => onEdit(record)}
+          style={{ cursor: "pointer" }}
+        />
+        <DeleteOutlined
+          onClick={() => onDelete(record)}
+          style={{ cursor: "pointer", marginLeft: 8 }}
+        />
+      </>
+    ),
+  },
+  {
+    title: "Código",
+    dataIndex: "codigo",
+    key: "codigo",
+    filters: Array.from(
+      new Set(categories.flatMap((c) => c.items.map((i) => i.codigo)))
+    ).map((c) => ({ text: c, value: c })),
+    filteredValue: filteredInfo.codigo || null,
+    onFilter: (value, record) => record.codigo.includes(value as string),
+    sorter: (a, b) => a.codigo.localeCompare(b.codigo),
+    sortOrder: sortedInfo.columnKey === "codigo" ? sortedInfo.order : null,
+    ellipsis: true,
+    width: 120,
+  },
+  {
+    title: "Descripción",
+    dataIndex: "descripcion",
+    key: "descripcion",
+    filters: Array.from(
+      new Set(categories.flatMap((c) => c.items.map((i) => i.descripcion)))
+    ).map((t) => ({ text: t, value: t })),
+    filteredValue: filteredInfo.descripcion || null,
+    onFilter: (value, record) => record.descripcion.includes(value as string),
+    sorter: (a, b) => a.descripcion.localeCompare(b.descripcion),
+    sortOrder: sortedInfo.columnKey === "descripcion" ? sortedInfo.order : null,
+    ellipsis: true,
+    width: 160,
+  },
+  {
+    title: "Campo1",
+    dataIndex: "campo1",
+    key: "campo1",
+    filteredValue: filteredInfo.tipoFuente || null,
+    sortOrder: sortedInfo.columnKey === "tipoFuente" ? sortedInfo.order : null,
+  },
+  {
+    title: "Campo2",
+    dataIndex: "campo2",
+    key: "campo2",
+    filteredValue: filteredInfo.tipoFuente || null,
+    sortOrder: sortedInfo.columnKey === "tipoFuente" ? sortedInfo.order : null,
+  },
+  {
+    title: "Campo3",
+    dataIndex: "campo3",
+    key: "campo3",
+    filteredValue: filteredInfo.campo3 || null,
+    sortOrder: sortedInfo.columnKey === "campo3" ? sortedInfo.order : null,
+  },
+  {
+    title: "Campo4",
+    dataIndex: "campo4",
+    key: "campo4",
+    filteredValue: filteredInfo.campo4 || null,
+    sortOrder: sortedInfo.columnKey === "campo4" ? sortedInfo.order : null,
+  },
+  {
+    title: "Campo5",
+    dataIndex: "campo5",
+    key: "campo5",
+    filteredValue: filteredInfo.campo5 || null,
+    sortOrder: sortedInfo.columnKey === "campo5" ? sortedInfo.order : null,
+  },
+  {
+    title: "Campo6",
+    dataIndex: "campo6",
+    key: "campo6",
+    filteredValue: filteredInfo.campo6 || null,
+    sortOrder: sortedInfo.columnKey === "campo6" ? sortedInfo.order : null,
+  },
+  {
+    title: "Campo7",
+    dataIndex: "campo7",
+    key: "campo7",
+    filteredValue: filteredInfo.campo7 || null,
+    sortOrder: sortedInfo.columnKey === "campo7" ? sortedInfo.order : null,
+  },
+  {
+    title: "Campo8",
+    dataIndex: "campo8",
+    key: "campo8",
+    filteredValue: filteredInfo.campo8 || null,
+    sortOrder: sortedInfo.columnKey === "campo8" ? sortedInfo.order : null,
+  },
+  {
+    title: "Campo9",
+    dataIndex: "campo9",
+    key: "campo9",
+    filteredValue: filteredInfo.campo9 || null,
+    sortOrder: sortedInfo.columnKey === "campo9" ? sortedInfo.order : null,
+  },
+  {
+    title: "Campo10",
+    dataIndex: "campo10",
+    key: "campo10",
+    filteredValue: filteredInfo.campo10 || null,
+    sortOrder: sortedInfo.columnKey === "campo10" ? sortedInfo.order : null,
+  },
+];
