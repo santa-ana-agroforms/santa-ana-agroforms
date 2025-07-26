@@ -14,6 +14,7 @@ import CreateFormsPage from "../CreateFormsPage";
 import DashboardPage from "../DashboardPage";
 import DataSourcesPage from "../DataSourcesPage";
 import DevicesListPage from "../DevicesListPage";
+import FormAssignmentPage from "../FormAssignmentPage";
 import FormListPage from "../FormListPage";
 import UserListPage from "../UserListPage";
 import { titles } from "./data";
@@ -86,7 +87,7 @@ export const HomePage: React.FC = () => {
           </Sider>
 
           {/* CONTENIDO */}
-          <Content className="bg-white p-6 overflow-auto">
+          <Content className="bg-white p-6 overflow-auto h-full">
             {selectedKey === "listado" && activeFormId === null && (
               // Paso el callback onSelectForm
               <FormListPage onSelectForm={setActiveFormId} />
@@ -94,6 +95,10 @@ export const HomePage: React.FC = () => {
 
             {selectedKey === "datos" && activeFormId === null && (
               <DataSourcesPage />
+            )}
+
+            {selectedKey === "formularios" && activeFormId === null && (
+              <FormAssignmentPage />
             )}
 
             {activeFormId !== null && (
