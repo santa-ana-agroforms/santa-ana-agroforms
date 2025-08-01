@@ -10,6 +10,7 @@ import { AppSidebar } from "@/components/AppSideBar";
 import { ItemType } from "@/components/DeviceTables";
 import { devices } from "@/features/devices-list/data";
 
+import AssignmentsProgressPage from "../AssignmentsProgressPage";
 import CreateFormsPage from "../CreateFormsPage";
 import DashboardPage from "../DashboardPage";
 import DataSourcesPage from "../DataSourcesPage";
@@ -99,6 +100,10 @@ export const HomePage: React.FC = () => {
 
             {selectedKey === "formularios" && activeFormId === null && (
               <FormAssignmentPage />
+            )}
+
+            {selectedKey === "proceso" && activeFormId === null && (
+              <AssignmentsProgressPage />
             )}
 
             {activeFormId !== null && (
