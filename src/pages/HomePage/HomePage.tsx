@@ -10,11 +10,13 @@ import { AppSidebar } from "@/components/AppSideBar";
 import { ItemType } from "@/components/DeviceTables";
 import { devices } from "@/features/devices-list/data";
 
+import ApprovalRoutesPage from "../ApprovalRoutesPage";
 import AssignmentsProgressPage from "../AssignmentsProgressPage";
 import CreateFormsPage from "../CreateFormsPage";
 import DashboardPage from "../DashboardPage";
 import DataSourcesPage from "../DataSourcesPage";
 import DevicesListPage from "../DevicesListPage";
+import ExportProcessPages from "../ExportProcessPage";
 import FormAssignmentPage from "../FormAssignmentPage";
 import FormListPage from "../FormListPage";
 import UserListPage from "../UserListPage";
@@ -104,6 +106,14 @@ export const HomePage: React.FC = () => {
 
             {selectedKey === "proceso" && activeFormId === null && (
               <AssignmentsProgressPage />
+            )}
+
+            {selectedKey === "aprobacion" && activeFormId === null && (
+              <ApprovalRoutesPage />
+            )}
+
+            {selectedKey === "exportacion" && activeFormId === null && (
+              <ExportProcessPages />
             )}
 
             {activeFormId !== null && (
