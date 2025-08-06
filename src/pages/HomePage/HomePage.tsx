@@ -13,6 +13,7 @@ import { devices } from "@/features/devices-list/data";
 import ApprovalRoutesPage from "../ApprovalRoutesPage";
 import AssignmentsProgressPage from "../AssignmentsProgressPage";
 import CreateFormsPage from "../CreateFormsPage";
+import CreateFromExcelPage from "../CreateFromExcelPage";
 import DashboardPage from "../DashboardPage";
 import DataSourcesPage from "../DataSourcesPage";
 import DevicesListPage from "../DevicesListPage";
@@ -114,6 +115,10 @@ export const HomePage: React.FC = () => {
 
             {selectedKey === "exportacion" && activeFormId === null && (
               <ExportProcessPages />
+            )}
+
+            {selectedKey === "excel" && activeFormId === null && (
+              <CreateFromExcelPage />
             )}
 
             {activeFormId !== null && (
