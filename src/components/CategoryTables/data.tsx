@@ -1,6 +1,8 @@
 // src/components/FormsLists/data.ts
+import { FormOutlined, PlusOutlined } from '@ant-design/icons';
 import type { TableColumnsType } from 'antd';
 import type { ColumnType } from 'antd/es/table';
+import { useState } from 'react';
 
 export interface ItemType {
   key: string;
@@ -18,6 +20,7 @@ export interface CategoryType {
   name: string;
   items: ItemType[];
 }
+
 
 // --- Tus datos estáticos de categoría + filas ---
 export const categories: CategoryType[] = [
@@ -68,8 +71,28 @@ export const categories: CategoryType[] = [
 // --- Función para generar las columnas, recibiendo el estado de sort y filter ---
 export const getColumns = (
   sortedInfo: any,
-  filteredInfo: any
+  filteredInfo: any,
+  onAdd: () => void,
+  onIdClick: (id: number) => void,
+  onEdit: (record: ItemType) => void
 ): ColumnType<ItemType>[] => [
+  {
+    title: (
+      <PlusOutlined
+        onClick={onAdd} 
+        style={{ cursor: 'pointer', fontSize: 16 }}
+      />
+    ),
+    dataIndex: 'new_form',
+    key: 'new_form',
+    width: 60,
+    align: 'center',
+    render: (_: any, record: ItemType) => (
+      <>
+        <FormOutlined onClick={() => onEdit(record)} style={{ cursor: 'pointer' }}  />
+      </>
+    ),
+  },
   {
     title: 'ID',
     dataIndex: 'id',
@@ -77,6 +100,14 @@ export const getColumns = (
     width: 80,
     sorter: (a, b) => a.id - b.id,
     sortOrder: sortedInfo.columnKey === 'id' ? sortedInfo.order : null,
+    render: (value: number, record) => (
+      <a
+        onClick={() => onIdClick(record.id)}
+        style={{ cursor: 'pointer', color: '#1890ff' }}
+      >
+        {value}
+      </a>
+    ),
     ellipsis: true,
   },
   {

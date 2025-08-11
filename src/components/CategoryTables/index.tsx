@@ -1,48 +1,59 @@
 // src/components/FormsLists/CategoryTables.tsx
-import React from 'react';
-import { Collapse, Table } from 'antd';
-import type { TableProps, TableColumnsType } from 'antd';
-import { CategoryType, ItemType } from './data';
+import React from "react";
+
+import { Collapse, Table, type TableColumnsType, type TableProps } from "antd";
 
 const { Panel } = Collapse;
 
-interface Props {
-  data: CategoryType[];
-  columns: TableColumnsType<ItemType>;
-  onTableChange: TableProps<ItemType>['onChange'];
+export interface Category<T> {
+  key: string;
+  name: string;
+  items: T[];
 }
 
-const CategoryTables: React.FC<Props> = ({ data, columns, onTableChange }) => (
-  <>
-    {/* 1) Cabecera única */}
-    <Table<ItemType>
-      columns={columns}
-      dataSource={[]}
-      pagination={false}
-      onChange={onTableChange}
-      locale={{ emptyText: '' }}
-      scroll={{ y: 0 }}
-    />
+interface Props<T> {
+  data: Category<T>[];
+  columns: TableColumnsType<T>;
+  onTableChange: TableProps<T>["onChange"];
+}
 
-    <div className='-mt-6'>
-      {/* 2) Collapse con header vacío */}
-      <Collapse>
-        {data.map((cat) => (
-          <Panel header={`Categoría: ${cat.name}`} key={cat.key}>
-            {/* 3) Tabla con datos, filtros y orden */}
-            <Table<ItemType>
-              columns={columns}
-              dataSource={cat.items}
-              onChange={onTableChange}
-              pagination={false}
-              showHeader={false}
-              rowKey="key"
-            />
-          </Panel>
-        ))}
-      </Collapse>
-    </div>
-  </>
-);
+// 3) Hacemos el componente genérico en T
+function CategoryTables<T extends { key: React.Key }>({
+  data,
+  columns,
+  onTableChange,
+}: Props<T>) {
+  return (
+    <>
+      {/* 1) Cabecera única */}
+      <Table<T>
+        columns={columns}
+        dataSource={[]}
+        pagination={false}
+        onChange={onTableChange}
+        locale={{ emptyText: "" }}
+        scroll={{ y: 0 }}
+      />
 
+      <div className="-mt-6">
+        {/* 2) Collapse con header vacío */}
+        <Collapse>
+          {data.map((cat) => (
+            <Panel header={`Categoría: ${cat.name}`} key={cat.key}>
+              {/* 3) Tabla con datos, filtros y orden */}
+              <Table<T>
+                columns={columns}
+                dataSource={cat.items}
+                onChange={onTableChange}
+                pagination={false}
+                showHeader={false}
+                rowKey="key"
+              />
+            </Panel>
+          ))}
+        </Collapse>
+      </div>
+    </>
+  );
+}
 export default CategoryTables;
