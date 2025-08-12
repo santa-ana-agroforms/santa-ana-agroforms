@@ -3,6 +3,8 @@
 **/.hg
 *.json
 *.md
+*.yml
+Dockerfile
 
 node_modules/*
 dist
