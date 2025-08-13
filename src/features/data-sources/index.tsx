@@ -7,6 +7,7 @@ import CategoryTables from "@/components/CategoryTables";
 import { categories, getColumns } from "@/features/data-sources/data";
 
 import DataModal from "./components/DataModal";
+import DataSourceModal, { NewFormValues } from "./components/DataSourceModal";
 
 export interface ItemType {
   key: string;
@@ -47,6 +48,11 @@ const DataSources: React.FC = () => {
     setOpen(false);
     setModalVisible(false);
   }, []);
+
+  const handleCreate = (values: NewFormValues) => {
+    console.log("Nuevos valores:", values);
+    // aquí haces el post o actualización de estado…
+  };
 
   const handleDatos = (record: ItemType) => {
     setSelected(record);
@@ -91,6 +97,12 @@ const DataSources: React.FC = () => {
         visible={modalVisible}
         onCancel={handleCancel}
         onSubmit={handleSubmit}
+      />
+
+      <DataSourceModal
+        visible={open}
+        onCancel={() => setOpen(false)}
+        onCreate={handleCreate}
       />
       {/* Aquí podrías añadir tu modal de edición/creación usando `open`, `selectedItem`, `modalVisible`, etc. */}
     </div>
