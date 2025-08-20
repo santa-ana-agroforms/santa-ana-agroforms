@@ -9,7 +9,7 @@ interface FormListPageProps {
 
 const FormListPage: React.FC<FormListPageProps> = ({ onSelectForm }) => {
   return (
-    <div className="flex flex-col w-full gap-4">
+    <div className="flex flex-col gap-4">
       <FormsLists onSelectForm={onSelectForm} />
     </div>
   );

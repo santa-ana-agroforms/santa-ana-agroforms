@@ -69,7 +69,7 @@ export const HomePage: React.FC = () => {
   }, []);
 
   return (
-    <div className="h-screen w-screen bg-white">
+    <div className="h-screen w-screen overflow-y-hidden bg-green-950">
       <Layout className="h-full w-full">
         <AppHeader collapsed={collapsed} onToggle={toggle} title={title} />
 

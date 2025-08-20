@@ -1,7 +1,7 @@
 // src/components/FormsLists/CategoryTables.tsx
 import React from "react";
 
-import { Collapse, Table, type TableColumnsType, type TableProps } from "antd";
+import { Collapse, Table, type TableColumnType, type TableProps } from "antd";
 
 const { Panel } = Collapse;
 
@@ -13,7 +13,7 @@ export interface Category<T> {
 
 interface Props<T> {
   data: Category<T>[];
-  columns: TableColumnsType<T>;
+  columns: TableColumnType<T>[];
   onTableChange: TableProps<T>["onChange"];
 }
 

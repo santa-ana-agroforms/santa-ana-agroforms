@@ -1,83 +1,103 @@
 // src/components/PageSettings.tsx
-import React, { useEffect, useState } from 'react'
-import { Input, InputNumber, Button, Form, Select } from 'antd'
-import { DiffOutlined } from '@ant-design/icons'
-import PageEditModal, { PageValues } from './PageEditModal'
+import React, { useEffect, useState } from "react";
+
+import { DiffOutlined } from "@ant-design/icons";
+import { Button, Form, Input, InputNumber, Select } from "antd";
+
+import { useCreatePagina } from "../hooks/useCreatePage";
+import { usePaginas } from "../hooks/usePaginas";
+import PageEditModal, { PageValues } from "./PageEditModal";
 
 interface PageSettingsProps {
   /** Callback cuando se presiona el icono */
-  onIconClick?: () => void
+  onIconClick?: () => void;
   /** Callback cuando se cambia de pagina */
-  onPageChange?: (page: PageValues) => void 
+  onPageChange?: (page: PageValues) => void;
+  formId?: string;
 }
 
-const { Option } = Select
+const { Option } = Select;
 
-const PageSettings: React.FC<PageSettingsProps> = ({ onIconClick, onPageChange}) => {
-  const [sequence, setSequence] = useState(1)
-  const [description, setDescription] = useState('Generales')
-  const [title, setTitle] = useState('Generales')
-  const [bgColor, setBgColor] = useState('#FFFFFF')
-  const [textColor, setTextColor] = useState('#000000')
+const PageSettings: React.FC<PageSettingsProps> = ({
+  onIconClick,
+  onPageChange,
+  formId,
+}) => {
+  const [sequence, setSequence] = useState(1);
+  const [description, setDescription] = useState("Generales");
+  const [title, setTitle] = useState("Generales");
+  const [bgColor, setBgColor] = useState("#FFFFFF");
+  const [textColor, setTextColor] = useState("#000000");
 
-  const [pageModalVisible, setPageModalVisible] = useState(false)
+  const [pageModalVisible, setPageModalVisible] = useState(false);
+  const { mutate: createPage, isPending } = useCreatePagina(formId!);
+
+  const { data: paginas, isLoading, error } = usePaginas(formId);
 
   const [pages, setPages] = useState<PageValues[]>([
-  {
-    sequence: 1,
-    description: 'Generales',
-    title: 'Generales',
-    bgColor: '#FFFFFF',
-    textColor: '#000000',
-  },
-])
-
+    {
+      sequence: 1,
+      description: "Generales",
+      title: "Generales",
+      bgColor: "#FFFFFF",
+      textColor: "#000000",
+    },
+  ]);
 
   const handleDelete = () => {
-    console.log('Eliminar clicked')
-  }
+    console.log("Eliminar clicked");
+  };
   const handleSave = () => {
-    console.log('Guardar clicked')
-  }
-  
+    console.log("Guardar clicked");
+  };
+
   const handleIconClick = () => {
-    setPageModalVisible(true)
-  }
+    setPageModalVisible(true);
+  };
 
   const handleCancel = () => {
-    setPageModalVisible(false)
-  }
+    setPageModalVisible(false);
+  };
 
-  const handleUpdate = (updated: PageValues) => {
-    setPageModalVisible(false)
+  const handleUpdate = (values: PageValues) => {
+    setPageModalVisible(false);
 
     // Si ya existe, lo actualizas; si no, lo agregas
     setPages((prev) => {
-      const exists = prev.find(p => p.title === updated.title)
+      const exists = prev.find((p) => p.title === values.title);
       if (exists) {
-        return prev.map(p => p.title === updated.title ? updated : p)
+        return prev.map((p) => (p.title === values.title ? values : p));
       }
-      return [...prev, updated]
-    })
-  }
+      return [...prev, values];
+    });
+
+    createPage({
+      sequence: values.sequence,
+      description: values.description,
+      title: values.title,
+      bump: true, // o false si no quieres crear nueva versión
+    });
+  };
 
   useEffect(() => {
-    const selectedPage = pages.find(p => p.title === title)
+    const selectedPage = pages.find((p) => p.title === title);
     if (selectedPage) {
-      setSequence(selectedPage.sequence)
-      setDescription(selectedPage.description)
-      setTitle(selectedPage.title)
-      setBgColor(selectedPage.bgColor)
-      setTextColor(selectedPage.textColor)
-      onPageChange?.(selectedPage) 
+      setSequence(selectedPage.sequence);
+      setDescription(selectedPage.description);
+      setTitle(selectedPage.title);
+      setBgColor(selectedPage.bgColor);
+      setTextColor(selectedPage.textColor);
+      onPageChange?.(selectedPage);
     }
-  }, [title, pages])
+  }, [title, pages]);
 
-  const selectedPageData = pages.find(p => p.title === title) ?? pages[0]
+  const selectedPageData = pages.find((p) => p.title === title) ?? pages[0];
 
+  if (isLoading) return <div>Cargando...</div>;
+  if (error) return <div>Error: {error.message}</div>;
 
   return (
-    <div className="bg-white rounded-lg shadow max-w-sm">
+    <div className="bg-white rounded-lg shadow max-w-sm mt-7">
       {/* Header fijo con icono pressable */}
       <div className="flex flex-col border-b">
         <div className="flex items-center px-4 py-3">
@@ -85,18 +105,18 @@ const PageSettings: React.FC<PageSettingsProps> = ({ onIconClick, onPageChange})
             onClick={handleIconClick}
             className="p-1 rounded hover:bg-gray-100 transition"
           >
-            <DiffOutlined/>
+            <DiffOutlined />
           </Button>
           <h3 className="ml-2 text-lg font-medium">Página</h3>
         </div>
 
-        <div className='w-full px-4 items-center justify-center'>
+        <div className="w-full px-4 items-center justify-center">
           <Form>
             <Form.Item name="estado" initialValue={title}>
               <Select value={title} onChange={setTitle}>
-                {pages.map((page) => (
-                  <Option key={page.title} value={page.title}>
-                    {page.title}
+                {paginas?.map((p) => (
+                  <Option key={p.nombre} value={p.nombre}>
+                    {p.nombre}
                   </Option>
                 ))}
               </Select>
@@ -105,13 +125,13 @@ const PageSettings: React.FC<PageSettingsProps> = ({ onIconClick, onPageChange})
         </div>
       </div>
 
-
       <PageEditModal
         visible={pageModalVisible}
         initialValues={selectedPageData}
         onCancel={handleCancel}
         onUpdate={handleUpdate}
-        existingPages={pages} 
+        existingPages={pages}
+        formId={formId}
       />
 
       {/* Contenido del form */}
@@ -122,7 +142,7 @@ const PageSettings: React.FC<PageSettingsProps> = ({ onIconClick, onPageChange})
             min={1}
             value={sequence}
             onChange={(value) => {
-              if (typeof value === 'number') setSequence(value)
+              if (typeof value === "number") setSequence(value);
             }}
             className="w-full"
             disabled
@@ -147,6 +167,8 @@ const PageSettings: React.FC<PageSettingsProps> = ({ onIconClick, onPageChange})
           />
         </div>
 
+        {/*
+        
         <div>
           <label className="block text-sm font-medium mb-1">Color Fondo</label>
           <Input
@@ -168,6 +190,8 @@ const PageSettings: React.FC<PageSettingsProps> = ({ onIconClick, onPageChange})
             disabled
           />
         </div>
+        
+        */}
       </div>
 
       {/* Footer con botones */}
@@ -180,7 +204,7 @@ const PageSettings: React.FC<PageSettingsProps> = ({ onIconClick, onPageChange})
         </Button>
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default PageSettings
+export default PageSettings;

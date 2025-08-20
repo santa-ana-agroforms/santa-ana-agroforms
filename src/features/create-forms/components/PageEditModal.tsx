@@ -1,28 +1,32 @@
 // src/components/PageEditModal.tsx
-import React, { FC, useEffect } from 'react'
-import { Form, InputNumber, Input, Button } from 'antd'
-import type { ModalProps } from 'antd'
-import BaseModal from '@/components/BaseModal'
+import { FC } from "react";
+
+import { Button, Form, Input, InputNumber, type ModalProps } from "antd";
+
+import BaseModal from "@/components/BaseModal";
+
+import { useCreatePagina } from "../hooks/useCreatePage";
 
 /** Forma de los datos de página */
 export interface PageValues {
-  sequence: number
-  description: string
-  title: string
-  bgColor: string
-  textColor: string
+  sequence: number;
+  description: string;
+  title: string;
+  bgColor: string;
+  textColor: string;
 }
 
 /** Props del modal */
-export interface PageEditModalProps extends Omit<ModalProps, 'title'> {
-  visible: boolean
+export interface PageEditModalProps extends Omit<ModalProps, "title"> {
+  visible: boolean;
   /** Inicializamos el form con estos valores */
-  initialValues: PageValues
-  onCancel: () => void
+  initialValues: PageValues;
+  onCancel: () => void;
   /** Se dispara al hacer click en “Guardar” */
-  onUpdate: (values: PageValues) => void
-   /** Prop para validar existencia de paginas */
-  existingPages: PageValues[] 
+  onUpdate: (values: PageValues) => void;
+  /** Prop para validar existencia de paginas */
+  existingPages: PageValues[];
+  formId?: string;
 }
 
 const PageEditModal: FC<PageEditModalProps> = ({
@@ -31,33 +35,28 @@ const PageEditModal: FC<PageEditModalProps> = ({
   onCancel,
   onUpdate,
   existingPages,
+  formId,
   ...modalProps
 }) => {
-  const [form] = Form.useForm<PageValues>()
+  const [form] = Form.useForm<PageValues>();
+  const { mutate: createPage, isPending, error } = useCreatePagina(formId!);
 
   const handleFinish = (values: PageValues) => {
-    onUpdate(values)
-    form.resetFields()
-    onCancel()
-  }
+    onUpdate(values);
+    form.resetFields();
+    onCancel();
+  };
 
   const handleCancel = () => {
-    form.resetFields()
-    onCancel()
-  }
-
-    useEffect(() => {
-    if (visible && initialValues) {
-      form.setFieldsValue(initialValues)
-    }
-  }, [visible, initialValues])
-
+    form.resetFields();
+    onCancel();
+  };
 
   return (
     <BaseModal
       open={visible}
       onCancel={handleCancel}
-      title="Edición de Página"
+      title="Creación de Página"
       width={500}
       {...modalProps}
     >
@@ -66,83 +65,90 @@ const PageEditModal: FC<PageEditModalProps> = ({
         layout="vertical"
         onFinish={handleFinish}
         initialValues={undefined}
+        preserve={false}
       >
         <div className="grid grid-cols-1 gap-0 px-6 py-4">
-          
           {/* Secuencia */}
           <Form.Item
             label="Secuencia"
             name="sequence"
             rules={[
-              { required: true, message: 'Por favor ingresa la secuencia' },
+              { required: true, message: "Por favor ingresa la secuencia" },
               {
                 // ⚠️ aquí va el validator correcto:
                 validator: (_rule, value: number) => {
                   // buscamos conflicto con cualquier otra página (mismo sequence distinto title)
                   const conflict = existingPages.find(
-                    p => p.sequence === value && p.title !== initialValues.title
-                  )
+                    (p) =>
+                      p.sequence === value && p.title !== initialValues.title
+                  );
                   if (conflict) {
                     return Promise.reject(
-                      new Error(`La secuencia ${value} ya está en uso por "${conflict.title}"`)
-                    )
+                      new Error(
+                        `La secuencia ${value} ya está en uso por "${conflict.title}"`
+                      )
+                    );
                   }
-                  return Promise.resolve()
-                }
-              }
+                  return Promise.resolve();
+                },
+              },
             ]}
           >
             <InputNumber min={1} className="w-full" />
-          </Form.Item>
-
-          {/* Descripción */}
-          <Form.Item
-            label="Descripción"
-            name="description"
-            rules={[{ required: true, message: 'Por favor ingresa la descripción' }]}
-          >
-            <Input />
           </Form.Item>
 
           {/* Título */}
           <Form.Item
             label="Título"
             name="title"
-            rules={[{ required: true, message: 'Por favor ingresa el título' }]}
+            rules={[{ required: true, message: "Por favor ingresa el título" }]}
             initialValue={""}
           >
             <Input />
           </Form.Item>
 
-          {/* Color de fondo */}
-          <Form.Item label="Color Fondo" name="bgColor">
-            <Input
-              type="color"
-              className="h-8 w-full p-0"
+          {/* Descripción */}
+          <Form.Item
+            label="Descripción"
+            name="description"
+            className="h-1/2"
+            rules={[
+              { required: true, message: "Por favor ingresa la descripción" },
+            ]}
+          >
+            <Input.TextArea
+              autoSize={false}
+              rows={4}
+              className="h-1/2 w-full resize-none"
+              placeholder="Escribe la descripción..."
             />
           </Form.Item>
 
-          {/* Color de texto */}
-          <Form.Item label="Color Texto" name="textColor">
-            <Input
-              type="color"
-              className="h-8 w-full p-0"
-            />
+          {/*
+
+          {/* Color de fondo }
+          <Form.Item label="Color Fondo" name="bgColor">
+            <Input type="color" className="h-8 w-full p-0" />
           </Form.Item>
+
+          {/* Color de texto }
+          <Form.Item label="Color Texto" name="textColor">
+            <Input type="color" className="h-8 w-full p-0" />
+          </Form.Item>
+          
+          */}
         </div>
 
         {/* Botones */}
         <div className="flex justify-end px-6 gap-4 space-x-4">
-          <Button onClick={handleCancel}>
-            Cancelar
-          </Button>
+          <Button onClick={handleCancel}>Cancelar</Button>
           <Button type="primary" htmlType="submit">
             Guardar
           </Button>
         </div>
       </Form>
     </BaseModal>
-  )
-}
+  );
+};
 
-export default PageEditModal
+export default PageEditModal;
