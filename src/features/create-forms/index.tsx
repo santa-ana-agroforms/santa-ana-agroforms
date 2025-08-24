@@ -7,7 +7,7 @@ import { PageValues } from "./components/PageEditModal";
 import PhoneMockup from "./components/PhoneMockup";
 
 interface CreateFormsProps {
-  formId: string;
+  formId: string | number;
   onBack: () => void;
 }
 
@@ -61,7 +61,7 @@ const CreateForms: React.FC<CreateFormsProps> = ({ formId, onBack }) => {
       </div>
 
       <div>
-        <PageSettings onPageChange={setSelectedPage} formId={formId} />
+        <PageSettings onPageChange={setSelectedPage} formId={String(formId)} />
       </div>
     </div>
   );

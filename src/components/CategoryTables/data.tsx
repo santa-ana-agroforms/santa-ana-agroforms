@@ -4,7 +4,7 @@ import type { ColumnType } from "antd/es/table";
 
 export interface ItemType {
   key: string;
-  id: number;
+  id: string | number;
   titulo: string;
   desde: string;
   hasta: string;
@@ -19,58 +19,20 @@ export interface CategoryType {
   items: ItemType[];
 }
 
-// --- Tus datos estáticos de categoría + filas ---
-export const categories: CategoryType[] = [
-  {
-    key: "pandemia",
-    name: "Pandemia",
-    items: [
-      {
-        key: "1",
-        id: 11,
-        titulo: "BITACORA Pandemia",
-        desde: "01/11/2019",
-        hasta: "31/10/2020",
-        estado: "Activa",
-        esPublico: true,
-        autoEnvio: false,
-      },
-      {
-        key: "2",
-        id: 10,
-        titulo: "Resumen Diario Pandemia",
-        desde: "18/03/2020",
-        hasta: "19/03/2021",
-        estado: "Activa",
-        esPublico: true,
-        autoEnvio: true,
-      },
-    ],
-  },
-  {
-    key: "otros",
-    name: "Otros",
-    items: [
-      {
-        key: "3",
-        id: 3,
-        titulo: "test",
-        desde: "13/06/2019",
-        hasta: "30/06/2019",
-        estado: "Activa",
-        esPublico: false,
-        autoEnvio: false,
-      },
-    ],
-  },
-];
+/** Utilidad para crear filtros únicos a partir de las filas */
+const buildFilters = <K extends keyof ItemType>(rows: ItemType[], key: K) =>
+  Array.from(new Set(rows.map((r) => String(r[key])))).map((v) => ({
+    text: v,
+    value: v,
+  }));
 
 // --- Función para generar las columnas, recibiendo el estado de sort y filter ---
 export const getColumns = (
+  rows: ItemType[],
   sortedInfo: any,
   filteredInfo: any,
   onAdd: () => void,
-  onIdClick: (id: number) => void,
+  onIdClick: (id: string | number) => void,
   onEdit: (record: ItemType) => void
 ): ColumnType<ItemType>[] => [
   {
@@ -98,7 +60,13 @@ export const getColumns = (
     dataIndex: "id",
     key: "id",
     width: 80,
-    sorter: (a, b) => a.id - b.id,
+    sorter: (a, b) => {
+      const an = Number(a.id);
+      const bn = Number(b.id);
+      return Number.isFinite(an) && Number.isFinite(bn) ?
+          an - bn
+        : String(a.id).localeCompare(String(b.id));
+    },
     sortOrder: sortedInfo.columnKey === "id" ? sortedInfo.order : null,
     render: (value: number, record) => (
       <a
@@ -114,9 +82,7 @@ export const getColumns = (
     title: "Título",
     dataIndex: "titulo",
     key: "titulo",
-    filters: Array.from(
-      new Set(categories.flatMap((c) => c.items.map((i) => i.titulo)))
-    ).map((t) => ({ text: t, value: t })),
+    filters: buildFilters(rows, "titulo"),
     filteredValue: filteredInfo.titulo || null,
     onFilter: (value, record) => record.titulo.includes(value as string),
     sorter: (a, b) => a.titulo.localeCompare(b.titulo),
@@ -154,9 +120,7 @@ export const getColumns = (
     title: "Estado",
     dataIndex: "estado",
     key: "estado",
-    filters: Array.from(
-      new Set(categories.flatMap((c) => c.items.map((i) => i.estado)))
-    ).map((e) => ({ text: e, value: e })),
+    filters: buildFilters(rows, "estado"),
     filteredValue: filteredInfo.estado || null,
     onFilter: (value, record) => record.estado.includes(value as string),
     sorter: (a, b) => a.estado.localeCompare(b.estado),

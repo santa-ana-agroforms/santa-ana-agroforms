@@ -11,7 +11,7 @@ import { PageValues } from "./PageEditModal";
 const { Text } = Typography;
 
 interface PhoneMockupProps {
-  formId: string;
+  formId: string | number;
   selectedElements: string[];
   onBack: () => void;
   selectedPage: PageValues;
@@ -23,13 +23,13 @@ const PhoneMockup: React.FC<PhoneMockupProps> = ({
   selectedElements,
   selectedPage,
 }) => {
-  const { data: formulario, isLoading, isFetching } = useFormulario(formId);
+  const {
+    data: formulario,
+    isLoading,
+    isFetching,
+  } = useFormulario(String(formId));
 
   if (isLoading && !formulario) return <div>Cargando…</div>;
-
-  {
-    console.warn("xd: ", formulario);
-  }
 
   return (
     <div

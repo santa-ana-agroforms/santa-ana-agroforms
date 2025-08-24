@@ -8,6 +8,11 @@ interface FormCount {
   cantidad: number;
 }
 
+interface ActiveUsersData {
+  estado: "Activos" | "Inactivos";
+  cantidad: number;
+}
+
 interface PieData {
   tipo: string;
   porcentaje: number;
@@ -16,12 +21,18 @@ interface BarData {
   formulario: string;
   respuestas: number;
 }
-interface BarDataTerm {
-  terminal: string;
-  respuestas: number;
+
+interface UserTermCount {
+  usuario: string;
+  cantidad: number;
 }
-interface BarDataWeek {
-  dia: string;
+
+interface LastAccessData {
+  terminal: string; // o user
+  diasSinAcceso: number; // o fecha transformada a días, horas, etc.
+}
+interface ActiveFormsData {
+  estado: "Activos" | "Inactivos";
   cantidad: number;
 }
 
@@ -45,8 +56,12 @@ const DashboardPage: React.FC = () => {
 
   const [pieData, setPieData] = useState<PieData[]>([]);
   const [barData, setBarData] = useState<BarData[]>([]);
-  const [termData, setTermData] = useState<BarDataTerm[]>([]);
-  const [weekData, setWeekData] = useState<BarDataWeek[]>([]);
+
+  const [activeUsers, setActiveUsers] = useState<ActiveUsersData[]>([]);
+  const [lastAccess, setLastAccess] = useState<LastAccessData[]>([]);
+  const [activeForms, setActiveForms] = useState<ActiveFormsData[]>([]);
+
+  const [userTermCounts, setUserTermCounts] = useState<UserTermCount[]>([]);
 
   useEffect(() => {
     // Simula tu llamada a la API
@@ -55,19 +70,31 @@ const DashboardPage: React.FC = () => {
       { tipo: "Cálculos", porcentaje: 25 },
       { tipo: "Reporte de Embarque", porcentaje: 50 },
     ]);
-    setBarData([
-      { formulario: "Control gastos de campo", respuestas: 2 },
-      { formulario: "Prueba con campos ocultos", respuestas: 2 },
-      { formulario: "Reporte de Embarque", respuestas: 4 },
+
+    setActiveUsers([
+      { estado: "Activos", cantidad: 42 },
+      { estado: "Inactivos", cantidad: 8 },
     ]);
-    setTermData([
-      { terminal: "A4", respuestas: 4 },
-      { terminal: "S21", respuestas: 4 },
+    // 2) Último acceso (ejemplo: días desde el último acceso por terminal)
+    setLastAccess([
+      { terminal: "A4", diasSinAcceso: 2 },
+      { terminal: "S21", diasSinAcceso: 7 },
+      { terminal: "ZFold", diasSinAcceso: 1 },
+      { terminal: "MotoG", diasSinAcceso: 15 },
     ]);
-    setWeekData([
-      { dia: "lunes", cantidad: 2 },
-      { dia: "viernes", cantidad: 2 },
-      { dia: "sábado", cantidad: 4 },
+
+    // 3) Formularios activos/inactivos
+    setActiveForms([
+      { estado: "Activos", cantidad: 12 },
+      { estado: "Inactivos", cantidad: 5 },
+    ]);
+
+    setUserTermCounts([
+      { usuario: "Jacqueline", cantidad: 4 },
+      { usuario: "Gerardo", cantidad: 2 },
+      { usuario: "Francis", cantidad: 5 },
+      { usuario: "Luisa", cantidad: 3 },
+      { usuario: "Ana", cantidad: 1 },
     ]);
   }, []);
 
@@ -88,14 +115,7 @@ const DashboardPage: React.FC = () => {
         rowPadding: 5,
       },
     },
-    autoFit: true,
-  };
 
-  const barConfig = {
-    data: barData,
-    xField: "formulario",
-    yField: "respuestas",
-    xAxis: { label: { autoRotate: false, style: { fontSize: 12 } } },
     autoFit: true,
   };
 
@@ -126,62 +146,104 @@ const DashboardPage: React.FC = () => {
     height: 200,
   };
 
-  const termConfig = {
-    data: termData,
-    xField: "terminal",
-    yField: "respuestas",
+  const userTermsBarConfig = {
+    data: userTermCounts,
+    xField: "usuario", // categorías en X
+    yField: "cantidad", // valor numérico en Y
     label: { position: "top" },
     xAxis: { label: { autoRotate: false } },
-    title: {
-      visible: true,
-      text: "Por Terminal",
-      style: {
-        fontSize: 16,
-        fontWeight: "bold",
-        fill: "red",
-      },
-    },
+    meta: { cantidad: { alias: "Terminales" } },
+    height: 500,
+    // opcionales para estética/legibilidad:
+    minColumnWidth: 24,
+  };
+
+  const lastAccessConfig = {
+    data: lastAccess,
+    xField: "terminal", // o "usuario"
+    yField: "diasSinAcceso", // menor es mejor (más reciente)
+    label: { position: "top" },
+    xAxis: { label: { autoRotate: false } },
+    meta: { diasSinAcceso: { alias: "Días sin acceso" } },
     height: 250,
   };
 
-  const weekConfig = {
-    data: weekData,
-    xField: "dia",
-    yField: "cantidad",
-    label: { position: "top" },
-    xAxis: { label: { autoRotate: false } },
-    title: { visible: true, text: "Por día de semana" },
+  // NUEVO: Pie Formularios Activos/Inactivos
+  const pieActiveFormsConfig = {
+    data: activeForms,
+    angleField: "cantidad",
+    colorField: "estado",
+    label: { text: "cantidad" },
+    legend: { position: "right" },
     height: 250,
+    statistic: { title: { content: "Formularios" } },
   };
+
+  const totalUsuarios = activeUsers.reduce((a, b) => a + b.cantidad, 0);
+  const activos =
+    activeUsers.find((d) => d.estado === "Activos")?.cantidad ?? 0;
+  const pctActivos =
+    totalUsuarios ? Math.round((activos / totalUsuarios) * 100) : 0;
 
   return (
     <div className="flex flex-col p-4 w-full gap-4">
       <h2 className="text-amber-400 text-lg font-semibold self-center">
-        Formularios recibidos
+        Dashboard
       </h2>
-      <div className="w-full bg-transparent p-4 rounded shadow">
+
+      <div className="grid grid-cols-3 gap-4">
+        <div className="bg-white p-4 rounded shadow">
+          <div className="text-xs text-gray-500">Usuarios Totales</div>
+          <div className="text-2xl font-semibold">{totalUsuarios}</div>
+        </div>
+        <div className="bg-white p-4 rounded shadow">
+          <div className="text-xs text-gray-500">Usuarios Activos</div>
+          <div className="text-2xl font-semibold">{activos}</div>
+        </div>
+        <div className="bg-white p-4 rounded shadow">
+          <div className="text-xs text-gray-500">% Activos</div>
+          <div className="text-2xl font-semibold">{pctActivos}%</div>
+        </div>
+      </div>
+
+      <div className="flex flex-col w-full bg-transparent p-4 rounded shadow gap-6">
+        <h3 className="text-base font-semibold mb-2">
+          Cantidad de formularios recibidos por fecha
+        </h3>
         <Line {...config} />
       </div>
 
       <div className="flex gap-6">
         {/* gráfica izquierda */}
         <div className="flex-1 bg-white p-4 rounded shadow">
+          <h3 className="text-base font-semibold mb-2">
+            Respuestas por tipo de formulario
+          </h3>
           <Pie {...pieConfig} />
         </div>
 
         {/* gráfica derecha */}
         <div className="flex-1 bg-white p-4 rounded shadow">
-          <Column {...barConfig} />
+          <h3 className="text-base font-semibold mb-2">
+            Cantidad de terminales por usuario
+          </h3>
+          <Column {...userTermsBarConfig} />
         </div>
       </div>
 
-      {/* Segunda fila: dos gráficas de barras */}
+      {/* Fila 2: izquierda Último acceso (barra); derecha Formularios activos/inactivos (pie) */}
       <div className="flex gap-6">
         <div className="flex-1 bg-white p-4 rounded shadow">
-          <Column {...termConfig} />
+          <h3 className="text-base font-semibold mb-2">
+            Cantidad de uso por terminal
+          </h3>
+          <Column {...lastAccessConfig} />
         </div>
         <div className="flex-1 bg-white p-4 rounded shadow">
-          <Column {...weekConfig} />
+          <h3 className="text-base font-semibold mb-2">
+            Cantidad de formularios activos e inactivos
+          </h3>
+          <Pie {...pieActiveFormsConfig} />
         </div>
       </div>
     </div>

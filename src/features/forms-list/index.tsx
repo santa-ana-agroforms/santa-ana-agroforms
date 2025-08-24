@@ -1,4 +1,4 @@
-import React, { useCallback, useState } from "react";
+import React, { useCallback, useMemo, useState } from "react";
 
 import { ArrowUpOutlined, FilterOutlined } from "@ant-design/icons";
 import {
@@ -17,7 +17,7 @@ import CategoryTables from "@/components/CategoryTables";
 import NewFormModal, {
   NewFormValues,
 } from "@/components/CategoryTables/components/NewFormModal";
-import { categories, getColumns } from "@/components/CategoryTables/data";
+import { getColumns } from "@/components/CategoryTables/data";
 
 import { useFormsListsData } from "./hooks/useFormsListsData";
 
@@ -42,7 +42,7 @@ interface CategoryType {
 }
 
 interface FormsListsProps {
-  onSelectForm: (id: number) => void;
+  onSelectForm: (id: string | number) => void;
 }
 
 type OnChange = NonNullable<TableProps<ItemType>["onChange"]>;
@@ -78,14 +78,6 @@ const FormsLists: React.FC<FormsListsProps> = ({ onSelectForm }) => {
     setModalVisible(true);
   }, []);
 
-  const columns = getColumns(
-    sortedInfo,
-    filteredInfo,
-    handleAdd,
-    onSelectForm,
-    handleEdit
-  );
-
   const handleCreate = (values: NewFormValues) => {
     console.log("Nuevos valores:", values);
     // aquí haces el post o actualización de estado…
@@ -96,6 +88,24 @@ const FormsLists: React.FC<FormsListsProps> = ({ onSelectForm }) => {
   {
     console.warn(categoriesData);
   }
+
+  const rows = useMemo(
+    () => (categoriesData ?? []).flatMap((c) => c.items),
+    [categoriesData]
+  );
+
+  const columns = useMemo(
+    () =>
+      getColumns(
+        rows,
+        sortedInfo,
+        filteredInfo,
+        handleAdd,
+        onSelectForm,
+        handleEdit
+      ),
+    [rows, sortedInfo, filteredInfo]
+  );
 
   return (
     <div className="flex flex-col p-4 w-full gap-7">
@@ -121,7 +131,7 @@ const FormsLists: React.FC<FormsListsProps> = ({ onSelectForm }) => {
         </>
       : <>
           <CategoryTables<ItemType>
-            data={[...categories, ...categoriesData]}
+            data={categoriesData}
             columns={columns as TableColumnType<ItemType>[]}
             onTableChange={handleChange}
           />
@@ -139,7 +149,7 @@ const FormsLists: React.FC<FormsListsProps> = ({ onSelectForm }) => {
                   estado: selectedItem.estado,
                   esPublico: selectedItem.esPublico,
                   autoEnvio: selectedItem.autoEnvio,
-                  categoria: categories.find((c) =>
+                  categoria: categoriesData.find((c) =>
                     c.items.some((i) => i.key === selectedItem.key)
                   )!.key,
                 }

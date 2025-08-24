@@ -4,7 +4,7 @@ import React from "react";
 import CreateForms from "@/features/create-forms";
 
 interface CreateFormsPageProps {
-  formId: number;
+  formId: string | number;
   onBack: () => void;
 }
 

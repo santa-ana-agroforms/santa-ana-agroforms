@@ -4,7 +4,7 @@ import React from "react";
 import FormsLists from "@/features/forms-list";
 
 interface FormListPageProps {
-  onSelectForm: (id: number) => void;
+  onSelectForm: (id: string | number) => void;
 }
 
 const FormListPage: React.FC<FormListPageProps> = ({ onSelectForm }) => {
