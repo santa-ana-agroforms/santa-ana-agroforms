@@ -4,12 +4,12 @@ import React from "react";
 import FormsLists from "@/features/forms-list";
 
 interface FormListPageProps {
-  onSelectForm: (id: number) => void;
+  onSelectForm: (id: string | number) => void;
 }
 
 const FormListPage: React.FC<FormListPageProps> = ({ onSelectForm }) => {
   return (
-    <div className="flex flex-col w-full gap-4">
+    <div className="flex flex-col gap-4">
       <FormsLists onSelectForm={onSelectForm} />
     </div>
   );

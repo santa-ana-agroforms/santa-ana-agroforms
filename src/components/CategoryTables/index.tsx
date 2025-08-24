@@ -1,7 +1,7 @@
 // src/components/FormsLists/CategoryTables.tsx
 import React from "react";
 
-import { Collapse, Table, type TableColumnsType, type TableProps } from "antd";
+import { Collapse, Table, type TableColumnType, type TableProps } from "antd";
 
 const { Panel } = Collapse;
 
@@ -13,7 +13,7 @@ export interface Category<T> {
 
 interface Props<T> {
   data: Category<T>[];
-  columns: TableColumnsType<T>;
+  columns: TableColumnType<T>[];
   onTableChange: TableProps<T>["onChange"];
 }
 
@@ -37,10 +37,11 @@ function CategoryTables<T extends { key: React.Key }>({
 
       <div className="-mt-6">
         {/* 2) Collapse con header vacío */}
-        <Collapse>
-          {data.map((cat) => (
-            <Panel header={`Categoría: ${cat.name}`} key={cat.key}>
-              {/* 3) Tabla con datos, filtros y orden */}
+        <Collapse
+          items={data.map((cat) => ({
+            key: cat.key,
+            label: `Categoría: ${cat.name}`,
+            children: (
               <Table<T>
                 columns={columns}
                 dataSource={cat.items}
@@ -49,9 +50,9 @@ function CategoryTables<T extends { key: React.Key }>({
                 showHeader={false}
                 rowKey="key"
               />
-            </Panel>
-          ))}
-        </Collapse>
+            ),
+          }))}
+        />
       </div>
     </>
   );

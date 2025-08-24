@@ -1,21 +1,32 @@
-import React, { useCallback, useState } from "react";
+import React, { useCallback, useMemo, useState } from "react";
 
 import { ArrowUpOutlined, FilterOutlined } from "@ant-design/icons";
-import { Button, Col, Collapse, Input, TableProps, Typography } from "antd";
+import {
+  Button,
+  Col,
+  Collapse,
+  Input,
+  Skeleton,
+  TableColumnType,
+  TableProps,
+  Typography,
+} from "antd";
 import moment from "moment";
 
 import CategoryTables from "@/components/CategoryTables";
 import NewFormModal, {
   NewFormValues,
 } from "@/components/CategoryTables/components/NewFormModal";
-import { categories, getColumns } from "@/components/CategoryTables/data";
+import { getColumns } from "@/components/CategoryTables/data";
+
+import { useFormsListsData } from "./hooks/useFormsListsData";
 
 const { Panel } = Collapse;
 const { Title } = Typography;
 
 interface ItemType {
   key: string;
-  id: number;
+  id: number | string;
   titulo: string;
   desde: string;
   hasta: string;
@@ -31,7 +42,7 @@ interface CategoryType {
 }
 
 interface FormsListsProps {
-  onSelectForm: (id: number) => void;
+  onSelectForm: (id: string | number) => void;
 }
 
 type OnChange = NonNullable<TableProps<ItemType>["onChange"]>;
@@ -46,6 +57,10 @@ const FormsLists: React.FC<FormsListsProps> = ({ onSelectForm }) => {
   const [open, setOpen] = useState(false);
   const [selectedItem, setSelectedItem] = useState<ItemType | null>(null);
   const [modalVisible, setModalVisible] = useState(false);
+
+  const [loading, setLoading] = useState<boolean>(true);
+
+  //const [categoriesData, setCategoriesData] = useState<CategoryType[]>([]);
 
   const handleAdd = () => {
     setOpen(true);
@@ -63,21 +78,37 @@ const FormsLists: React.FC<FormsListsProps> = ({ onSelectForm }) => {
     setModalVisible(true);
   }, []);
 
-  const columns = getColumns(
-    sortedInfo,
-    filteredInfo,
-    handleAdd,
-    onSelectForm,
-    handleEdit
-  );
-
   const handleCreate = (values: NewFormValues) => {
     console.log("Nuevos valores:", values);
     // aquí haces el post o actualización de estado…
   };
 
+  const { categoriesData, isLoading, error } = useFormsListsData();
+
+  {
+    console.warn(categoriesData);
+  }
+
+  const rows = useMemo(
+    () => (categoriesData ?? []).flatMap((c) => c.items),
+    [categoriesData]
+  );
+
+  const columns = useMemo(
+    () =>
+      getColumns(
+        rows,
+        sortedInfo,
+        filteredInfo,
+        handleAdd,
+        onSelectForm,
+        handleEdit
+      ),
+    [rows, sortedInfo, filteredInfo]
+  );
+
   return (
-    <div className="flex flex-col p-4 w-full gap-7 ">
+    <div className="flex flex-col p-4 w-full gap-7">
       <div className="flex justify-between items-center w-full">
         {/* Botón de Categoría */}
         <Button icon={<FilterOutlined />} className="flex items-center gap-1">
@@ -93,31 +124,40 @@ const FormsLists: React.FC<FormsListsProps> = ({ onSelectForm }) => {
         </Col>
       </div>
 
-      <CategoryTables<ItemType>
-        data={categories}
-        columns={columns}
-        onTableChange={handleChange}
-      />
-      <NewFormModal
-        visible={open}
-        onCancel={() => setOpen(false)}
-        onCreate={handleCreate}
-        initialValues={
-          selectedItem ?
-            {
-              titulo: selectedItem.titulo,
-              desde: moment(selectedItem.desde, "DD/MM/YYYY"),
-              hasta: moment(selectedItem.hasta, "DD/MM/YYYY"),
-              estado: selectedItem.estado,
-              esPublico: selectedItem.esPublico,
-              autoEnvio: selectedItem.autoEnvio,
-              categoria: categories.find((c) =>
-                c.items.some((i) => i.key === selectedItem.key)
-              )!.key,
+      {isLoading ?
+        <>
+          <Skeleton active />
+          <Skeleton active />
+        </>
+      : <>
+          <CategoryTables<ItemType>
+            data={categoriesData}
+            columns={columns as TableColumnType<ItemType>[]}
+            onTableChange={handleChange}
+          />
+
+          <NewFormModal
+            visible={open}
+            onCancel={() => setOpen(false)}
+            onCreate={handleCreate}
+            initialValues={
+              selectedItem ?
+                {
+                  titulo: selectedItem.titulo,
+                  desde: moment(selectedItem.desde, "DD/MM/YYYY"),
+                  hasta: moment(selectedItem.hasta, "DD/MM/YYYY"),
+                  estado: selectedItem.estado,
+                  esPublico: selectedItem.esPublico,
+                  autoEnvio: selectedItem.autoEnvio,
+                  categoria: categoriesData.find((c) =>
+                    c.items.some((i) => i.key === selectedItem.key)
+                  )!.key,
+                }
+              : undefined
             }
-          : undefined
-        }
-      />
+          />
+        </>
+      }
     </div>
   );
 };

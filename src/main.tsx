@@ -1,15 +1,24 @@
-import { StrictMode } from 'react'
-import { createRoot } from 'react-dom/client'
-import 'antd/dist/reset.css'
-import './index.css'
-import App from './App';
+import "antd/dist/reset.css";
 
-const rootElement = document.getElementById('root');
+import { StrictMode } from "react";
+import { createRoot } from "react-dom/client";
+
+import App from "./App";
+
+import "./index.css";
+
+import { QueryClientProvider } from "@tanstack/react-query";
+
+import { queryClient } from "./lib/queryClient";
+
+const rootElement = document.getElementById("root");
 if (rootElement) {
   createRoot(rootElement).render(
     <StrictMode>
-      <App />
-    </StrictMode>,
+      <QueryClientProvider client={queryClient}>
+        <App />
+      </QueryClientProvider>
+    </StrictMode>
   );
 } else {
   console.error("Root element not found");

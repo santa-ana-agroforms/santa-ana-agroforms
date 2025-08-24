@@ -33,7 +33,9 @@ export const HomePage: React.FC = () => {
   const [selectedKey, setSelected] = useState<string>("1");
 
   // Estado para saber si estoy viendo el detalle “móvil” de un formulario
-  const [activeFormId, setActiveFormId] = useState<number | null>(null);
+  const [activeFormId, setActiveFormId] = useState<string | number | null>(
+    null
+  );
   const [filteredInfo, setFilteredInfo] = useState<Record<string, any>>({});
   const [sortedInfo, setSortedInfo] = useState<any>({});
   const [search, setSearch] = useState("");
@@ -69,7 +71,7 @@ export const HomePage: React.FC = () => {
   }, []);
 
   return (
-    <div className="h-screen w-screen bg-white">
+    <div className="h-screen w-screen overflow-y-hidden bg-green-950">
       <Layout className="h-full w-full">
         <AppHeader collapsed={collapsed} onToggle={toggle} title={title} />
 
