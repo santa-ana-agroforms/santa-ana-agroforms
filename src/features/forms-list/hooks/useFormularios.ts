@@ -6,6 +6,7 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import {
   createFormulario,
   CreateFormularioDto,
+  deleteFormulario,
   Formulario,
   getFormularioById,
   getFormularios,
@@ -49,6 +50,26 @@ export function useCreateFormulario() {
         prev ? [...prev, nuevo] : [nuevo]
       );
       qc.setQueryData(["formulario", nuevo.id], nuevo);
+    },
+  });
+}
+
+export function useDeleteFormulario() {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: (id: string) => deleteFormulario(id),
+    onSuccess: (_, id) => {
+      // Elimina el formulario de la cache
+      qc.setQueryData<Formulario[]>(["formularios"], (prev) =>
+        prev ? prev.filter((form) => form.id.toString() !== id) : []
+      );
+
+      // Elimina también la query individual si existe
+      qc.removeQueries({ queryKey: ["formulario", id] });
+    },
+    onError: (error) => {
+      console.error("Error al eliminar formulario:", error);
+      // Puedes mostrar una notificación de error aquí
     },
   });
 }

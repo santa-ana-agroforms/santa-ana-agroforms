@@ -1,5 +1,5 @@
 // src/components/FormsLists/data.ts
-import { FormOutlined, PlusOutlined } from "@ant-design/icons";
+import { DeleteOutlined, FormOutlined, PlusOutlined } from "@ant-design/icons";
 import type { ColumnType } from "antd/es/table";
 
 export interface ItemType {
@@ -33,25 +33,35 @@ export const getColumns = (
   filteredInfo: any,
   onAdd: () => void,
   onIdClick: (id: string | number) => void,
-  onEdit: (record: ItemType) => void
+  onEdit: (record: ItemType) => void,
+  onDelete: (record: ItemType) => void
 ): ColumnType<ItemType>[] => [
   {
     title: (
-      <PlusOutlined
-        onClick={onAdd}
-        style={{ cursor: "pointer", fontSize: 16 }}
-      />
+      <>
+        <PlusOutlined
+          onClick={onAdd}
+          style={{ cursor: "pointer", fontSize: 16 }}
+        />
+      </>
     ),
     dataIndex: "new_form",
     key: "new_form",
-    width: 60,
+    width: 90,
     align: "center",
     render: (_: any, record: ItemType) => (
       <>
-        <FormOutlined
-          onClick={() => onEdit(record)}
-          style={{ cursor: "pointer" }}
-        />
+        <div className="flex flex-row gap-2">
+          <FormOutlined
+            onClick={() => onEdit(record)}
+            style={{ cursor: "pointer" }}
+          />
+
+          <DeleteOutlined
+            onClick={() => onDelete(record)}
+            style={{ cursor: "pointer", fontSize: 16 }}
+          />
+        </div>
       </>
     ),
   },
@@ -59,7 +69,7 @@ export const getColumns = (
     title: "ID",
     dataIndex: "id",
     key: "id",
-    width: 80,
+    width: 100,
     sorter: (a, b) => {
       const an = Number(a.id);
       const bn = Number(b.id);
@@ -101,6 +111,7 @@ export const getColumns = (
       );
     },
     sortOrder: sortedInfo.columnKey === "desde" ? sortedInfo.order : null,
+    width: 125,
   },
   {
     title: "Hasta",
@@ -115,6 +126,7 @@ export const getColumns = (
       );
     },
     sortOrder: sortedInfo.columnKey === "hasta" ? sortedInfo.order : null,
+    width: 125,
   },
   {
     title: "Estado",
@@ -125,6 +137,7 @@ export const getColumns = (
     onFilter: (value, record) => record.estado.includes(value as string),
     sorter: (a, b) => a.estado.localeCompare(b.estado),
     sortOrder: sortedInfo.columnKey === "estado" ? sortedInfo.order : null,
+    width: 160,
   },
   {
     title: "¿Es Público?",

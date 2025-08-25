@@ -14,12 +14,14 @@ import {
 import moment from "moment";
 
 import CategoryTables from "@/components/CategoryTables";
+import DeleteFormModal from "@/components/CategoryTables/components/DeleteFormModal";
 import NewFormModal, {
   NewFormValues,
 } from "@/components/CategoryTables/components/NewFormModal";
 import { getColumns } from "@/components/CategoryTables/data";
 
 import { useFormsListsData } from "./hooks/useFormsListsData";
+import { useDeleteFormulario } from "./hooks/useFormularios";
 
 const { Panel } = Collapse;
 const { Title } = Typography;
@@ -58,9 +60,15 @@ const FormsLists: React.FC<FormsListsProps> = ({ onSelectForm }) => {
   const [selectedItem, setSelectedItem] = useState<ItemType | null>(null);
   const [modalVisible, setModalVisible] = useState(false);
 
+  //Modal para borrar
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+  const [isDeleting, setIsDeleting] = useState(false);
+  //
+
   const [loading, setLoading] = useState<boolean>(true);
 
-  //const [categoriesData, setCategoriesData] = useState<CategoryType[]>([]);
+  const { mutate: deleteForm, isPending: isDeletingForm } =
+    useDeleteFormulario();
 
   const handleAdd = () => {
     setOpen(true);
@@ -78,10 +86,34 @@ const FormsLists: React.FC<FormsListsProps> = ({ onSelectForm }) => {
     setModalVisible(true);
   }, []);
 
+  const handleDelete = useCallback((record: ItemType) => {
+    setSelectedItem(record); // Guarda el registro seleccionado
+    setIsDeleteModalOpen(true); // Abre el modal
+    setIsDeleting(false); // Inicialmente no está eliminando
+  }, []);
+
   const handleCreate = (values: NewFormValues) => {
     console.log("Nuevos valores:", values);
     // aquí haces el post o actualización de estado…
   };
+
+  const handleConfirmDelete = useCallback(() => {
+    console.warn("Borrando el formulario:", selectedItem);
+    if (selectedItem) {
+      // Usa la mutación de React Query para eliminar
+      deleteForm(selectedItem.id.toString(), {
+        onSuccess: () => {
+          setIsDeleteModalOpen(false);
+          setSelectedItem(null);
+          // Puedes agregar una notificación de éxito aquí
+        },
+        onError: () => {
+          // Maneja el error, quizás mostrando un mensaje
+          setIsDeleting(false);
+        },
+      });
+    }
+  }, [selectedItem, deleteForm]);
 
   const { categoriesData, isLoading, error } = useFormsListsData();
 
@@ -102,7 +134,8 @@ const FormsLists: React.FC<FormsListsProps> = ({ onSelectForm }) => {
         filteredInfo,
         handleAdd,
         onSelectForm,
-        handleEdit
+        handleEdit,
+        handleDelete
       ),
     [rows, sortedInfo, filteredInfo]
   );
@@ -155,6 +188,17 @@ const FormsLists: React.FC<FormsListsProps> = ({ onSelectForm }) => {
                 }
               : undefined
             }
+          />
+
+          <DeleteFormModal
+            open={isDeleteModalOpen}
+            formTitle={selectedItem ? selectedItem.titulo : ""}
+            loading={isDeleting}
+            onConfirm={handleConfirmDelete}
+            onCancel={() => {
+              setIsDeleteModalOpen(false);
+              setSelectedItem(null);
+            }}
           />
         </>
       }
