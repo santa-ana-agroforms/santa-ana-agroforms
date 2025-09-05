@@ -7,6 +7,7 @@ import {
   createFormulario,
   CreateFormularioDto,
   deleteFormulario,
+  duplicateFormulario,
   Formulario,
   getFormularioById,
   getFormularios,
@@ -70,6 +71,23 @@ export function useDeleteFormulario() {
     onError: (error) => {
       console.error("Error al eliminar formulario:", error);
       // Puedes mostrar una notificación de error aquí
+    },
+  });
+}
+
+export function useDuplicateFormulario() {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: (id: string) => duplicateFormulario(id),
+    onSuccess: (duplicado) => {
+      // agrega el duplicado a la lista y cache individual
+      qc.setQueryData<Formulario[]>(["formularios"], (prev) =>
+        prev ? [...prev, duplicado] : [duplicado]
+      );
+      qc.setQueryData(["formulario", duplicado.id], duplicado);
+    },
+    onError: (error) => {
+      console.error("Error al duplicar formulario:", error);
     },
   });
 }

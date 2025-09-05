@@ -2,7 +2,7 @@
 import React, { useEffect, useState } from "react";
 
 import { DiffOutlined } from "@ant-design/icons";
-import { Button, Form, Input, InputNumber, Select } from "antd";
+import { Button, Form, Input, InputNumber, message, Select } from "antd";
 
 import { useCreatePagina } from "../hooks/useCreatePage";
 import { usePaginas } from "../hooks/usePaginas";
@@ -26,23 +26,13 @@ const PageSettings: React.FC<PageSettingsProps> = ({
   const [sequence, setSequence] = useState(1);
   const [description, setDescription] = useState("Generales");
   const [title, setTitle] = useState("Generales");
-  const [bgColor, setBgColor] = useState("#FFFFFF");
-  const [textColor, setTextColor] = useState("#000000");
 
   const [pageModalVisible, setPageModalVisible] = useState(false);
   const { mutate: createPage, isPending } = useCreatePagina(formId!);
 
   const { data: paginas, isLoading, error } = usePaginas(formId);
 
-  const [pages, setPages] = useState<PageValues[]>([
-    {
-      sequence: 1,
-      description: "Generales",
-      title: "Generales",
-      bgColor: "#FFFFFF",
-      textColor: "#000000",
-    },
-  ]);
+  const [pages, setPages] = useState<PageValues[]>([]);
 
   const handleDelete = () => {
     console.log("Eliminar clicked");
@@ -71,12 +61,22 @@ const PageSettings: React.FC<PageSettingsProps> = ({
       return [...prev, values];
     });
 
-    createPage({
+    (createPage({
       sequence: values.sequence,
       description: values.description,
       title: values.title,
       bump: true, // o false si no quieres crear nueva versión
-    });
+    }),
+      {
+        onSuccess: () => {
+          message.success(`Página "${values.title}" creada correctamente`);
+        },
+        onError: (err: any) => {
+          message.error(
+            err?.message ?? "No se pudo actualizar la página. Intenta de nuevo."
+          );
+        },
+      });
   };
 
   useEffect(() => {
@@ -85,8 +85,6 @@ const PageSettings: React.FC<PageSettingsProps> = ({
       setSequence(selectedPage.sequence);
       setDescription(selectedPage.description);
       setTitle(selectedPage.title);
-      setBgColor(selectedPage.bgColor);
-      setTextColor(selectedPage.textColor);
       onPageChange?.(selectedPage);
     }
   }, [title, pages]);
@@ -95,6 +93,8 @@ const PageSettings: React.FC<PageSettingsProps> = ({
 
   if (isLoading) return <div>Cargando...</div>;
   if (error) return <div>Error: {error.message}</div>;
+
+  console.warn("Paginas:", paginas);
 
   return (
     <div className="bg-white rounded-lg shadow max-w-sm mt-7">
@@ -112,8 +112,20 @@ const PageSettings: React.FC<PageSettingsProps> = ({
 
         <div className="w-full px-4 items-center justify-center">
           <Form>
-            <Form.Item name="estado" initialValue={title}>
-              <Select value={title} onChange={setTitle}>
+            <Form.Item name="estado">
+              <Select
+                value={
+                  paginas && paginas.length !== 0 && paginas[0] !== null ?
+                    paginas[0].nombre
+                  : ""
+                }
+                onChange={setTitle}
+                placeholder={
+                  paginas && paginas.length !== 0 && paginas[0] !== null ?
+                    paginas[0].nombre
+                  : ""
+                }
+              >
                 {paginas?.map((p) => (
                   <Option key={p.nombre} value={p.nombre}>
                     {p.nombre}
@@ -127,7 +139,15 @@ const PageSettings: React.FC<PageSettingsProps> = ({
 
       <PageEditModal
         visible={pageModalVisible}
-        initialValues={selectedPageData}
+        initialValues={
+          paginas && paginas.length > 0 ?
+            paginas[0]
+          : {
+              secuencia: 1,
+              descripcion: "",
+              nombre: "",
+            }
+        }
         onCancel={handleCancel}
         onUpdate={handleUpdate}
         existingPages={pages}
@@ -140,7 +160,11 @@ const PageSettings: React.FC<PageSettingsProps> = ({
           <label className="block text-sm font-medium mb-1">Secuencia</label>
           <InputNumber
             min={1}
-            value={sequence}
+            value={
+              paginas && paginas.length !== 0 && paginas[0] !== null ?
+                paginas[0].secuencia
+              : ""
+            }
             onChange={(value) => {
               if (typeof value === "number") setSequence(value);
             }}
@@ -152,7 +176,11 @@ const PageSettings: React.FC<PageSettingsProps> = ({
         <div>
           <label className="block text-sm font-medium mb-1">Descripción</label>
           <Input
-            value={description}
+            value={
+              paginas && paginas.length !== 0 && paginas[0] !== null ?
+                paginas[0].descripcion
+              : ""
+            }
             onChange={(e) => setDescription(e.target.value)}
             disabled
           />
@@ -161,7 +189,11 @@ const PageSettings: React.FC<PageSettingsProps> = ({
         <div>
           <label className="block text-sm font-medium mb-1">Título</label>
           <Input
-            value={title}
+            value={
+              paginas && paginas.length !== 0 && paginas[0] !== null ?
+                paginas[0].nombre
+              : ""
+            }
             onChange={(e) => setTitle(e.target.value)}
             disabled
           />

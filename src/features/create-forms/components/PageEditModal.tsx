@@ -1,32 +1,39 @@
 // src/components/PageEditModal.tsx
 import { FC } from "react";
 
-import { Button, Form, Input, InputNumber, type ModalProps } from "antd";
+import {
+  Button,
+  Form,
+  Input,
+  InputNumber,
+  message,
+  type ModalProps,
+} from "antd";
 
 import BaseModal from "@/components/BaseModal";
 
 import { useCreatePagina } from "../hooks/useCreatePage";
+import { type PaginaAPI } from "../services/pages.services";
 
 /** Forma de los datos de página */
 export interface PageValues {
   sequence: number;
   description: string;
   title: string;
-  bgColor: string;
-  textColor: string;
 }
 
 /** Props del modal */
 export interface PageEditModalProps extends Omit<ModalProps, "title"> {
   visible: boolean;
   /** Inicializamos el form con estos valores */
-  initialValues: PageValues;
+  initialValues: PaginaAPI;
   onCancel: () => void;
   /** Se dispara al hacer click en “Guardar” */
   onUpdate: (values: PageValues) => void;
   /** Prop para validar existencia de paginas */
   existingPages: PageValues[];
   formId?: string;
+  isLoading?: boolean;
 }
 
 const PageEditModal: FC<PageEditModalProps> = ({
@@ -36,15 +43,51 @@ const PageEditModal: FC<PageEditModalProps> = ({
   onUpdate,
   existingPages,
   formId,
+  isLoading,
   ...modalProps
 }) => {
   const [form] = Form.useForm<PageValues>();
   const { mutate: createPage, isPending, error } = useCreatePagina(formId!);
 
+  // const handleFinish = (values: PageValues) => {
+  //   onUpdate(values);
+  //   form.resetFields();
+  //   onCancel();
+  // };
+
+  // En tu componente PageEditModal, cambia la función mapToDto:
+  function mapToDto(values: PageValues) {
+    return {
+      sequence: values.sequence,
+      description: values.description.trim(),
+      title: values.title.trim(),
+    };
+  }
+
   const handleFinish = (values: PageValues) => {
-    onUpdate(values);
-    form.resetFields();
-    onCancel();
+    if (!values.title?.trim()) {
+      message.warning("El título es obligatorio.");
+      return;
+    }
+
+    if (!values.description?.trim()) {
+      message.warning("La descripción es obligatoria.");
+      return;
+    }
+
+    createPage(mapToDto(values), {
+      onSuccess: () => {
+        message.success("Página creada correctamente");
+        onUpdate(values);
+        form.resetFields();
+        onCancel();
+      },
+      onError: (err: any) => {
+        message.error(
+          err?.message ?? "No se pudo actualizar la página. Intenta de nuevo."
+        );
+      },
+    });
   };
 
   const handleCancel = () => {
@@ -80,7 +123,7 @@ const PageEditModal: FC<PageEditModalProps> = ({
                   // buscamos conflicto con cualquier otra página (mismo sequence distinto title)
                   const conflict = existingPages.find(
                     (p) =>
-                      p.sequence === value && p.title !== initialValues.title
+                      p.sequence === value && p.title !== initialValues.nombre
                   );
                   if (conflict) {
                     return Promise.reject(
@@ -123,26 +166,12 @@ const PageEditModal: FC<PageEditModalProps> = ({
               placeholder="Escribe la descripción..."
             />
           </Form.Item>
-
-          {/*
-
-          {/* Color de fondo }
-          <Form.Item label="Color Fondo" name="bgColor">
-            <Input type="color" className="h-8 w-full p-0" />
-          </Form.Item>
-
-          {/* Color de texto }
-          <Form.Item label="Color Texto" name="textColor">
-            <Input type="color" className="h-8 w-full p-0" />
-          </Form.Item>
-          
-          */}
         </div>
 
         {/* Botones */}
         <div className="flex justify-end px-6 gap-4 space-x-4">
           <Button onClick={handleCancel}>Cancelar</Button>
-          <Button type="primary" htmlType="submit">
+          <Button type="primary" htmlType="submit" loading={isPending}>
             Guardar
           </Button>
         </div>

@@ -28,7 +28,18 @@ import { Menu, MenuProps } from "antd";
 import EditFieldModal, { FieldFormValues, VariantType } from "./EditFieldModal";
 
 interface FormElementsListProps {
-  onSelect: (key: string) => void;
+  onSelect: (
+    key: string,
+    keyType?: string,
+    groupName?: string,
+    values?: FieldFormValues
+  ) => void;
+  groupsList: string[];
+  editOpen?: boolean;
+  initialValues?: Partial<FieldFormValues>;
+  editVariant?: VariantType;
+  handleClose?: (vals: FieldFormValues) => void;
+  onEditCancel?: () => void;
 }
 
 const items = [
@@ -65,7 +76,15 @@ const items = [
 const opciones = ["Decimal", "Entero", "Texto"];
 const grupos = ["Grupo A", "Grupo B", "Otro"];
 
-const FormElementsList: React.FC<FormElementsListProps> = ({ onSelect }) => {
+const FormElementsList: React.FC<FormElementsListProps> = ({
+  onSelect,
+  groupsList,
+  editOpen,
+  editVariant,
+  onEditCancel,
+  initialValues,
+  handleClose,
+}) => {
   const [visible, setVisible] = useState(false);
   const [selectedKey, setSelectedKey] = useState<VariantType>();
   const [fieldData, setFieldData] = useState<Partial<FieldFormValues>>({});
@@ -79,11 +98,23 @@ const FormElementsList: React.FC<FormElementsListProps> = ({ onSelect }) => {
   };
 
   const handleSave = (vals: FieldFormValues) => {
-    console.log("Guardado:", vals);
     if (selectedKey) {
-      onSelect(selectedKey);
+      if (selectedKey === "grupo") {
+        // cuando es grupo, usamos el nombre como "key"
+        onSelect(vals.nombre, "grupo", undefined, vals);
+      } else {
+        // para el resto, mandamos el grupo elegido + TODOS los valores
+        onSelect(selectedKey, undefined, vals.grupo || undefined, vals);
+      }
     }
     setVisible(false);
+  };
+
+  const handleCancel = () => {
+    setVisible(false);
+    if (handleClose) {
+      handleClose;
+    }
   };
 
   return (
@@ -95,14 +126,26 @@ const FormElementsList: React.FC<FormElementsListProps> = ({ onSelect }) => {
         onClick={handleMenuClick}
         items={items}
       />
+
+      {/* Modal de CREACIÓN (tu modal actual) */}
       <EditFieldModal
         visible={visible}
-        initialValues={fieldData}
         variant={selectedKey}
         opcionesList={opciones}
-        gruposList={grupos}
+        gruposList={groupsList}
         onSave={handleSave}
-        onCancel={() => setVisible(false)}
+        onCancel={handleCancel}
+      />
+
+      {/* Modal de EDICIÓN (controlado por CreateForms) */}
+      <EditFieldModal
+        visible={!!editOpen}
+        initialValues={initialValues}
+        variant={editVariant} // pásalo desde el padre si lo tienes
+        opcionesList={opciones}
+        gruposList={groupsList}
+        onSave={(vals) => handleClose?.(vals)} // ← usa la función que pasas del padre
+        onCancel={onEditCancel ?? (() => {})}
       />
     </>
   );

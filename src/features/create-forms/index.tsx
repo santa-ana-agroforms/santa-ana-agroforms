@@ -1,6 +1,7 @@
 // src/components/CreateForms.tsx
 import React, { useState } from "react";
 
+import { FieldFormValues, VariantType } from "./components/EditFieldModal";
 import FormElementsList from "./components/FormElementList";
 import PageSettings from "./components/Forms-Settings";
 import { PageValues } from "./components/PageEditModal";
@@ -11,29 +12,107 @@ interface CreateFormsProps {
   onBack: () => void;
 }
 
+export type ElementItem = {
+  type: string;
+  name: string;
+  group?: string;
+  variant?: VariantType; // el tipo exacto que se abrió en el modal
+  values?: Partial<FieldFormValues>;
+};
+
 const CreateForms: React.FC<CreateFormsProps> = ({ formId, onBack }) => {
-  // aquí guardamos la clave del elemento (texto, fecha, foto, etc.) que pinchó el usuario
+  const [keyName, setKeyName] = useState("");
+  const [groups, setGroups] = useState<string[]>([]);
+
   const [elementsByPage, setElementsByPage] = useState<
-    Record<number, string[]>
+    Record<number, ElementItem[]>
   >({});
 
-  const handleAddElement = (key: string) => {
+  // 🔴 nuevo: estado del modal de edición
+  const [editOpen, setEditOpen] = useState(false);
+  const [editInitialValues, setEditInitialValues] = useState<
+    Partial<FieldFormValues> | undefined
+  >(undefined);
+  const [editVariant, setEditVariant] = useState<VariantType | undefined>(
+    undefined
+  );
+  const [editIndex, setEditIndex] = useState<number | null>(null);
+
+  const handleAddElement = (
+    key: string,
+    keyType?: string,
+    groupName?: string,
+    values?: FieldFormValues
+  ) => {
     setElementsByPage((prev) => {
       const pageKey = selectedPage.sequence;
       const prevList = prev[pageKey] ?? [];
-      return {
-        ...prev,
-        [pageKey]: [...prevList, key],
+      const next: ElementItem = {
+        type: keyType ?? key,
+        name: keyType === "grupo" ? (values?.nombre ?? key) : key, // nombre del grupo o del campo
+        group: groupName,
+        variant: (keyType ?? key) as VariantType,
+        values,
       };
+      return { ...prev, [pageKey]: [...prevList, next] };
     });
+
+    if (keyType === "grupo") {
+      const groupToAdd = values?.nombre ?? key;
+      setGroups((prev) =>
+        prev.includes(groupToAdd) ? prev : [...prev, groupToAdd]
+      );
+    }
+  };
+
+  // 🟢 abrir modal en modo edición (desde PhoneMockup)
+  const handleEditElementRequest = (index: number) => {
+    const el = currentElements[index];
+    if (!el) return;
+    setEditIndex(index);
+    setEditVariant(el.variant || (el.type as VariantType));
+    setEditInitialValues({
+      ...el.values,
+      nombre: el.name,
+      grupo: el.group,
+    });
+    setEditOpen(true);
+  };
+
+  // 🟢 guardar cambios del modal de edición y actualizar el elemento
+  const handleEditSave = (vals: FieldFormValues) => {
+    const pageKey = selectedPage.sequence;
+    setElementsByPage((prev) => {
+      const list = [...(prev[pageKey] ?? [])];
+      if (editIndex != null && list[editIndex]) {
+        const prevEl = list[editIndex];
+        list[editIndex] = {
+          ...prevEl,
+          name: vals.nombre ?? prevEl.name,
+          group: vals.grupo ?? prevEl.group,
+          values: { ...prevEl.values, ...vals }, // merge
+        };
+      }
+      return { ...prev, [pageKey]: list };
+    });
+
+    // si cambió el nombre de un grupo, lo añadimos a la lista si no existe
+    if (editVariant === "grupo" && vals.nombre) {
+      setGroups((gs) => (gs.includes(vals.nombre) ? gs : [...gs, vals.nombre]));
+    }
+
+    setEditOpen(false);
+    setEditIndex(null);
+    setEditInitialValues(undefined);
+    setEditVariant(undefined);
   };
 
   const [selectedPage, setSelectedPage] = useState<PageValues>({
     sequence: 1,
     description: "Generales",
     title: "Generales",
-    bgColor: "#FFFFFF",
-    textColor: "#000000",
+    //bgColor: "#FFFFFF",
+    //textColor: "#000000",
   });
 
   const currentElements = elementsByPage[selectedPage.sequence] ?? [];
@@ -42,7 +121,15 @@ const CreateForms: React.FC<CreateFormsProps> = ({ formId, onBack }) => {
     <div className="flex h-full bg-gray-50">
       {/* Sidebar con la lista de elementos */}
       <div className="w-64 bg-white border-r">
-        <FormElementsList onSelect={handleAddElement} />
+        <FormElementsList
+          onSelect={handleAddElement}
+          groupsList={groups}
+          editOpen={editOpen}
+          initialValues={editInitialValues}
+          editVariant={editVariant}
+          handleClose={handleEditSave}
+          onEditCancel={() => setEditOpen(false)}
+        />
       </div>
 
       {/* Zona del “mockup” */}
@@ -57,6 +144,7 @@ const CreateForms: React.FC<CreateFormsProps> = ({ formId, onBack }) => {
           onBack={onBack}
           selectedElements={currentElements}
           selectedPage={selectedPage}
+          onEditElement={handleEditElementRequest}
         />
       </div>
 
