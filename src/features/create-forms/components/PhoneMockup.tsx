@@ -171,14 +171,18 @@ const PhoneMockup: React.FC<PhoneMockupProps> = ({
               )}
 
               {element.type === "switch" && (
-                <div className="flex flex-row gap-4 items-center w-1/3">
+                <div className="flex flex-row gap-4 items-center w-full">
                   <HighlightOutlined
                     className="cursor-pointer"
                     onClick={() => onEditElement?.(index)}
                   />
-                  <div className="flex flex-col w-full">
-                    <Text>{element.name}</Text>
-                    <Switch />
+                  <div className="flex flex-col">
+                    <div className="flex w-full">
+                      <Text>{element.name}</Text>
+                    </div>
+                    <div className="flex w-1/3">
+                      <Switch />
+                    </div>
                   </div>
                 </div>
               )}

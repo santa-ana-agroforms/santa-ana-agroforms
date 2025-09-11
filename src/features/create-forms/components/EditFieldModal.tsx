@@ -109,7 +109,7 @@ const EditFieldModal: FC<EditFieldModalProps> = ({
         clase,
         nombre_campo: values.nombre,
         etiqueta: values.etiqueta,
-        ayuda: values.ayuda,
+        ayuda: values.ayuda ?? "",
         requerido: !!values.requerido,
         config: {},
       };
@@ -128,9 +128,9 @@ const EditFieldModal: FC<EditFieldModalProps> = ({
         clase,
         nombre_campo: values.nombre,
         etiqueta: values.etiqueta,
-        ayuda: values.ayuda,
+        ayuda: values.ayuda ?? "",
         requerido: !!values.requerido,
-        config: { max: values.tamano },
+        config: {},
       };
 
       // Devuélvelo al padre inmediato

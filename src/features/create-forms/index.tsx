@@ -103,6 +103,8 @@ const CreateForms: React.FC<CreateFormsProps> = ({ formId, onBack }) => {
     [compiledByPage]
   );
 
+  console.warn("JSOM:_ ", allCompiled);
+
   const handleAddElement = (
     key: string,
     keyType?: string,
@@ -186,9 +188,11 @@ const CreateForms: React.FC<CreateFormsProps> = ({ formId, onBack }) => {
 
   const handleEditDelete = () => {
     const pageKey = selectedPage.sequence;
+    let deletedName: string | undefined;
     setElementsByPage((prev) => {
       const list = [...(prev[pageKey] ?? [])];
       if (editIndex != null && editIndex >= 0 && editIndex < list.length) {
+        deletedName = list[editIndex].name;
         list.splice(editIndex, 1);
       }
       const next = { ...prev, [pageKey]: list };
@@ -204,6 +208,16 @@ const CreateForms: React.FC<CreateFormsProps> = ({ formId, onBack }) => {
 
       return next;
     });
+
+    if (deletedName) {
+      setCompiledByPage((prev) => {
+        const list = [...(prev[pageKey] ?? [])];
+        const filtered = list.filter(
+          (item) => item?.nombre_campo !== deletedName
+        );
+        return { ...prev, [pageKey]: filtered };
+      });
+    }
 
     setEditOpen(false);
     setEditIndex(null);
