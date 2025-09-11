@@ -1,17 +1,15 @@
 // src/components/PageSettings.tsx
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 
 import { DiffOutlined } from "@ant-design/icons";
-import { Button, Form, Input, InputNumber, message, Select } from "antd";
+import { Button, Form, Input, InputNumber, Select } from "antd";
 
 import { useCreatePagina } from "../hooks/useCreatePage";
 import { usePaginas } from "../hooks/usePaginas";
 import PageEditModal, { PageValues } from "./PageEditModal";
 
 interface PageSettingsProps {
-  /** Callback cuando se presiona el icono */
   onIconClick?: () => void;
-  /** Callback cuando se cambia de pagina */
   onPageChange?: (page: PageValues) => void;
   formId?: string;
 }
@@ -23,16 +21,46 @@ const PageSettings: React.FC<PageSettingsProps> = ({
   onPageChange,
   formId,
 }) => {
-  const [sequence, setSequence] = useState(1);
-  const [description, setDescription] = useState("Generales");
-  const [title, setTitle] = useState("Generales");
-
   const [pageModalVisible, setPageModalVisible] = useState(false);
   const { mutate: createPage, isPending } = useCreatePagina(formId!);
-
   const { data: paginas, isLoading, error } = usePaginas(formId);
 
-  const [pages, setPages] = useState<PageValues[]>([]);
+  // Id de la página seleccionada en el Select
+  const [selectedId, setSelectedId] = useState<string | undefined>(undefined);
+
+  // Cuando llegan las páginas (o cambian), seleccionar la primera si no hay selección
+  useEffect(() => {
+    if (paginas && paginas.length > 0) {
+      setSelectedId((prev) => prev ?? paginas[0].id);
+    }
+  }, [paginas]);
+
+  // Página actualmente seleccionada (derivada de 'selectedId')
+  const selectedPage = useMemo(
+    () => paginas?.find((p) => p.id === selectedId),
+    [paginas, selectedId]
+  );
+
+  // Mapeo opcional a tu tipo PageValues si onPageChange lo requiere
+  const mapToPageValues = (p: any): PageValues => ({
+    sequence: p.secuencia,
+    description: p.descripcion,
+    title: p.nombre,
+  });
+
+  // Notificar cambios al padre cuando cambia la página seleccionada
+  useEffect(() => {
+    if (selectedPage) onPageChange?.(mapToPageValues(selectedPage));
+  }, [selectedPage, onPageChange]);
+
+  const handleIconClick = () => setPageModalVisible(true);
+  const handleCancel = () => setPageModalVisible(false);
+
+  // Si tu modal edita/crea páginas locales, aquí podrías refrescar o mutar
+  const handleUpdate = (_values: PageValues) => {
+    setPageModalVisible(false);
+    // Aquí podrías llamar a un invalidate de React Query o ajustar tu cache local
+  };
 
   const handleDelete = () => {
     console.log("Eliminar clicked");
@@ -41,64 +69,12 @@ const PageSettings: React.FC<PageSettingsProps> = ({
     console.log("Guardar clicked");
   };
 
-  const handleIconClick = () => {
-    setPageModalVisible(true);
-  };
-
-  const handleCancel = () => {
-    setPageModalVisible(false);
-  };
-
-  const handleUpdate = (values: PageValues) => {
-    setPageModalVisible(false);
-
-    // Si ya existe, lo actualizas; si no, lo agregas
-    setPages((prev) => {
-      const exists = prev.find((p) => p.title === values.title);
-      if (exists) {
-        return prev.map((p) => (p.title === values.title ? values : p));
-      }
-      return [...prev, values];
-    });
-
-    (createPage({
-      sequence: values.sequence,
-      description: values.description,
-      title: values.title,
-      bump: true, // o false si no quieres crear nueva versión
-    }),
-      {
-        onSuccess: () => {
-          message.success(`Página "${values.title}" creada correctamente`);
-        },
-        onError: (err: any) => {
-          message.error(
-            err?.message ?? "No se pudo actualizar la página. Intenta de nuevo."
-          );
-        },
-      });
-  };
-
-  useEffect(() => {
-    const selectedPage = pages.find((p) => p.title === title);
-    if (selectedPage) {
-      setSequence(selectedPage.sequence);
-      setDescription(selectedPage.description);
-      setTitle(selectedPage.title);
-      onPageChange?.(selectedPage);
-    }
-  }, [title, pages]);
-
-  const selectedPageData = pages.find((p) => p.title === title) ?? pages[0];
-
   if (isLoading) return <div>Cargando...</div>;
   if (error) return <div>Error: {error.message}</div>;
 
-  console.warn("Paginas:", paginas);
-
   return (
     <div className="bg-white rounded-lg shadow max-w-sm mt-7">
-      {/* Header fijo con icono pressable */}
+      {/* Header */}
       <div className="flex flex-col border-b">
         <div className="flex items-center px-4 py-3">
           <Button
@@ -114,20 +90,14 @@ const PageSettings: React.FC<PageSettingsProps> = ({
           <Form>
             <Form.Item name="estado">
               <Select
-                value={
-                  paginas && paginas.length !== 0 && paginas[0] !== null ?
-                    paginas[0].nombre
-                  : ""
-                }
-                onChange={setTitle}
-                placeholder={
-                  paginas && paginas.length !== 0 && paginas[0] !== null ?
-                    paginas[0].nombre
-                  : ""
-                }
+                value={selectedId}
+                onChange={(value) => setSelectedId(value)}
+                placeholder="Selecciona una página"
+                loading={isLoading}
+                allowClear={false}
               >
                 {paginas?.map((p) => (
-                  <Option key={p.nombre} value={p.nombre}>
+                  <Option key={p.id} value={p.id}>
                     {p.nombre}
                   </Option>
                 ))}
@@ -140,8 +110,12 @@ const PageSettings: React.FC<PageSettingsProps> = ({
       <PageEditModal
         visible={pageModalVisible}
         initialValues={
-          paginas && paginas.length > 0 ?
-            paginas[0]
+          selectedPage ?
+            {
+              secuencia: selectedPage.secuencia,
+              descripcion: selectedPage.descripcion,
+              nombre: selectedPage.nombre,
+            }
           : {
               secuencia: 1,
               descripcion: "",
@@ -150,24 +124,21 @@ const PageSettings: React.FC<PageSettingsProps> = ({
         }
         onCancel={handleCancel}
         onUpdate={handleUpdate}
-        existingPages={pages}
+        existingPages={(paginas ?? []).map((p) => ({
+          sequence: p.secuencia,
+          description: p.descripcion,
+          title: p.nombre,
+        }))}
         formId={formId}
       />
 
-      {/* Contenido del form */}
+      {/* Contenido del form (solo lectura, basado en la selección) */}
       <div className="px-4 py-5 space-y-4">
         <div>
           <label className="block text-sm font-medium mb-1">Secuencia</label>
           <InputNumber
             min={1}
-            value={
-              paginas && paginas.length !== 0 && paginas[0] !== null ?
-                paginas[0].secuencia
-              : ""
-            }
-            onChange={(value) => {
-              if (typeof value === "number") setSequence(value);
-            }}
+            value={selectedPage?.secuencia ?? ""}
             className="w-full"
             disabled
           />
@@ -175,58 +146,16 @@ const PageSettings: React.FC<PageSettingsProps> = ({
 
         <div>
           <label className="block text-sm font-medium mb-1">Descripción</label>
-          <Input
-            value={
-              paginas && paginas.length !== 0 && paginas[0] !== null ?
-                paginas[0].descripcion
-              : ""
-            }
-            onChange={(e) => setDescription(e.target.value)}
-            disabled
-          />
+          <Input value={selectedPage?.descripcion ?? ""} disabled />
         </div>
 
         <div>
           <label className="block text-sm font-medium mb-1">Título</label>
-          <Input
-            value={
-              paginas && paginas.length !== 0 && paginas[0] !== null ?
-                paginas[0].nombre
-              : ""
-            }
-            onChange={(e) => setTitle(e.target.value)}
-            disabled
-          />
+          <Input value={selectedPage?.nombre ?? ""} disabled />
         </div>
-
-        {/*
-        
-        <div>
-          <label className="block text-sm font-medium mb-1">Color Fondo</label>
-          <Input
-            type="color"
-            value={bgColor}
-            onChange={(e) => setBgColor(e.target.value)}
-            className="w-full h-8 p-0"
-            disabled
-          />
-        </div>
-
-        <div>
-          <label className="block text-sm font-medium mb-1">Color Texto</label>
-          <Input
-            type="color"
-            value={textColor}
-            onChange={(e) => setTextColor(e.target.value)}
-            className="w-full h-8 p-0"
-            disabled
-          />
-        </div>
-        
-        */}
       </div>
 
-      {/* Footer con botones */}
+      {/* Footer */}
       <div className="flex justify-end gap-3 px-4 py-3 border-t space-x-2">
         <Button danger onClick={handleDelete}>
           ELIMINAR

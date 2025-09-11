@@ -157,9 +157,9 @@ const FormsLists: React.FC<FormsListsProps> = ({ onSelectForm }) => {
 
   const { categoriesData, isLoading, error } = useFormsListsData();
 
-  {
-    console.warn(categoriesData);
-  }
+  // {
+  //   console.warn(categoriesData);
+  // }
 
   const rows = useMemo(
     () => (categoriesData ?? []).flatMap((c) => c.items),

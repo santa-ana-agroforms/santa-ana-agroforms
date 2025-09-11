@@ -65,8 +65,6 @@ const NewFormModal: FC<NewFormModalProps> = ({
   // Mutación: crear formulario
   const { mutate: createFormulario, isPending } = useCreateFormulario();
 
-  console.warn("cat: ", categorias);
-
   useEffect(() => {
     if (visible) {
       if (initialValues) {

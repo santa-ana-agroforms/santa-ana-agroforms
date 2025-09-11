@@ -8,11 +8,14 @@ import {
   Form,
   Input,
   InputNumber,
+  Modal,
   Select,
   type ModalProps,
 } from "antd";
 
 import BaseModal from "@/components/BaseModal";
+
+import { FieldJson } from "../types";
 
 const { Option } = Select;
 const { TextArea } = Input;
@@ -66,16 +69,20 @@ export interface EditFieldModalProps extends Omit<ModalProps, "title"> {
   /** Listas para poblar los selects */
   opcionesList: string[];
   gruposList: string[];
+  onDelete?: () => void;
+  onBuild?: (json: FieldJson) => void;
 }
 
 const EditFieldModal: FC<EditFieldModalProps> = ({
   visible,
   onCancel,
   onSave,
+  onDelete,
   variant = "texto",
   initialValues,
   opcionesList,
   gruposList,
+  onBuild,
   ...modalProps
 }) => {
   const [form] = Form.useForm<FieldFormValues>();
@@ -91,7 +98,48 @@ const EditFieldModal: FC<EditFieldModalProps> = ({
     }
   }, [visible, initialValues, form]);
 
+  // 4) En handleFinish: construir y devolver el JSON + normalizar values.opciones
   const handleFinish = (values: FieldFormValues) => {
+    if (variant === "dato") {
+      const { tipo, clase } = mapDatoToTipoClase(values.opciones);
+
+      // JSON compilado
+      const compiled = {
+        tipo,
+        clase,
+        nombre_campo: values.nombre,
+        etiqueta: values.etiqueta,
+        ayuda: values.ayuda,
+        requerido: !!values.requerido,
+        config: {},
+      };
+
+      // Devuélvelo al padre inmediato
+      onBuild?.(compiled);
+
+      // (opcional recomendado) normaliza lo que sube por onSave
+      values = { ...values, opciones: tipo };
+    } else {
+      const { tipo, clase } = mapDatoToTipoClase(undefined, variant);
+
+      // JSON compilado
+      const compiled = {
+        tipo,
+        clase,
+        nombre_campo: values.nombre,
+        etiqueta: values.etiqueta,
+        ayuda: values.ayuda,
+        requerido: !!values.requerido,
+        config: { max: values.tamano },
+      };
+
+      // Devuélvelo al padre inmediato
+      onBuild?.(compiled);
+
+      // (opcional recomendado) normaliza lo que sube por onSave
+      values = { ...values, opciones: tipo };
+    }
+
     onSave(values);
     form.resetFields();
     onCancel();
@@ -100,6 +148,35 @@ const EditFieldModal: FC<EditFieldModalProps> = ({
   const handleCancel = () => {
     form.resetFields();
     onCancel();
+  };
+
+  const handleDelete = () => {
+    if (!onDelete) return;
+
+    Modal.confirm({
+      title: "¿Eliminar este campo?",
+      content: "Esta acción no se puede deshacer.",
+      okText: "Sí, eliminar",
+      okType: "danger",
+      cancelText: "Cancelar",
+      onOk: async () => {
+        await onDelete();
+        form.resetFields();
+        onCancel();
+      },
+    });
+  };
+
+  const mapDatoToTipoClase = (
+    opcion?: string,
+    variant?: string
+  ): { tipo: string; clase: string } => {
+    if (opcion === "Número") return { tipo: "numerico", clase: "number" };
+    if (opcion === "Comentarios") return { tipo: "texto", clase: "string" };
+    if (opcion === "Nombre") return { tipo: "texto", clase: "string" };
+    if (variant === "switch") return { tipo: "booleano", clase: "boolean" };
+    if (variant === "fecha") return { tipo: "date", clase: "date" };
+    return { tipo: opcion?.toLowerCase() ?? "texto", clase: "string" };
   };
 
   const valor_inicial = ["Normal", "Botones"];
@@ -154,13 +231,16 @@ const EditFieldModal: FC<EditFieldModalProps> = ({
 
         <div className="flex gap-16">
           <div className="self-center">
-            {variant === "texto" ||
+            {(variant === "texto" ||
               variant === "dato" ||
-              (variant === "combo" && (
-                <Form.Item name="requerido" valuePropName="checked">
-                  <Checkbox className="flex-row-reverse">Requerido</Checkbox>
-                </Form.Item>
-              ))}
+              variant === "combo" ||
+              variant === "firma" ||
+              variant === "switch" ||
+              variant === "fecha") && (
+              <Form.Item name="requerido" valuePropName="checked">
+                <Checkbox className="flex-row-reverse">Requerido</Checkbox>
+              </Form.Item>
+            )}
 
             {variant === "combo" && (
               <Form.Item
@@ -180,11 +260,16 @@ const EditFieldModal: FC<EditFieldModalProps> = ({
             )}
           </div>
           <div className="flex flex-col pl-2 w-1/2">
-            {/* {variant === "texto" && (
-              <Form.Item label="Tamaño" name="tamano">
+            {variant === "dato" && (
+              <Form.Item
+                label="Tamaño"
+                name="tamano"
+                className="w-full"
+                required
+              >
                 <InputNumber min={0} />
               </Form.Item>
-            )} */}
+            )}
 
             {variant === "fecha" && (
               <Form.Item
@@ -231,7 +316,8 @@ const EditFieldModal: FC<EditFieldModalProps> = ({
         </div>
 
         {variant === "texto" ||
-          (variant === "fecha" && (
+          variant === "fecha" ||
+          (variant === "combo" && (
             <Form.Item label="Regla de Visualización" name="reglaVisualizacion">
               <TextArea rows={3} placeholder="Condición..." />
             </Form.Item>
@@ -350,11 +436,21 @@ const EditFieldModal: FC<EditFieldModalProps> = ({
           </div>
         )}
 
-        <Form.Item className="text-right">
-          <Button type="primary" htmlType="submit">
-            Guardar
-          </Button>
-        </Form.Item>
+        <div className="flex flex-row w-full h-8 justify-end gap-5">
+          {initialValues && (
+            <Form.Item className="text-right">
+              <Button type="primary" danger onClick={handleDelete}>
+                Eliminar
+              </Button>
+            </Form.Item>
+          )}
+
+          <Form.Item className="text-right">
+            <Button type="primary" htmlType="submit">
+              Guardar
+            </Button>
+          </Form.Item>
+        </div>
       </Form>
     </BaseModal>
   );
