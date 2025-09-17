@@ -1,4 +1,3 @@
-import React from 'react';
 import { render, screen } from '@testing-library/react';
 import FlatTables, { type Category } from '@/components/FlatTables';
 
