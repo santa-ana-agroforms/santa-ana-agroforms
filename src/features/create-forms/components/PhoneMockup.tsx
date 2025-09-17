@@ -1,24 +1,17 @@
 // src/components/PhoneMockup.tsx
 import React from "react";
 
-import { HighlightOutlined } from "@ant-design/icons";
 import {
-  Button,
-  DatePicker,
-  Input,
-  message,
-  Select,
-  Switch,
-  Typography,
-} from "antd";
+  HighlightOutlined,
+  LeftOutlined,
+  RightOutlined,
+} from "@ant-design/icons";
+import { Button, DatePicker, Input, Select, Switch, Typography } from "antd";
 
 import signatureIcon from "@/assets/signature_icon.svg";
 import { useFormulario } from "@/features/forms-list/hooks/useFormularios";
 
 import { ElementItem } from "..";
-import { usePostCamposActualBatch } from "../hooks/useCampoActual";
-import { usePaginas } from "../hooks/usePaginas";
-import { FieldJson } from "../types";
 import { PageValues } from "./PageEditModal";
 
 const { Text } = Typography;
@@ -28,73 +21,41 @@ interface PhoneMockupProps {
   selectedElements: ElementItem[];
   onBack: () => void;
   selectedPage: PageValues;
+  pages: PageValues[]; // 👈 todas las páginas
+  onPageChange: (page: PageValues) => void;
   keyType?: string;
   onEditElement?: (index: number) => void;
-  compiledList: FieldJson[];
 }
 
 const PhoneMockup: React.FC<PhoneMockupProps> = ({
   formId,
   onBack,
   selectedElements,
+  pages,
+  onPageChange,
   selectedPage,
   onEditElement,
-  compiledList,
 }) => {
-  const {
-    data: formulario,
-    isLoading,
-    isFetching,
-  } = useFormulario(String(formId));
+  const { data: formulario, isLoading } = useFormulario(String(formId));
 
-  // 1) Traemos páginas para obtener el pageId a partir de la secuencia actual
-  const { data: paginas } = usePaginas(String(formId));
-  const currentPagina = React.useMemo(
-    () => paginas?.find((p) => p.secuencia === selectedPage.sequence),
-    [paginas, selectedPage.sequence]
-  );
-  const currentPageId = currentPagina?.id as string | undefined;
-
-  // 2) Mutación POST a /campos-actual/
-  // Mutaciones
-  const { mutateAsync: postCamposBulk, isPending: sendingBulk } =
-    usePostCamposActualBatch();
+  const currentIndex = pages.findIndex((p) => p.title === selectedPage.title);
+  const totalPages = pages.length;
 
   if (isLoading && !formulario) return <div>Cargando…</div>;
 
-  let currentGroupName: string | null = null;
-
-  const handleContinue = async () => {
-    console.warn("➡️ JSONs compilados (front):", compiledList);
-
-    if (!currentPageId) {
-      console.warn("⚠️ No hay pageId: no se puede enviar al backend.");
-      message.error("No se pudo identificar la página actual (pageId).");
-      return;
-    }
-
-    try {
-      const { ok, errors } = await postCamposBulk({
-        pageId: currentPageId,
-        campos: compiledList, // 👈 se envían UNO POR UNO en el service
-      });
-
-      console.warn("🌐 Resultados envío:", { ok, errors });
-
-      if (errors.length) {
-        message.error(
-          `Algunos campos fallaron (${errors.length}). Revisa la consola.`
-        );
-      } else {
-        message.success("Campos enviados correctamente.");
-      }
-
-      // aquí puedes navegar o continuar el flujo
-    } catch (e) {
-      console.error("❌ Error al enviar campos:", e);
-      message.error("Error al enviar campos al backend.");
+  const handlePrev = () => {
+    if (currentIndex > 0) {
+      onPageChange(pages[currentIndex - 1]);
     }
   };
+
+  const handleNext = () => {
+    if (currentIndex < totalPages - 1) {
+      onPageChange(pages[currentIndex + 1]);
+    }
+  };
+
+  let currentGroupName: string | null = null;
 
   return (
     <div className="w-80 h-[600px] border border-gray-300 rounded-3xl shadow-lg flex flex-col overflow-hidden bg-white">
@@ -253,18 +214,29 @@ const PhoneMockup: React.FC<PhoneMockupProps> = ({
 
       {/* Footer con botones */}
       <div className="flex justify-between px-4 py-3 border-t">
-        <Button type="primary" danger onClick={onBack}>
+        {/* <Button type="primary" danger onClick={onBack}>
           Regresar
         </Button>
         <Button
           type="primary"
           style={{ backgroundColor: "#52c41a", borderColor: "#52c41a" }}
-          onClick={handleContinue}
-          loading={sendingBulk}
-          disabled={sendingBulk}
+          onClick={() => console.warn("XD")}
+          //loading={sendingBulk}
+          //disabled={sendingBulk}
         >
           Continuar
-        </Button>
+        </Button> */}
+
+        <Button
+          icon={<LeftOutlined />}
+          onClick={handlePrev}
+          disabled={totalPages <= 1 || currentIndex === 0}
+        ></Button>
+        <Button
+          icon={<RightOutlined />}
+          onClick={handleNext}
+          disabled={totalPages <= 1 || currentIndex === totalPages - 1}
+        ></Button>
       </div>
     </div>
   );

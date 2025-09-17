@@ -1,7 +1,8 @@
 // src/components/CreateForms.tsx
 import React, { useMemo, useState } from "react";
 
-import { MenuProps } from "antd";
+import { ArrowLeftOutlined } from "@ant-design/icons";
+import { Button, MenuProps } from "antd";
 
 import EditFieldModal, {
   FieldFormValues,
@@ -28,7 +29,6 @@ export type ElementItem = {
 };
 
 const CreateForms: React.FC<CreateFormsProps> = ({ formId, onBack }) => {
-  const [keyName, setKeyName] = useState("");
   const [groups, setGroups] = useState<string[]>([]);
 
   const [elementsByPage, setElementsByPage] = useState<
@@ -49,9 +49,10 @@ const CreateForms: React.FC<CreateFormsProps> = ({ formId, onBack }) => {
     Record<number, FieldJson[]>
   >({});
 
+  const [pages, setPages] = useState<PageValues[]>([]);
+
   // EDITFIELDMODAL
   const [visible, setVisible] = useState(false);
-  const [fieldData, setFieldData] = useState<Partial<FieldFormValues>>({});
   const [selectedKey, setSelectedKey] = useState<VariantType>();
 
   const handleSave = (vals: FieldFormValues) => {
@@ -102,8 +103,6 @@ const CreateForms: React.FC<CreateFormsProps> = ({ formId, onBack }) => {
     () => Object.values(compiledByPage).flat().filter(Boolean) as FieldJson[],
     [compiledByPage]
   );
-
-  console.warn("JSOM:_ ", allCompiled);
 
   const handleAddElement = (
     key: string,
@@ -234,6 +233,8 @@ const CreateForms: React.FC<CreateFormsProps> = ({ formId, onBack }) => {
     setVisible(true);
   };
 
+  console.warn("pages: ", pages);
+
   return (
     <div className="flex h-full bg-gray-50">
       {/* Sidebar con la lista de elementos */}
@@ -242,7 +243,19 @@ const CreateForms: React.FC<CreateFormsProps> = ({ formId, onBack }) => {
       </div>
 
       {/* Zona del “mockup” */}
-      <div className="flex-1 flex justify-center items-start p-6 ">
+      <div className="flex-1 flex justify-start items-start p-6">
+        <div className="flex justify-start items-start self-start w-3/10">
+          <Button
+            icon={<ArrowLeftOutlined />}
+            danger
+            onClick={onBack}
+            // onClick={handlePrev}
+            // disabled={totalPages <= 1 || currentIndex === 0}
+          >
+            Regresar
+          </Button>
+        </div>
+
         {/* Modal de CREACIÓN (tu modal actual) */}
         <EditFieldModal
           visible={visible}
@@ -277,13 +290,20 @@ const CreateForms: React.FC<CreateFormsProps> = ({ formId, onBack }) => {
           onBack={onBack}
           selectedElements={currentElements}
           selectedPage={selectedPage}
+          pages={pages}
+          onPageChange={setSelectedPage}
           onEditElement={handleEditElementRequest}
-          compiledList={allCompiled}
         />
       </div>
 
       <div>
-        <PageSettings onPageChange={setSelectedPage} formId={String(formId)} />
+        <PageSettings
+          onPageChange={setSelectedPage}
+          onPagesChange={setPages}
+          formId={String(formId)}
+          compiledList={allCompiled}
+          currentPage={selectedPage}
+        />
       </div>
     </div>
   );

@@ -1,39 +1,41 @@
 // src/components/PageSettings.tsx
 import React, { useEffect, useMemo, useState } from "react";
 
-import { DiffOutlined } from "@ant-design/icons";
-import { Button, Form, Input, InputNumber, Select } from "antd";
+import { DiffOutlined, DownOutlined } from "@ant-design/icons";
+import { Button, Input, InputNumber, message, Tooltip } from "antd";
 
-import { useCreatePagina } from "../hooks/useCreatePage";
+import { usePostCamposActualBatch } from "../hooks/useCampoActual";
 import { usePaginas } from "../hooks/usePaginas";
+import { FieldJson } from "../types";
 import PageEditModal, { PageValues } from "./PageEditModal";
 
 interface PageSettingsProps {
-  onIconClick?: () => void;
   onPageChange?: (page: PageValues) => void;
+  onPagesChange?: (pages: PageValues[]) => void;
   formId?: string;
+  compiledList: FieldJson[];
+  currentPage?: PageValues;
 }
 
-const { Option } = Select;
-
 const PageSettings: React.FC<PageSettingsProps> = ({
-  onIconClick,
   onPageChange,
+  onPagesChange,
   formId,
+  compiledList,
+  currentPage,
 }) => {
   const [pageModalVisible, setPageModalVisible] = useState(false);
-  const { mutate: createPage, isPending } = useCreatePagina(formId!);
-  const { data: paginas, isLoading, error } = usePaginas(formId);
+  const [dropdownOpen, setDropdownOpen] = useState(false);
+  const { data: paginas, isLoading, error, refetch } = usePaginas(formId);
 
-  // Id de la página seleccionada en el Select
+  console.warn("paginas: ", paginas);
+
+  // Mutaciones
+  const { mutateAsync: postCamposBulk, isPending: sendingBulk } =
+    usePostCamposActualBatch();
+
+  // Solo un estado para el ID seleccionado
   const [selectedId, setSelectedId] = useState<string | undefined>(undefined);
-
-  // Cuando llegan las páginas (o cambian), seleccionar la primera si no hay selección
-  useEffect(() => {
-    if (paginas && paginas.length > 0) {
-      setSelectedId((prev) => prev ?? paginas[0].id);
-    }
-  }, [paginas]);
 
   // Página actualmente seleccionada (derivada de 'selectedId')
   const selectedPage = useMemo(
@@ -48,29 +50,102 @@ const PageSettings: React.FC<PageSettingsProps> = ({
     title: p.nombre,
   });
 
-  // Notificar cambios al padre cuando cambia la página seleccionada
+  // 1. Inicializar con la primera página cuando lleguen los datos
   useEffect(() => {
-    if (selectedPage) onPageChange?.(mapToPageValues(selectedPage));
+    if (paginas && paginas.length > 0 && !selectedId) {
+      setSelectedId(paginas[0].id);
+    }
+  }, [paginas, selectedId]);
+
+  // 2. Sincronizar cuando cambie currentPage (navegación externa)
+  useEffect(() => {
+    if (currentPage && paginas) {
+      const match = paginas.find((p) => p.secuencia === currentPage.sequence);
+      if (match) {
+        console.log(
+          "🔄 Actualizando selectedId por currentPage:",
+          match.nombre
+        );
+        setSelectedId(match.id);
+      }
+    }
+  }, [currentPage, paginas]);
+
+  // 3. Notificar cambios al componente padre
+  useEffect(() => {
+    if (selectedPage) {
+      onPageChange?.(mapToPageValues(selectedPage));
+    }
   }, [selectedPage, onPageChange]);
+
+  useMemo(() => {
+    if (paginas) {
+      onPagesChange?.(
+        paginas.map((p) => ({
+          sequence: p.secuencia,
+          description: p.descripcion,
+          title: p.nombre,
+        }))
+      );
+    }
+  }, [paginas, onPagesChange]);
+
+  // Handler del dropdown personalizado
+  const handlePageSelect = (pageId: string) => {
+    console.log("👆 Usuario seleccionó página:", pageId);
+    setSelectedId(pageId);
+    setDropdownOpen(false);
+  };
 
   const handleIconClick = () => setPageModalVisible(true);
   const handleCancel = () => setPageModalVisible(false);
 
-  // Si tu modal edita/crea páginas locales, aquí podrías refrescar o mutar
-  const handleUpdate = (_values: PageValues) => {
+  const handleUpdate = async (_values: PageValues) => {
     setPageModalVisible(false);
-    // Aquí podrías llamar a un invalidate de React Query o ajustar tu cache local
+    await refetch();
   };
 
   const handleDelete = () => {
     console.log("Eliminar clicked");
   };
-  const handleSave = () => {
-    console.log("Guardar clicked");
-  };
 
   if (isLoading) return <div>Cargando...</div>;
   if (error) return <div>Error: {error.message}</div>;
+
+  const handleContinue = async () => {
+    console.warn("➡️ JSONs compilados (front):", compiledList);
+
+    if (compiledList.length === 0) {
+      message.warning("¡Necesitas seleccionar al menos un campo! ⚠️");
+      return;
+    }
+
+    if (!selectedId) {
+      console.warn("⚠️ No hay pageId: no se puede enviar al backend.");
+      message.error("No se pudo identificar la página actual (pageId).");
+      return;
+    }
+
+    try {
+      const { ok, errors } = await postCamposBulk({
+        pageId: selectedId,
+        campos: compiledList,
+      });
+
+      console.warn("🌐 Resultados envío:", { ok, errors });
+
+      if (errors.length) {
+        message.error(
+          `Algunos campos fallaron (${errors.length}). Revisa la consola.`
+        );
+      } else {
+        message.success("Campos enviados correctamente.");
+      }
+    } catch (e) {
+      console.error("❌ Error al enviar campos:", e);
+      message.error("Error al enviar campos al backend.");
+    }
+  };
 
   return (
     <div className="bg-white rounded-lg shadow max-w-sm mt-7">
@@ -86,24 +161,39 @@ const PageSettings: React.FC<PageSettingsProps> = ({
           <h3 className="ml-2 text-lg font-medium">Página</h3>
         </div>
 
-        <div className="w-full px-4 items-center justify-center">
-          <Form>
-            <Form.Item name="estado">
-              <Select
-                value={selectedId}
-                onChange={(value) => setSelectedId(value)}
-                placeholder="Selecciona una página"
-                loading={isLoading}
-                allowClear={false}
-              >
+        {/* Custom Dropdown Selector */}
+        <div className="w-full px-4 pb-4">
+          <div className="relative">
+            <div
+              className="w-full px-3 py-2 border border-gray-300 rounded-md bg-white cursor-pointer hover:border-blue-400 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 flex justify-between items-center"
+              onClick={() => setDropdownOpen(!dropdownOpen)}
+            >
+              <span className="text-gray-900">
+                {selectedPage?.nombre || "Selecciona una página"}
+              </span>
+              <DownOutlined
+                className={`text-gray-400 transition-transform ${dropdownOpen ? "rotate-180" : ""}`}
+              />
+            </div>
+
+            {dropdownOpen && (
+              <div className="absolute z-10 w-full mt-1 bg-white border border-gray-200 rounded-md shadow-lg max-h-60 overflow-auto">
                 {paginas?.map((p) => (
-                  <Option key={p.id} value={p.id}>
+                  <div
+                    key={p.id}
+                    className={`px-3 py-2 cursor-pointer hover:bg-gray-100 ${
+                      selectedId === p.id ?
+                        "bg-blue-50 text-blue-600"
+                      : "text-gray-900"
+                    }`}
+                    onClick={() => handlePageSelect(p.id)}
+                  >
                     {p.nombre}
-                  </Option>
+                  </div>
                 ))}
-              </Select>
-            </Form.Item>
-          </Form>
+              </div>
+            )}
+          </div>
         </div>
       </div>
 
@@ -112,11 +202,13 @@ const PageSettings: React.FC<PageSettingsProps> = ({
         initialValues={
           selectedPage ?
             {
+              id: selectedPage.id,
               secuencia: selectedPage.secuencia,
               descripcion: selectedPage.descripcion,
               nombre: selectedPage.nombre,
             }
           : {
+              id: "",
               secuencia: 1,
               descripcion: "",
               nombre: "",
@@ -160,9 +252,24 @@ const PageSettings: React.FC<PageSettingsProps> = ({
         <Button danger onClick={handleDelete}>
           ELIMINAR
         </Button>
-        <Button type="primary" onClick={handleSave}>
-          GUARDAR
-        </Button>
+        <Tooltip
+          title={
+            compiledList.length === 0 ?
+              "Debes seleccionar un campo para guardar"
+            : ""
+          }
+        >
+          <span>
+            <Button
+              type="primary"
+              onClick={handleContinue}
+              loading={sendingBulk}
+              disabled={sendingBulk || compiledList.length === 0}
+            >
+              GUARDAR
+            </Button>
+          </span>
+        </Tooltip>
       </div>
     </div>
   );

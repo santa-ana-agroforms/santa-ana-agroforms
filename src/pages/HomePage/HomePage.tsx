@@ -88,7 +88,10 @@ export const HomePage: React.FC = () => {
               navigate={navigate}
               collapsed={collapsed}
               selectedKey={selectedKey}
-              onSelect={setSelected}
+              onSelect={(key) => {
+                setSelected(key);
+                setActiveFormId(null); // 👈 esto mata el CreateFormsPage cuando cambias de sección
+              }}
             />
           </Sider>
 
