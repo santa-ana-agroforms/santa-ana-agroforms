@@ -10,7 +10,10 @@
     "format": "prettier --write .",
     "prepare": "husky",
     "preview": "vite preview",
-    "commit": "npx cz"
+    "commit": "npx cz",
+    "test": "jest",
+    "test:watch": "jest --watch",
+    "test:cov": "jest --coverage"
   },
   "husky": {
     "hooks": {
@@ -42,8 +45,13 @@
     "@commitlint/config-conventional": "^19.8.0",
     "@eslint/js": "^9.22.0",
     "@ianvs/prettier-plugin-sort-imports": "^4.5.1",
+    "@swc/jest": "^0.2.39",
+    "@testing-library/jest-dom": "^6.8.0",
+    "@testing-library/react": "^16.3.0",
+    "@testing-library/user-event": "^14.6.1",
+    "@types/jest": "^30.0.0",
     "@types/moment": "^2.13.0",
-    "@types/node": "^22.15.3",
+    "@types/node": "^22.18.5",
     "@types/react": "^18.0.28",
     "@types/react-dom": "^18.0.11",
     "@typescript-eslint/eslint-plugin": "^8.32.0",
@@ -56,11 +64,15 @@
     "eslint-plugin-react-refresh": "^0.4.19",
     "globals": "^16.0.0",
     "husky": "^9.1.7",
+    "identity-obj-proxy": "^3.0.0",
+    "jest": "^30.0.5",
+    "jest-environment-jsdom": "^30.0.5",
     "lint-staged": "^15.5.2",
     "postcss": "^8.5.3",
     "prettier": "^3.6.2",
     "tailwindcss": "^4.1.5",
-    "typescript": "^5.8.3",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.9.2",
     "vite": "^6.3.1"
   }
 }
