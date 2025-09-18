@@ -7,7 +7,7 @@ import { Button, Form, TableProps, Upload } from "antd";
 import type { UploadFile } from "antd/lib/upload/interface";
 
 import BaseModal from "@/components/BaseModal";
-import CategoryTables from "@/components/CategoryTables";
+import FlatTables from "@/components/FlatTables";
 
 import { categories, getColumns, ItemType } from "./data";
 import DataManualModal from "./DataManualModa";
@@ -143,10 +143,11 @@ const DataModal: React.FC<DataModalProps> = ({
             <p className="ant-upload-text">Arrastra el archivo aquí</p>
             <p className="ant-upload-hint">o haz clic para seleccionarlo</p>
           </Dragger>
-          <CategoryTables<ItemType>
+
+          <FlatTables
             data={categories}
             columns={columns}
-            onTableChange={handleChange}
+            onTableChange={() => {}}
           />
         </div>
       </BaseModal>
