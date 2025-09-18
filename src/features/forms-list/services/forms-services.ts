@@ -94,3 +94,55 @@ export async function getFormularioById(
   if (!res.ok) throw new Error("No se pudo cargar el formulario");
   return res.json();
 }
+
+export async function deleteFormulario(
+  id: string,
+  opts?: { signal?: AbortSignal }
+): Promise<void> {
+  const csrf = getCookie("csrftoken");
+
+  const res = await fetch(
+    `${import.meta.env.VITE_API_BASE_URL}/api/formularios/${id}/`,
+    {
+      method: "DELETE",
+      headers: {
+        Accept: "application/json",
+        ...(csrf ? { "X-CSRFToken": csrf } : {}),
+      },
+      signal: opts?.signal,
+    }
+  );
+
+  if (!res.ok) {
+    const msg = await res.text().catch(() => "");
+    throw new Error(msg || "Error al eliminar formulario");
+  }
+}
+
+export async function duplicateFormulario(
+  id: string,
+  opts?: { signal?: AbortSignal }
+): Promise<Formulario> {
+  const csrf = getCookie("csrftoken");
+
+  const res = await fetch(
+    `${import.meta.env.VITE_API_BASE_URL}/api/formularios/${id}/duplicar/`,
+    {
+      method: "POST",
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json",
+        ...(csrf ? { "X-CSRFToken": csrf } : {}),
+      },
+      signal: opts?.signal,
+      // credentials: "include", // cookies
+    }
+  );
+
+  if (!res.ok) {
+    const msg = await res.text().catch(() => "");
+    throw new Error(msg || "Error al duplicar formulario");
+  }
+
+  return res.json();
+}

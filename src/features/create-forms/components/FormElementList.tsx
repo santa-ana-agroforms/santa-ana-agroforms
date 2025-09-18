@@ -1,5 +1,5 @@
 // src/components/FormElementsList.tsx
-import React, { useState } from "react";
+import React from "react";
 
 import {
   BarChartOutlined,
@@ -25,10 +25,8 @@ import {
 } from "@ant-design/icons";
 import { Menu, MenuProps } from "antd";
 
-import EditFieldModal, { FieldFormValues, VariantType } from "./EditFieldModal";
-
 interface FormElementsListProps {
-  onSelect: (key: string) => void;
+  onMenuClick: MenuProps["onClick"];
 }
 
 const items = [
@@ -62,47 +60,15 @@ const items = [
   },
 ];
 
-const opciones = ["Decimal", "Entero", "Texto"];
-const grupos = ["Grupo A", "Grupo B", "Otro"];
-
-const FormElementsList: React.FC<FormElementsListProps> = ({ onSelect }) => {
-  const [visible, setVisible] = useState(false);
-  const [selectedKey, setSelectedKey] = useState<VariantType>();
-  const [fieldData, setFieldData] = useState<Partial<FieldFormValues>>({});
-
-  // Cuando el usuario hace click en un item, guardamos la key y abrimos modal
-  const handleMenuClick: MenuProps["onClick"] = ({ key }) => {
-    setSelectedKey(key as VariantType);
-
-    // aquí podrías hacer setFieldData(...) con datos por defecto según el tipo
-    setVisible(true);
-  };
-
-  const handleSave = (vals: FieldFormValues) => {
-    console.log("Guardado:", vals);
-    if (selectedKey) {
-      onSelect(selectedKey);
-    }
-    setVisible(false);
-  };
-
+const FormElementsList: React.FC<FormElementsListProps> = ({ onMenuClick }) => {
   return (
     <>
       <Menu
         mode="inline"
         style={{ height: "100%", borderRight: 0 }}
         //onClick={e => onSelect(e.key)}
-        onClick={handleMenuClick}
+        onClick={onMenuClick}
         items={items}
-      />
-      <EditFieldModal
-        visible={visible}
-        initialValues={fieldData}
-        variant={selectedKey}
-        opcionesList={opciones}
-        gruposList={grupos}
-        onSave={handleSave}
-        onCancel={() => setVisible(false)}
       />
     </>
   );

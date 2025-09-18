@@ -65,8 +65,6 @@ const NewFormModal: FC<NewFormModalProps> = ({
   // Mutación: crear formulario
   const { mutate: createFormulario, isPending } = useCreateFormulario();
 
-  console.warn("cat: ", categorias);
-
   useEffect(() => {
     if (visible) {
       if (initialValues) {
@@ -214,8 +212,8 @@ const NewFormModal: FC<NewFormModalProps> = ({
               rules={[{ required: true, message: "Selecciona forma de envío" }]}
             >
               <Select placeholder="Selecciona forma de envío">
-                <Option value="En Línea/Fuera">En Línea/Fuera</Option>
-                <Option value="En Línea">En Línea</Option>
+                <Option value="En Linea/fuera Linea">En Línea/Fuera</Option>
+                <Option value="En Linea">En Línea</Option>
                 <Option value="Guardar">Guardar</Option>
               </Select>
             </Form.Item>

@@ -1,104 +1,155 @@
 // src/components/PageSettings.tsx
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 
-import { DiffOutlined } from "@ant-design/icons";
-import { Button, Form, Input, InputNumber, Select } from "antd";
+import { DiffOutlined, DownOutlined } from "@ant-design/icons";
+import { Button, Input, InputNumber, message, Tooltip } from "antd";
 
-import { useCreatePagina } from "../hooks/useCreatePage";
+import { usePostCamposActualBatch } from "../hooks/useCampoActual";
 import { usePaginas } from "../hooks/usePaginas";
+import { FieldJson } from "../types";
 import PageEditModal, { PageValues } from "./PageEditModal";
 
 interface PageSettingsProps {
-  /** Callback cuando se presiona el icono */
-  onIconClick?: () => void;
-  /** Callback cuando se cambia de pagina */
   onPageChange?: (page: PageValues) => void;
+  onPagesChange?: (pages: PageValues[]) => void;
   formId?: string;
+  compiledList: FieldJson[];
+  currentPage?: PageValues;
 }
 
-const { Option } = Select;
-
 const PageSettings: React.FC<PageSettingsProps> = ({
-  onIconClick,
   onPageChange,
+  onPagesChange,
   formId,
+  compiledList,
+  currentPage,
 }) => {
-  const [sequence, setSequence] = useState(1);
-  const [description, setDescription] = useState("Generales");
-  const [title, setTitle] = useState("Generales");
-  const [bgColor, setBgColor] = useState("#FFFFFF");
-  const [textColor, setTextColor] = useState("#000000");
-
   const [pageModalVisible, setPageModalVisible] = useState(false);
-  const { mutate: createPage, isPending } = useCreatePagina(formId!);
+  const [dropdownOpen, setDropdownOpen] = useState(false);
+  const { data: paginas, isLoading, error, refetch } = usePaginas(formId);
 
-  const { data: paginas, isLoading, error } = usePaginas(formId);
+  console.warn("paginas: ", paginas);
 
-  const [pages, setPages] = useState<PageValues[]>([
-    {
-      sequence: 1,
-      description: "Generales",
-      title: "Generales",
-      bgColor: "#FFFFFF",
-      textColor: "#000000",
-    },
-  ]);
+  // Mutaciones
+  const { mutateAsync: postCamposBulk, isPending: sendingBulk } =
+    usePostCamposActualBatch();
+
+  // Solo un estado para el ID seleccionado
+  const [selectedId, setSelectedId] = useState<string | undefined>(undefined);
+
+  // Página actualmente seleccionada (derivada de 'selectedId')
+  const selectedPage = useMemo(
+    () => paginas?.find((p) => p.id === selectedId),
+    [paginas, selectedId]
+  );
+
+  // Mapeo opcional a tu tipo PageValues si onPageChange lo requiere
+  const mapToPageValues = (p: any): PageValues => ({
+    sequence: p.secuencia,
+    description: p.descripcion,
+    title: p.nombre,
+  });
+
+  // 1. Inicializar con la primera página cuando lleguen los datos
+  useEffect(() => {
+    if (paginas && paginas.length > 0 && !selectedId) {
+      setSelectedId(paginas[0].id);
+    }
+  }, [paginas, selectedId]);
+
+  // 2. Sincronizar cuando cambie currentPage (navegación externa)
+  useEffect(() => {
+    if (currentPage && paginas) {
+      const match = paginas.find((p) => p.secuencia === currentPage.sequence);
+      if (match) {
+        console.log(
+          "🔄 Actualizando selectedId por currentPage:",
+          match.nombre
+        );
+        setSelectedId(match.id);
+      }
+    }
+  }, [currentPage, paginas]);
+
+  // 3. Notificar cambios al componente padre
+  useEffect(() => {
+    if (selectedPage) {
+      onPageChange?.(mapToPageValues(selectedPage));
+    }
+  }, [selectedPage, onPageChange]);
+
+  useMemo(() => {
+    if (paginas) {
+      onPagesChange?.(
+        paginas.map((p) => ({
+          sequence: p.secuencia,
+          description: p.descripcion,
+          title: p.nombre,
+        }))
+      );
+    }
+  }, [paginas, onPagesChange]);
+
+  // Handler del dropdown personalizado
+  const handlePageSelect = (pageId: string) => {
+    console.log("👆 Usuario seleccionó página:", pageId);
+    setSelectedId(pageId);
+    setDropdownOpen(false);
+  };
+
+  const handleIconClick = () => setPageModalVisible(true);
+  const handleCancel = () => setPageModalVisible(false);
+
+  const handleUpdate = async (_values: PageValues) => {
+    setPageModalVisible(false);
+    await refetch();
+  };
 
   const handleDelete = () => {
     console.log("Eliminar clicked");
   };
-  const handleSave = () => {
-    console.log("Guardar clicked");
-  };
-
-  const handleIconClick = () => {
-    setPageModalVisible(true);
-  };
-
-  const handleCancel = () => {
-    setPageModalVisible(false);
-  };
-
-  const handleUpdate = (values: PageValues) => {
-    setPageModalVisible(false);
-
-    // Si ya existe, lo actualizas; si no, lo agregas
-    setPages((prev) => {
-      const exists = prev.find((p) => p.title === values.title);
-      if (exists) {
-        return prev.map((p) => (p.title === values.title ? values : p));
-      }
-      return [...prev, values];
-    });
-
-    createPage({
-      sequence: values.sequence,
-      description: values.description,
-      title: values.title,
-      bump: true, // o false si no quieres crear nueva versión
-    });
-  };
-
-  useEffect(() => {
-    const selectedPage = pages.find((p) => p.title === title);
-    if (selectedPage) {
-      setSequence(selectedPage.sequence);
-      setDescription(selectedPage.description);
-      setTitle(selectedPage.title);
-      setBgColor(selectedPage.bgColor);
-      setTextColor(selectedPage.textColor);
-      onPageChange?.(selectedPage);
-    }
-  }, [title, pages]);
-
-  const selectedPageData = pages.find((p) => p.title === title) ?? pages[0];
 
   if (isLoading) return <div>Cargando...</div>;
   if (error) return <div>Error: {error.message}</div>;
 
+  const handleContinue = async () => {
+    console.warn("➡️ JSONs compilados (front):", compiledList);
+
+    if (compiledList.length === 0) {
+      message.warning("¡Necesitas seleccionar al menos un campo! ⚠️");
+      return;
+    }
+
+    if (!selectedId) {
+      console.warn("⚠️ No hay pageId: no se puede enviar al backend.");
+      message.error("No se pudo identificar la página actual (pageId).");
+      return;
+    }
+
+    try {
+      const { ok, errors } = await postCamposBulk({
+        pageId: selectedId,
+        campos: compiledList,
+      });
+
+      console.warn("🌐 Resultados envío:", { ok, errors });
+
+      if (errors.length) {
+        message.error(
+          `Algunos campos fallaron (${errors.length}). Revisa la consola.`
+        );
+      } else {
+        message.success("Campos enviados correctamente.");
+      }
+    } catch (e) {
+      console.error("❌ Error al enviar campos:", e);
+      message.error("Error al enviar campos al backend.");
+    }
+  };
+
   return (
     <div className="bg-white rounded-lg shadow max-w-sm mt-7">
-      {/* Header fijo con icono pressable */}
+      {/* Header */}
       <div className="flex flex-col border-b">
         <div className="flex items-center px-4 py-3">
           <Button
@@ -110,40 +161,76 @@ const PageSettings: React.FC<PageSettingsProps> = ({
           <h3 className="ml-2 text-lg font-medium">Página</h3>
         </div>
 
-        <div className="w-full px-4 items-center justify-center">
-          <Form>
-            <Form.Item name="estado" initialValue={title}>
-              <Select value={title} onChange={setTitle}>
+        {/* Custom Dropdown Selector */}
+        <div className="w-full px-4 pb-4">
+          <div className="relative">
+            <div
+              className="w-full px-3 py-2 border border-gray-300 rounded-md bg-white cursor-pointer hover:border-blue-400 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 flex justify-between items-center"
+              onClick={() => setDropdownOpen(!dropdownOpen)}
+            >
+              <span className="text-gray-900">
+                {selectedPage?.nombre || "Selecciona una página"}
+              </span>
+              <DownOutlined
+                className={`text-gray-400 transition-transform ${dropdownOpen ? "rotate-180" : ""}`}
+              />
+            </div>
+
+            {dropdownOpen && (
+              <div className="absolute z-10 w-full mt-1 bg-white border border-gray-200 rounded-md shadow-lg max-h-60 overflow-auto">
                 {paginas?.map((p) => (
-                  <Option key={p.nombre} value={p.nombre}>
+                  <div
+                    key={p.id}
+                    className={`px-3 py-2 cursor-pointer hover:bg-gray-100 ${
+                      selectedId === p.id ?
+                        "bg-blue-50 text-blue-600"
+                      : "text-gray-900"
+                    }`}
+                    onClick={() => handlePageSelect(p.id)}
+                  >
                     {p.nombre}
-                  </Option>
+                  </div>
                 ))}
-              </Select>
-            </Form.Item>
-          </Form>
+              </div>
+            )}
+          </div>
         </div>
       </div>
 
       <PageEditModal
         visible={pageModalVisible}
-        initialValues={selectedPageData}
+        initialValues={
+          selectedPage ?
+            {
+              id: selectedPage.id,
+              secuencia: selectedPage.secuencia,
+              descripcion: selectedPage.descripcion,
+              nombre: selectedPage.nombre,
+            }
+          : {
+              id: "",
+              secuencia: 1,
+              descripcion: "",
+              nombre: "",
+            }
+        }
         onCancel={handleCancel}
         onUpdate={handleUpdate}
-        existingPages={pages}
+        existingPages={(paginas ?? []).map((p) => ({
+          sequence: p.secuencia,
+          description: p.descripcion,
+          title: p.nombre,
+        }))}
         formId={formId}
       />
 
-      {/* Contenido del form */}
+      {/* Contenido del form (solo lectura, basado en la selección) */}
       <div className="px-4 py-5 space-y-4">
         <div>
           <label className="block text-sm font-medium mb-1">Secuencia</label>
           <InputNumber
             min={1}
-            value={sequence}
-            onChange={(value) => {
-              if (typeof value === "number") setSequence(value);
-            }}
+            value={selectedPage?.secuencia ?? ""}
             className="w-full"
             disabled
           />
@@ -151,57 +238,38 @@ const PageSettings: React.FC<PageSettingsProps> = ({
 
         <div>
           <label className="block text-sm font-medium mb-1">Descripción</label>
-          <Input
-            value={description}
-            onChange={(e) => setDescription(e.target.value)}
-            disabled
-          />
+          <Input value={selectedPage?.descripcion ?? ""} disabled />
         </div>
 
         <div>
           <label className="block text-sm font-medium mb-1">Título</label>
-          <Input
-            value={title}
-            onChange={(e) => setTitle(e.target.value)}
-            disabled
-          />
+          <Input value={selectedPage?.nombre ?? ""} disabled />
         </div>
-
-        {/*
-        
-        <div>
-          <label className="block text-sm font-medium mb-1">Color Fondo</label>
-          <Input
-            type="color"
-            value={bgColor}
-            onChange={(e) => setBgColor(e.target.value)}
-            className="w-full h-8 p-0"
-            disabled
-          />
-        </div>
-
-        <div>
-          <label className="block text-sm font-medium mb-1">Color Texto</label>
-          <Input
-            type="color"
-            value={textColor}
-            onChange={(e) => setTextColor(e.target.value)}
-            className="w-full h-8 p-0"
-            disabled
-          />
-        </div>
-        
-        */}
       </div>
 
-      {/* Footer con botones */}
+      {/* Footer */}
       <div className="flex justify-end gap-3 px-4 py-3 border-t space-x-2">
         <Button danger onClick={handleDelete}>
           ELIMINAR
         </Button>
-        <Button type="primary" onClick={handleSave}>
-          GUARDAR
-        </Button>
+        <Tooltip
+          title={
+            compiledList.length === 0 ?
+              "Debes seleccionar un campo para guardar"
+            : ""
+          }
+        >
+          <span>
+            <Button
+              type="primary"
+              onClick={handleContinue}
+              loading={sendingBulk}
+              disabled={sendingBulk || compiledList.length === 0}
+            >
+              GUARDAR
+            </Button>
+          </span>
+        </Tooltip>
       </div>
     </div>
   );

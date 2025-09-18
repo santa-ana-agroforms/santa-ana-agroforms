@@ -65,7 +65,7 @@ const DataSouceModal: FC<NewFormModalProps> = ({
     <BaseModal
       open={visible}
       onCancel={handleCancel}
-      title="Adición de Formulario"
+      title="Adición de Fuente de Dato"
       {...modalProps}
       width={750}
     >
@@ -92,7 +92,7 @@ const DataSouceModal: FC<NewFormModalProps> = ({
           </Form.Item>
         </div>
 
-        <div className="w-2xl pl-9">
+        <div className="w-2xl">
           <Form.Item
             label="Descripción"
             name="descripcion"
@@ -104,7 +104,7 @@ const DataSouceModal: FC<NewFormModalProps> = ({
           </Form.Item>
         </div>
 
-        <div className="w-2xl pl-3">
+        <div className="w-2xl pl-1">
           <Form.Item
             label="Tipo fuente:"
             name="tipo_fuente"
@@ -112,23 +112,26 @@ const DataSouceModal: FC<NewFormModalProps> = ({
               { required: true, message: "Seleccione un tipo de fuente" },
             ]}
           >
-            <Select placeholder="Selecciona un tipo de fuente"></Select>
+            <Select placeholder="Selecciona un tipo de fuente">
+              <Select.Option value="local">Local</Select.Option>
+              <Select.Option value="esterna">Externa</Select.Option>
+            </Select>
           </Form.Item>
         </div>
 
-        <div className="w-2xl pl-9">
+        <div className="w-2xl pl-7">
           <Form.Item label="Conexión:" name="conexion">
             <Input />
           </Form.Item>
         </div>
 
-        <div className="w-2xl pl-9">
+        <div className="w-2xl pl-7">
           <Form.Item label="Comando:" name="comando">
             <Input />
           </Form.Item>
         </div>
 
-        <div className="w-2xl pl-9">
+        <div className="w-2xl ">
           <Form.Item label="Intervalo (segs):" name="intervalo">
             <Input />
           </Form.Item>

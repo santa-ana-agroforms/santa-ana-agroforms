@@ -1,11 +1,8 @@
 import React, { useCallback, useMemo, useState } from "react";
 
-import { ArrowUpOutlined, FilterOutlined } from "@ant-design/icons";
 import {
-  Button,
-  Col,
   Collapse,
-  Input,
+  message,
   Skeleton,
   TableColumnType,
   TableProps,
@@ -14,12 +11,19 @@ import {
 import moment from "moment";
 
 import CategoryTables from "@/components/CategoryTables";
+import DeleteFormModal from "@/components/CategoryTables/components/DeleteFormModal";
+import DuplicateFormModal from "@/components/CategoryTables/components/DuplicateFormModal";
 import NewFormModal, {
   NewFormValues,
 } from "@/components/CategoryTables/components/NewFormModal";
+import SuspendFormModal from "@/components/CategoryTables/components/SuspendFormModal";
 import { getColumns } from "@/components/CategoryTables/data";
 
 import { useFormsListsData } from "./hooks/useFormsListsData";
+import {
+  useDeleteFormulario,
+  useDuplicateFormulario,
+} from "./hooks/useFormularios";
 
 const { Panel } = Collapse;
 const { Title } = Typography;
@@ -58,9 +62,20 @@ const FormsLists: React.FC<FormsListsProps> = ({ onSelectForm }) => {
   const [selectedItem, setSelectedItem] = useState<ItemType | null>(null);
   const [modalVisible, setModalVisible] = useState(false);
 
-  const [loading, setLoading] = useState<boolean>(true);
+  //Modal para borrar
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
 
-  //const [categoriesData, setCategoriesData] = useState<CategoryType[]>([]);
+  //Modal para duplicar
+  const [isDuplicateModalOpen, setIsDuplicateModalOpen] = useState(false);
+
+  //Modal para duplicar
+  const [isSuspendModalOpen, setIsSuspendModalOpen] = useState(false);
+
+  const { mutate: deleteForm, isPending: isDeletingForm } =
+    useDeleteFormulario();
+
+  const { mutate: duplicate, isPending: isDuplicateForm } =
+    useDuplicateFormulario();
 
   const handleAdd = () => {
     setOpen(true);
@@ -78,16 +93,73 @@ const FormsLists: React.FC<FormsListsProps> = ({ onSelectForm }) => {
     setModalVisible(true);
   }, []);
 
+  const handleDelete = useCallback((record: ItemType) => {
+    setSelectedItem(record); // Guarda el registro seleccionado
+    setIsDeleteModalOpen(true); // Abre el modal
+  }, []);
+
+  const handleDuplicate = useCallback((record: ItemType) => {
+    setSelectedItem(record); // Guarda el registro seleccionado
+    setIsDuplicateModalOpen(true); // Abre el modal
+  }, []);
+
+  const handleSuspend = useCallback((record: ItemType) => {
+    setSelectedItem(record); // Guarda el registro seleccionado
+    setIsSuspendModalOpen(true); // Abre el modal
+  }, []);
+
   const handleCreate = (values: NewFormValues) => {
     console.log("Nuevos valores:", values);
     // aquí haces el post o actualización de estado…
   };
 
+  const handleConfirmDelete = useCallback(() => {
+    if (!selectedItem) {
+      message.warning("No hay un formulario seleccionado para borrar.");
+      return;
+    }
+
+    deleteForm(selectedItem.id.toString(), {
+      onSuccess: () => {
+        message.success(`Formulario "${selectedItem.titulo}" eliminado.`);
+        setIsDeleteModalOpen(false);
+        setSelectedItem(null);
+      },
+      onError: (err: any) => {
+        message.error(
+          err?.message ?? "No se pudo eliminar el formulario. Intenta de nuevo."
+        );
+      },
+    });
+  }, [selectedItem, deleteForm]);
+
+  const handleDuplicateConfirm = useCallback(() => {
+    if (!selectedItem) {
+      message.warning("No hay un formulario seleccionado para duplicar.");
+      return;
+    }
+
+    duplicate(selectedItem.id.toString(), {
+      onSuccess: (nuevo) => {
+        message.success(
+          `Formulario "${selectedItem.titulo}" duplicado como "${nuevo.nombre}".`
+        );
+        setIsDuplicateModalOpen(false);
+        setSelectedItem(null);
+      },
+      onError: (err: any) => {
+        message.error(
+          err?.message ?? "No se pudo duplicar el formulario. Intenta de nuevo."
+        );
+      },
+    });
+  }, [selectedItem, duplicate]);
+
   const { categoriesData, isLoading, error } = useFormsListsData();
 
-  {
-    console.warn(categoriesData);
-  }
+  // {
+  //   console.warn(categoriesData);
+  // }
 
   const rows = useMemo(
     () => (categoriesData ?? []).flatMap((c) => c.items),
@@ -102,28 +174,16 @@ const FormsLists: React.FC<FormsListsProps> = ({ onSelectForm }) => {
         filteredInfo,
         handleAdd,
         onSelectForm,
-        handleEdit
+        handleEdit,
+        handleDelete,
+        handleDuplicate,
+        handleSuspend
       ),
     [rows, sortedInfo, filteredInfo]
   );
 
   return (
     <div className="flex flex-col p-4 w-full gap-7">
-      <div className="flex justify-between items-center w-full">
-        {/* Botón de Categoría */}
-        <Button icon={<FilterOutlined />} className="flex items-center gap-1">
-          Categoría <ArrowUpOutlined />
-        </Button>
-
-        <Col className="w-60">
-          {/* Input de búsqueda */}
-          <Input
-            placeholder="Introduzca el texto a buscar..."
-            className="w-48"
-          />
-        </Col>
-      </div>
-
       {isLoading ?
         <>
           <Skeleton active />
@@ -155,6 +215,39 @@ const FormsLists: React.FC<FormsListsProps> = ({ onSelectForm }) => {
                 }
               : undefined
             }
+          />
+
+          <DeleteFormModal
+            open={isDeleteModalOpen}
+            formTitle={selectedItem ? selectedItem.titulo : ""}
+            loading={isDeletingForm}
+            onConfirm={handleConfirmDelete}
+            onCancel={() => {
+              setIsDeleteModalOpen(false);
+              setSelectedItem(null);
+            }}
+          />
+
+          <DuplicateFormModal
+            open={isDuplicateModalOpen}
+            formTitle={selectedItem ? selectedItem.titulo : ""}
+            loading={isDuplicateForm}
+            onConfirm={handleDuplicateConfirm}
+            onCancel={() => {
+              setIsDuplicateModalOpen(false);
+              setSelectedItem(null);
+            }}
+          />
+
+          <SuspendFormModal
+            open={isSuspendModalOpen}
+            formTitle={selectedItem ? selectedItem.titulo : ""}
+            loading={false}
+            onConfirm={() => {}}
+            onCancel={() => {
+              setIsSuspendModalOpen(false);
+              setSelectedItem(null);
+            }}
           />
         </>
       }
