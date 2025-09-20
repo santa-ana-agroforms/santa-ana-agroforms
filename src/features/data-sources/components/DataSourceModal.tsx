@@ -107,7 +107,7 @@ const DataSouceModal: FC<NewFormModalProps> = ({
         <div className="w-2xl pl-1">
           <Form.Item
             label="Tipo fuente:"
-            name="tipo_fuente"
+            name="tipoFuente"
             rules={[
               { required: true, message: "Seleccione un tipo de fuente" },
             ]}

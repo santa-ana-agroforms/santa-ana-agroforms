@@ -1,5 +1,5 @@
 // components/DataModal.tsx
-import React, { useCallback, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 
 import { InboxOutlined } from "@ant-design/icons";
 import { Button, Form, TableProps, Upload } from "antd";
@@ -7,9 +7,11 @@ import { Button, Form, TableProps, Upload } from "antd";
 import type { UploadFile } from "antd/lib/upload/interface";
 
 import BaseModal from "@/components/BaseModal";
+import DeleteFormModal from "@/components/CategoryTables/components/DeleteFormModal";
 import FlatTables from "@/components/FlatTables";
 
-import { categories, getColumns, ItemType } from "./data";
+import { useExcelUpload } from "../hooks/useExcelUpload";
+import { CategoryType, DataManualType, getColumns, ItemType } from "./data";
 import DataManualModal from "./DataManualModa";
 
 const { Dragger } = Upload;
@@ -25,7 +27,17 @@ const DataModal: React.FC<DataModalProps> = ({
   onCancel,
   onSubmit,
 }) => {
-  const [fileList, setFileList] = useState<UploadFile[]>([]);
+  //const [fileList, setFileList] = useState<UploadFile[]>([]);
+
+  useEffect(() => {
+    if (!visible) {
+      setFileList([]);
+      setDataManual([
+        { key: "local", name: "Local", items: [] },
+        { key: "externa", name: "Externa", items: [] },
+      ]);
+    }
+  }, [visible]);
 
   /** Estados para el modal “añadir/editar manualmente” */
   const [manualVisible, setManualVisible] = useState(false);
@@ -35,18 +47,6 @@ const DataModal: React.FC<DataModalProps> = ({
 
   /** Estados para el modal de detalle de datos (si lo necesitas) */
   const [detailVisible, setDetailVisible] = useState(false);
-  const [selectedDetailItem, setSelectedDetailItem] = useState<ItemType | null>(
-    null
-  );
-
-  const uploadProps = {
-    multiple: false,
-    fileList,
-    beforeUpload: () => false, // deshabilita el upload automático
-    onChange(info: { fileList: UploadFile[] }) {
-      setFileList(info.fileList);
-    },
-  };
 
   const handleOk = () => {
     onSubmit(fileList);
@@ -60,28 +60,27 @@ const DataModal: React.FC<DataModalProps> = ({
 
   const [filteredInfo, setFilteredInfo] = useState<Filters>({});
   const [sortedInfo, setSortedInfo] = useState<Sorts>({});
-  const [open, setOpen] = useState(false);
   const [selectedItem, setSelectedItem] = useState<ItemType | null>(null);
   const [modalVisible, setModalVisible] = useState(false);
-  const [selected, setSelected] = useState<ItemType | null>(null);
 
   const handleAdd = () => {
-    setManualInitialValues(undefined); // nuevo
+    setManualInitialValues(undefined);
     setManualVisible(true);
   };
 
-  const handleEdit = useCallback((record: ItemType) => {
-    setManualInitialValues(record); // editas con valores del registro
+  const handleEdit = (record: ItemType) => {
+    setManualInitialValues(record);
     setManualVisible(true);
-  }, []);
+  };
 
   const handleDelete = useCallback((_record: ItemType) => {
-    setOpen(false);
-    setModalVisible(false);
+    //setOpen(true);
+    setSelectedItem(_record);
+    setModalVisible(true);
   }, []);
 
   const handleDatos = (record: ItemType) => {
-    setSelectedDetailItem(record);
+    setSelectedItem(record);
     setDetailVisible(true);
   };
 
@@ -101,18 +100,25 @@ const DataModal: React.FC<DataModalProps> = ({
 
   const handleCancel = () => {
     setModalVisible(false);
-    setSelected(null);
+    setSelectedItem(null);
   };
 
   const handleSubmit = () => {
-    console.log("Subiendo archivos para registro:", selected);
+    console.log("Subiendo archivos para registro:", selectedItem);
     // → aquí llamas a tu API
     setModalVisible(false);
-    setSelected(null);
+    setSelectedItem(null);
   };
 
   // Create a Form instance
   const [formInstance] = Form.useForm();
+
+  const [dataManual, setDataManual] = useState<CategoryType[]>([
+    { key: "local", name: "Local", items: [] },
+    { key: "externa", name: "Externa", items: [] },
+  ]);
+
+  const { uploadProps, fileList, setFileList } = useExcelUpload(setDataManual);
 
   return (
     <>
@@ -121,12 +127,24 @@ const DataModal: React.FC<DataModalProps> = ({
         onCancel={() => {
           setFileList([]);
           onCancel();
+          setDataManual([
+            { key: "local", name: "Local", items: [] },
+            { key: "externa", name: "Externa", items: [] },
+          ]);
         }}
         title="Contenido de Datos"
         width={1350}
         footer={[
           <Form.Item>
-            <Button type="primary" htmlType="submit">
+            <Button
+              type="primary"
+              htmlType="submit"
+              disabled={
+                dataManual[0].items.length === 0 &&
+                dataManual[1].items.length === 0
+              }
+              onClick={handleOk}
+            >
               Guardar
             </Button>
             <Button style={{ marginLeft: 8 }} onClick={onCancel}>
@@ -145,9 +163,9 @@ const DataModal: React.FC<DataModalProps> = ({
           </Dragger>
 
           <FlatTables
-            data={categories}
+            data={dataManual}
             columns={columns}
-            onTableChange={() => {}}
+            onTableChange={handleChange}
           />
         </div>
       </BaseModal>
@@ -159,14 +177,61 @@ const DataModal: React.FC<DataModalProps> = ({
           setManualInitialValues(undefined);
         }}
         onSubmit={(values) => {
-          if (manualInitialValues) {
-            console.log("Actualizando registro con:", values);
-            // → tu lógica de edición
-          } else {
-            console.log("Añadiendo nuevo registro:", values);
-            // → tu lógica de alta
-          }
+          setDataManual((prev) =>
+            prev.map((cat) => {
+              if (cat.key === "local") {
+                if (manualInitialValues) {
+                  // Actualizar registro existente
+                  return {
+                    ...cat,
+                    items: cat.items.map((it) =>
+                      it.key === manualInitialValues.key ?
+                        { ...it, ...values }
+                      : it
+                    ),
+                  };
+                } else {
+                  // Añadir nuevo
+                  return {
+                    ...cat,
+                    items: [
+                      ...cat.items,
+                      {
+                        ...(values as DataManualType),
+                        key: Date.now().toString(),
+                      },
+                    ],
+                  };
+                }
+              }
+              return cat;
+            })
+          );
+
           setManualVisible(false);
+          setManualInitialValues(undefined);
+        }}
+      />
+
+      <DeleteFormModal
+        open={modalVisible}
+        confirmText={`¿Estás seguro de querer borrar el dato: ${selectedItem?.descripcion}?`}
+        loading={false}
+        onConfirm={() => {
+          if (selectedItem) {
+            setDataManual((prev) =>
+              prev.map((cat) => ({
+                ...cat,
+                items: cat.items.filter((it) => it.key !== selectedItem.key),
+              }))
+            );
+          }
+          setModalVisible(false);
+          setSelectedItem(null);
+        }}
+        onCancel={() => {
+          setModalVisible(false);
+          setSelectedItem(null);
         }}
       />
     </>
