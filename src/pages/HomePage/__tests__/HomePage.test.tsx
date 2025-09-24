@@ -34,3 +34,17 @@ describe('HomePage', () => {
     expect(h2).toBeInTheDocument();
   });
 });
+
+describe('HomePage Card', () => {
+  test('Mostrar un acceso rápido o card', () => {
+    render(
+      <MemoryRouter>
+        <HomePage />
+      </MemoryRouter>
+    );
+
+    // Verificar varias instancias de Dashboard
+    const dashboards = screen.getAllByText(/Dashboard/i);
+    expect(dashboards.length).toBeGreaterThan(0);
+  });
+});

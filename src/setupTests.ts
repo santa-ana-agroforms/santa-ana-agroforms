@@ -1,21 +1,18 @@
-import React from 'react';
 import '@testing-library/jest-dom';
 import { TextEncoder, TextDecoder } from 'util';
-// @ts-ignore
-if (!global.TextEncoder) (global as any).TextEncoder = TextEncoder;
-// @ts-ignore
-if (!global.TextDecoder) (global as any).TextDecoder = TextDecoder as any;
 
-// matchMedia para breakpoints de AntD
+if (!(global as any).TextEncoder) (global as any).TextEncoder = TextEncoder;
+if (!(global as any).TextDecoder) (global as any).TextDecoder = TextDecoder as any;
+
 Object.defineProperty(window, 'matchMedia', {
   writable: true,
   value: jest.fn().mockImplementation((query: string) => ({
     matches: false,
     media: query,
     onchange: null,
-    addListener: jest.fn(),            // legacy
+    addListener: jest.fn(), // legacy
     removeListener: jest.fn(),
-    addEventListener: jest.fn(),       // moderno
+    addEventListener: jest.fn(), // moderno
     removeEventListener: jest.fn(),
     dispatchEvent: jest.fn(),
   })),
@@ -31,9 +28,7 @@ jest.mock('@ant-design/plots', () => {
   const stub =
     (testId: string) =>
     (props: any) =>
-      React.createElement('div', {
-        'data-testid': props?.['data-testid'] || testId,
-      });
+      React.createElement('div', { 'data-testid': props?.['data-testid'] || testId });
 
   return {
     __esModule: true,
@@ -47,26 +42,55 @@ jest.mock('@ant-design/plots', () => {
 const originalError = console.error;
 const originalWarn = console.warn;
 
+type Filter = (msg: string, args: unknown[]) => boolean;
+
+const toMsg = (args: unknown[]) =>
+  args
+    .map((a) =>
+      typeof a === 'string' ? a : a instanceof Error ? a.message : (() => {
+        try { return JSON.stringify(a); } catch { return String(a); }
+      })()
+    )
+    .join(' ');
+
+const shouldIgnore = (filters: Filter[], msg: string, args: unknown[]) =>
+  filters.some((f) => f(msg, args));
+
+const errorFilters: Filter[] = [
+  (m) => m.includes('[antd: Modal] `visible` is deprecated'),
+  (m) => /Not implemented:\s*window\.getComputedStyle/i.test(m),
+  (m) => /Each child in a list should have a unique "key" prop/i.test(m),
+  (m) => /not wrapped in act/i.test(m) && /(rc-menu|antd[\/\\]lib[\/\\]menu)/i.test(m),
+];
+
+const warnFilters: Filter[] = [
+  (m) => /A function to advance timers was called/i.test(m),
+  (m) => /^paginas:\s*/i.test(m),
+];
+
+const SHOW_IGNORED = process.env.SHOW_IGNORED_LOGS === '1';
+
 beforeAll(() => {
-  jest.spyOn(console, 'error').mockImplementation((...args: any[]) => {
-    const [first] = args;
-    if (typeof first === 'string' && (
-        first.includes('[antd: Modal] `visible` is deprecated') ||
-        first.includes('Not implemented: window.getComputedStyle')
-      )) {
+  jest.spyOn(console, 'error').mockImplementation((...args: unknown[]) => {
+    const msg = toMsg(args);
+    if (shouldIgnore(errorFilters, msg, args)) {
+      if (SHOW_IGNORED) originalError('[IGNORED error]', ...args as any);
       return;
     }
-    (originalError as any)(...args);
+    originalError(...args as any);
   });
 
-  jest.spyOn(console, 'warn').mockImplementation((...args: any[]) => {
-    const [first] = args;
-    if (typeof first === 'string' && first.includes('A function to advance timers was called')) {
+  jest.spyOn(console, 'warn').mockImplementation((...args: unknown[]) => {
+    const msg = toMsg(args);
+    if (shouldIgnore(warnFilters, msg, args)) {
+      if (SHOW_IGNORED) originalWarn('[IGNORED warn]', ...args as any);
       return;
     }
-    (originalWarn as any)(...args);
+    originalWarn(...args as any);
   });
 });
+
 afterAll(() => {
   (console.error as jest.Mock).mockRestore();
+  (console.warn as jest.Mock).mockRestore();
 });
