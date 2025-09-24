@@ -1,4 +1,9 @@
 import '@testing-library/jest-dom';
+import { TextEncoder, TextDecoder } from 'util';
+// @ts-ignore
+if (!global.TextEncoder) (global as any).TextEncoder = TextEncoder;
+// @ts-ignore
+if (!global.TextDecoder) (global as any).TextDecoder = TextDecoder as any;
 
 // matchMedia para breakpoints de AntD
 Object.defineProperty(window, 'matchMedia', {
