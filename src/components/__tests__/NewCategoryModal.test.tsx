@@ -1,11 +1,10 @@
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import NewCategoryModal from '@/components/NewCategoryModal';
 
 jest.mock('@/features/forms-list/hooks/useCategorias', () => ({
   useCreateCategoria: () => ({ mutate: jest.fn(), isPending: false }),
 }));
-
-import NewCategoryModal from '@/components/NewCategoryModal';
 
 describe('NewCategoryModal', () => {
   test('Renderiza título y campos cuando visible=true', () => {

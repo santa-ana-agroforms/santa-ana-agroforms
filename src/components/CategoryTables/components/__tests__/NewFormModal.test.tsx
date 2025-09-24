@@ -26,9 +26,7 @@ describe('NewFormModal', () => {
       />
     );
 
-    // ⬇️ Cambiar este assertion:
     expect(screen.getByText('Adición de Formulario')).toBeInTheDocument();
-
     expect(screen.getByLabelText(/Título/i)).toBeInTheDocument();
     expect(screen.getByLabelText(/Descripción/i)).toBeInTheDocument();
     expect(screen.getByLabelText(/^Desde$/i)).toBeInTheDocument();

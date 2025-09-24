@@ -35,7 +35,7 @@ describe('CategoryTables', () => {
     await user.click(headerA);
     await user.click(headerB);
 
-    // Ahora sí, filas visibles
+    // Filas visibles
     expect(screen.getByText('Uno')).toBeInTheDocument();
     expect(screen.getByText('Dos')).toBeInTheDocument();
   });

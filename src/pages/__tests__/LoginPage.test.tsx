@@ -1,5 +1,6 @@
 import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import { LoginPage } from '@/pages/LoginPage';
 
 // Mock estable de useNavigate
 const mockNavigate = jest.fn();
@@ -10,8 +11,6 @@ jest.mock('react-router-dom', () => {
     useNavigate: () => mockNavigate,
   };
 });
-
-import { LoginPage } from '@/pages/LoginPage';
 
 describe('LoginPage', () => {
   beforeEach(() => {
