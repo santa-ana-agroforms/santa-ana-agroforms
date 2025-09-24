@@ -1,3 +1,4 @@
+import React from 'react';
 import '@testing-library/jest-dom';
 import { TextEncoder, TextDecoder } from 'util';
 // @ts-ignore
@@ -24,6 +25,24 @@ const _getComputedStyle = window.getComputedStyle?.bind(window) as typeof window
 window.getComputedStyle = ((elt: Element) => {
   return _getComputedStyle ? _getComputedStyle(elt) : ({ getPropertyValue: () => '' } as any);
 }) as typeof window.getComputedStyle;
+
+jest.mock('@ant-design/plots', () => {
+  const React = require('react');
+  const stub =
+    (testId: string) =>
+    (props: any) =>
+      React.createElement('div', {
+        'data-testid': props?.['data-testid'] || testId,
+      });
+
+  return {
+    __esModule: true,
+    Line: stub('ant-plot-line'),
+    Column: stub('ant-plot-column'),
+    Pie: stub('ant-plot-pie'),
+    Area: stub('ant-plot-area'),
+  };
+});
 
 const originalError = console.error;
 const originalWarn = console.warn;
