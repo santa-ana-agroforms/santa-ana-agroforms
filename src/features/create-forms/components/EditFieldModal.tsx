@@ -101,11 +101,10 @@ const EditFieldModal: FC<EditFieldModalProps> = ({
   // 4) En handleFinish: construir y devolver el JSON + normalizar values.opciones
   const handleFinish = (values: FieldFormValues) => {
     if (variant === "dato") {
-      const { tipo, clase } = mapDatoToTipoClase(values.opciones);
+      const { clase } = mapDatoToTipoClase(values.opciones);
 
       // JSON compilado
       const compiled = {
-        tipo,
         clase,
         nombre_campo: values.nombre,
         etiqueta: values.etiqueta,
@@ -118,13 +117,12 @@ const EditFieldModal: FC<EditFieldModalProps> = ({
       onBuild?.(compiled);
 
       // (opcional recomendado) normaliza lo que sube por onSave
-      values = { ...values, opciones: tipo };
+      values = { ...values };
     } else {
-      const { tipo, clase } = mapDatoToTipoClase(undefined, variant);
+      const { clase } = mapDatoToTipoClase(undefined, variant);
 
       // JSON compilado
       const compiled = {
-        tipo,
         clase,
         nombre_campo: values.nombre,
         etiqueta: values.etiqueta,
@@ -137,7 +135,7 @@ const EditFieldModal: FC<EditFieldModalProps> = ({
       onBuild?.(compiled);
 
       // (opcional recomendado) normaliza lo que sube por onSave
-      values = { ...values, opciones: tipo };
+      values = { ...values };
     }
 
     onSave(values);
@@ -170,13 +168,13 @@ const EditFieldModal: FC<EditFieldModalProps> = ({
   const mapDatoToTipoClase = (
     opcion?: string,
     variant?: string
-  ): { tipo: string; clase: string } => {
-    if (opcion === "Número") return { tipo: "numerico", clase: "number" };
-    if (opcion === "Comentarios") return { tipo: "texto", clase: "string" };
-    if (opcion === "Nombre") return { tipo: "texto", clase: "string" };
-    if (variant === "switch") return { tipo: "booleano", clase: "boolean" };
-    if (variant === "fecha") return { tipo: "date", clase: "date" };
-    return { tipo: opcion?.toLowerCase() ?? "texto", clase: "string" };
+  ): { clase: string } => {
+    if (opcion === "Número") return { clase: "number" };
+    if (opcion === "Comentarios") return { clase: "string" };
+    if (opcion === "Nombre") return { clase: "string" };
+    if (variant === "switch") return { clase: "boolean" };
+    if (variant === "fecha") return { clase: "date" };
+    return { clase: "string" };
   };
 
   const valor_inicial = ["Normal", "Botones"];

@@ -1,9 +1,10 @@
 // src/components/CreateForms.tsx
-import React, { useMemo, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 
 import { ArrowLeftOutlined } from "@ant-design/icons";
 import { Button, MenuProps } from "antd";
 
+import { useFormulario } from "../forms-list/hooks/useFormularios";
 import EditFieldModal, {
   FieldFormValues,
   VariantType,
@@ -30,6 +31,39 @@ export type ElementItem = {
 
 const CreateForms: React.FC<CreateFormsProps> = ({ formId, onBack }) => {
   const [groups, setGroups] = useState<string[]>([]);
+  const {
+    data: formulario,
+    isLoading,
+    isError,
+  } = useFormulario(formId.toString());
+
+  useEffect(() => {
+    if (formulario?.paginas) {
+      const inicial: Record<number, ElementItem[]> = {};
+      formulario.paginas.forEach((pagina: any) => {
+        inicial[pagina.secuencia] = pagina.campos.map((campo: any) => ({
+          type: campo.tipo,
+          name: campo.nombre_campo,
+          group: campo.grupo ?? undefined,
+          key: campo.id_campo,
+          variant: campo.tipo,
+          values: {
+            secuencia: campo.sequence ?? 0,
+            nombre: campo.nombre_campo,
+            etiqueta: campo.etiqueta,
+            ayuda: campo.ayuda ?? "",
+            color: campo.color ?? "",
+            requerido: campo.requerido,
+            tamano: campo.tamano ?? 0,
+            opciones: campo.opciones ?? "",
+            grupo: campo.grupo ?? "",
+            reglaVisualizacion: campo.reglaVisualizacion ?? "",
+          } satisfies Partial<FieldFormValues>, // 👈 importantísimo
+        }));
+      });
+      setElementsByPage(inicial);
+    }
+  }, [formulario]);
 
   const [elementsByPage, setElementsByPage] = useState<
     Record<number, ElementItem[]>
@@ -113,7 +147,6 @@ const CreateForms: React.FC<CreateFormsProps> = ({ formId, onBack }) => {
     setElementsByPage((prev) => {
       const pageKey = selectedPage.sequence;
       const prevList = prev[pageKey] ?? [];
-      console.warn("keyTIPE_ ", keyType);
       const next: ElementItem = {
         type: keyType ?? key,
         name:
@@ -178,12 +211,30 @@ const CreateForms: React.FC<CreateFormsProps> = ({ formId, onBack }) => {
   };
 
   const [selectedPage, setSelectedPage] = useState<PageValues>({
+    id: "0",
     sequence: 1,
     description: "Generales",
     title: "Generales",
-    //bgColor: "#FFFFFF",
-    //textColor: "#000000",
   });
+
+  useEffect(() => {
+    if (formulario?.paginas) {
+      const mappedPages: PageValues[] = formulario.paginas.map((p: any) => ({
+        id: p.id_pagina,
+        sequence: p.secuencia,
+        description: p.descripcion,
+        title: p.nombre,
+      }));
+      setPages(mappedPages);
+
+      // opcional: setear la primera página como seleccionada si aún no hay
+      if (mappedPages.length > 0 && !selectedPage) {
+        setSelectedPage(mappedPages[0]);
+      }
+    }
+  }, [formulario, selectedPage]);
+
+  console.warn("mapped: ", pages);
 
   const handleEditDelete = () => {
     const pageKey = selectedPage.sequence;
@@ -232,8 +283,6 @@ const CreateForms: React.FC<CreateFormsProps> = ({ formId, onBack }) => {
     // aquí podrías hacer setFieldData(...) con datos por defecto según el tipo
     setVisible(true);
   };
-
-  console.warn("pages: ", pages);
 
   return (
     <div className="flex h-full bg-gray-50">
@@ -288,6 +337,9 @@ const CreateForms: React.FC<CreateFormsProps> = ({ formId, onBack }) => {
         <PhoneMockup
           formId={formId}
           onBack={onBack}
+          formulario={formulario} // 👈 nuevo
+          isLoading={isLoading} // 👈 nuevo
+          isError={isError}
           selectedElements={currentElements}
           selectedPage={selectedPage}
           pages={pages}
@@ -299,10 +351,11 @@ const CreateForms: React.FC<CreateFormsProps> = ({ formId, onBack }) => {
       <div>
         <PageSettings
           onPageChange={setSelectedPage}
-          onPagesChange={setPages}
-          formId={String(formId)}
+          pages={pages}
+          pageId={String(selectedPage.id)}
           compiledList={allCompiled}
           currentPage={selectedPage}
+          formId={formId}
         />
       </div>
     </div>

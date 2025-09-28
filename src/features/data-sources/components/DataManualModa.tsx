@@ -33,13 +33,10 @@ const DataManualModal: React.FC<DataManualModalProps> = ({
   };
 
   useEffect(() => {
-    console.warn(visible, initialValues);
     if (visible) {
       if (initialValues) {
-        console.warn("set");
         form.setFieldsValue(initialValues);
       } else {
-        console.warn("reset");
         form.resetFields();
       }
     }

@@ -1,5 +1,9 @@
 // src/components/CategoryTables/data.tsx
-import { DeleteOutlined, FormOutlined, PlusOutlined } from "@ant-design/icons";
+import {
+  DeleteOutlined,
+  FileAddOutlined,
+  FormOutlined,
+} from "@ant-design/icons";
 import { Typography } from "antd";
 import type { ColumnType } from "antd/es/table";
 
@@ -253,14 +257,20 @@ export const getColumns = (
 ): ColumnType<ItemType>[] => [
   {
     title: (
-      <PlusOutlined
-        onClick={onAdd}
-        style={{ cursor: "pointer", fontSize: 16 }}
-      />
+      <>
+        <div
+          onClick={onAdd}
+          title="Crear nuevo formulario"
+          className="flex flex-col items-center justify-center cursor-pointer p-2 hover:bg-gray-100 rounded-md"
+        >
+          <FileAddOutlined className="text-2xl" />
+          <span className="text-xs mt-1">Nueva fuente de dato</span>
+        </div>
+      </>
     ),
     dataIndex: "actions",
     key: "actions",
-    width: 70,
+    width: 110,
     align: "center",
     render: (_: any, record: ItemType) => (
       <>

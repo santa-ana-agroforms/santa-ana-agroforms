@@ -88,10 +88,6 @@ const DataSources: React.FC = () => {
     setSelected(null);
   };
 
-  {
-    console.warn("selected: ", selected, selectedItem);
-  }
-
   return (
     <div className="flex flex-col w-full h-full gap-5">
       <CategoryTables<ItemType>

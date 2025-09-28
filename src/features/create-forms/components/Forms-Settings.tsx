@@ -1,116 +1,84 @@
-// src/components/PageSettings.tsx
-import React, { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 
 import { DiffOutlined, DownOutlined } from "@ant-design/icons";
 import { Button, Input, InputNumber, message, Tooltip } from "antd";
 
 import { usePostCamposActualBatch } from "../hooks/useCampoActual";
-import { usePaginas } from "../hooks/usePaginas";
 import { FieldJson } from "../types";
 import PageEditModal, { PageValues } from "./PageEditModal";
 
 interface PageSettingsProps {
   onPageChange?: (page: PageValues) => void;
-  onPagesChange?: (pages: PageValues[]) => void;
-  formId?: string;
+  pages: PageValues[];
+  pageId?: string;
+  formId?: string | number;
   compiledList: FieldJson[];
   currentPage?: PageValues;
 }
 
 const PageSettings: React.FC<PageSettingsProps> = ({
   onPageChange,
-  onPagesChange,
+  pages,
+  pageId,
   formId,
   compiledList,
   currentPage,
 }) => {
   const [pageModalVisible, setPageModalVisible] = useState(false);
   const [dropdownOpen, setDropdownOpen] = useState(false);
-  const { data: paginas, isLoading, error, refetch } = usePaginas(formId);
+  const [selectedSeq, setSelectedSeq] = useState<number | undefined>(undefined);
 
-  console.warn("paginas: ", paginas);
-
-  // Mutaciones
-  const { mutateAsync: postCamposBulk, isPending: sendingBulk } =
-    usePostCamposActualBatch();
+  const selectedPage = useMemo(
+    () => pages.find((p) => p.sequence === selectedSeq),
+    [pages, selectedSeq]
+  );
 
   // Solo un estado para el ID seleccionado
   const [selectedId, setSelectedId] = useState<string | undefined>(undefined);
 
-  // Página actualmente seleccionada (derivada de 'selectedId')
-  const selectedPage = useMemo(
-    () => paginas?.find((p) => p.id === selectedId),
-    [paginas, selectedId]
-  );
+  const { mutateAsync: postCamposBulk, isPending: sendingBulk } =
+    usePostCamposActualBatch();
 
-  // Mapeo opcional a tu tipo PageValues si onPageChange lo requiere
-  const mapToPageValues = (p: any): PageValues => ({
-    sequence: p.secuencia,
-    description: p.descripcion,
-    title: p.nombre,
-  });
-
-  // 1. Inicializar con la primera página cuando lleguen los datos
+  // inicializar
   useEffect(() => {
-    if (paginas && paginas.length > 0 && !selectedId) {
-      setSelectedId(paginas[0].id);
+    if (pages.length > 0 && !selectedSeq) {
+      setSelectedSeq(pages[0].sequence);
     }
-  }, [paginas, selectedId]);
+  }, [pages, selectedSeq]);
 
-  // 2. Sincronizar cuando cambie currentPage (navegación externa)
+  // sincronizar con currentPage
   useEffect(() => {
-    if (currentPage && paginas) {
-      const match = paginas.find((p) => p.secuencia === currentPage.sequence);
-      if (match) {
-        console.log(
-          "🔄 Actualizando selectedId por currentPage:",
-          match.nombre
-        );
-        setSelectedId(match.id);
-      }
+    if (currentPage) {
+      setSelectedSeq(currentPage.sequence);
     }
-  }, [currentPage, paginas]);
+  }, [currentPage]);
 
-  // 3. Notificar cambios al componente padre
   useEffect(() => {
-    if (selectedPage) {
-      onPageChange?.(mapToPageValues(selectedPage));
+    if (pages.length > 0) {
+      const first = pages[0]; // siempre el primer elemento
+      setSelectedId(first.id);
+      console.warn("COñoo", first);
     }
-  }, [selectedPage, onPageChange]);
+  }, [pages]);
 
-  useMemo(() => {
-    if (paginas) {
-      onPagesChange?.(
-        paginas.map((p) => ({
-          sequence: p.secuencia,
-          description: p.descripcion,
-          title: p.nombre,
-        }))
-      );
+  const handlePageSelect = (seq: number) => {
+    const selected = pages.find((p) => p.sequence === seq);
+    if (selected) {
+      console.warn("select: ", selected);
+      onPageChange?.(selected); // ⬅️ avisa al padre
+      setSelectedId(selected.id);
     }
-  }, [paginas, onPagesChange]);
-
-  // Handler del dropdown personalizado
-  const handlePageSelect = (pageId: string) => {
-    console.log("👆 Usuario seleccionó página:", pageId);
-    setSelectedId(pageId);
     setDropdownOpen(false);
   };
 
   const handleIconClick = () => setPageModalVisible(true);
   const handleCancel = () => setPageModalVisible(false);
 
-  const handleUpdate = async (_values: PageValues) => {
-    setPageModalVisible(false);
-    await refetch();
-  };
-
   const handleDelete = () => {
     console.log("Eliminar clicked");
   };
 
-  if (isLoading) return <div>Cargando...</div>;
-  if (error) return <div>Error: {error.message}</div>;
+  console.warn("pageiID: ", pageId);
 
   const handleContinue = async () => {
     console.warn("➡️ JSONs compilados (front):", compiledList);
@@ -126,9 +94,11 @@ const PageSettings: React.FC<PageSettingsProps> = ({
       return;
     }
 
+    console.warn("pageID ENVIANDO: ", pageId);
+
     try {
       const { ok, errors } = await postCamposBulk({
-        pageId: selectedId,
+        pageId: pageId as string,
         campos: compiledList,
       });
 
@@ -165,11 +135,11 @@ const PageSettings: React.FC<PageSettingsProps> = ({
         <div className="w-full px-4 pb-4">
           <div className="relative">
             <div
-              className="w-full px-3 py-2 border border-gray-300 rounded-md bg-white cursor-pointer hover:border-blue-400 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 flex justify-between items-center"
+              className="w-full px-3 py-2 border border-gray-300 rounded-md bg-white cursor-pointer flex justify-between items-center"
               onClick={() => setDropdownOpen(!dropdownOpen)}
             >
               <span className="text-gray-900">
-                {selectedPage?.nombre || "Selecciona una página"}
+                {selectedPage?.title || "Selecciona una página"}
               </span>
               <DownOutlined
                 className={`text-gray-400 transition-transform ${dropdownOpen ? "rotate-180" : ""}`}
@@ -178,17 +148,17 @@ const PageSettings: React.FC<PageSettingsProps> = ({
 
             {dropdownOpen && (
               <div className="absolute z-10 w-full mt-1 bg-white border border-gray-200 rounded-md shadow-lg max-h-60 overflow-auto">
-                {paginas?.map((p) => (
+                {pages.map((p) => (
                   <div
-                    key={p.id}
+                    key={p.sequence}
                     className={`px-3 py-2 cursor-pointer hover:bg-gray-100 ${
-                      selectedId === p.id ?
+                      selectedSeq === p.sequence ?
                         "bg-blue-50 text-blue-600"
                       : "text-gray-900"
                     }`}
-                    onClick={() => handlePageSelect(p.id)}
+                    onClick={() => handlePageSelect(p.sequence)}
                   >
-                    {p.nombre}
+                    {p.title}
                   </div>
                 ))}
               </div>
@@ -200,50 +170,33 @@ const PageSettings: React.FC<PageSettingsProps> = ({
       <PageEditModal
         visible={pageModalVisible}
         initialValues={
-          selectedPage ?
-            {
-              id: selectedPage.id,
-              secuencia: selectedPage.secuencia,
-              descripcion: selectedPage.descripcion,
-              nombre: selectedPage.nombre,
-            }
-          : {
-              id: "",
-              secuencia: 1,
-              descripcion: "",
-              nombre: "",
-            }
+          selectedPage ?? {
+            sequence: 1,
+            description: "",
+            title: "",
+          }
         }
         onCancel={handleCancel}
-        onUpdate={handleUpdate}
-        existingPages={(paginas ?? []).map((p) => ({
-          sequence: p.secuencia,
-          description: p.descripcion,
-          title: p.nombre,
-        }))}
-        formId={formId}
+        onUpdate={() => setPageModalVisible(false)}
+        existingPages={pages}
+        formId={formId !== undefined ? String(formId) : undefined}
       />
 
-      {/* Contenido del form (solo lectura, basado en la selección) */}
+      {/* Contenido */}
       <div className="px-4 py-5 space-y-4">
         <div>
           <label className="block text-sm font-medium mb-1">Secuencia</label>
-          <InputNumber
-            min={1}
-            value={selectedPage?.secuencia ?? ""}
-            className="w-full"
-            disabled
-          />
+          <InputNumber min={1} value={selectedPage?.sequence ?? ""} disabled />
         </div>
 
         <div>
           <label className="block text-sm font-medium mb-1">Descripción</label>
-          <Input value={selectedPage?.descripcion ?? ""} disabled />
+          <Input value={selectedPage?.description ?? ""} disabled />
         </div>
 
         <div>
           <label className="block text-sm font-medium mb-1">Título</label>
-          <Input value={selectedPage?.nombre ?? ""} disabled />
+          <Input value={selectedPage?.title ?? ""} disabled />
         </div>
       </div>
 
@@ -263,8 +216,8 @@ const PageSettings: React.FC<PageSettingsProps> = ({
             <Button
               type="primary"
               onClick={handleContinue}
+              disabled={compiledList.length === 0}
               loading={sendingBulk}
-              disabled={sendingBulk || compiledList.length === 0}
             >
               GUARDAR
             </Button>

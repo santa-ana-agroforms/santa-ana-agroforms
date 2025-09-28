@@ -34,9 +34,11 @@ export function useFormulario(id: string) {
   const qc = useQueryClient();
   return useQuery({
     queryKey: ["formulario", id],
+
     queryFn: ({ signal }) => getFormularioById(id, { signal }),
     initialData: () => qc.getQueryData(["formulario", id]), // usa datos de la lista si ya están
     placeholderData: (prev) => prev, // evita parpadeo
+    enabled: !!id,
     staleTime: 60_000,
   });
 }

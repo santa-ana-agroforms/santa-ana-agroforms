@@ -1,13 +1,21 @@
 // src/components/FormsLists/UsersTable.tsx
 import React, { useState } from "react";
 
-import { DeleteOutlined, FormOutlined, PlusOutlined } from "@ant-design/icons";
+import {
+  DeleteOutlined,
+  FormOutlined,
+  QrcodeOutlined,
+  UserAddOutlined,
+} from "@ant-design/icons";
 import { Table, type TableProps } from "antd";
 import type { ColumnsType } from "antd/es/table";
 
 import EditUserModal, {
   EditUserValues,
-} from "../DeviceTables/components/EditUserModal"; // un modal específico para usuarios
+} from "../DeviceTables/components/EditUserModal";
+import QrModal from "./components/QrModal";
+
+// un modal específico para usuarios
 
 export interface UserType {
   key: string;
@@ -46,12 +54,16 @@ const UsersTable: React.FC<Props> = ({
   const [modalOpen, setModalOpen] = useState(false);
   const [selected, setSelected] = useState<UserType | null>(null);
 
+  const [QrModalOpen, setQrModalOpen] = useState(false);
+
   const handleAdd = () => {
     setSelected(null);
     setModalOpen(true);
   };
 
   const handleCancel = () => setModalOpen(false);
+
+  const handleShowQr = () => setQrModalOpen(true);
 
   const handleSave = (values: EditUserValues) => {
     if (selected) {
@@ -65,34 +77,40 @@ const UsersTable: React.FC<Props> = ({
   const columns: ColumnsType<UserType> = [
     {
       title: (
-        <PlusOutlined
+        <div
           onClick={handleAdd}
-          style={{ cursor: "pointer", fontSize: 16 }}
-        />
+          title="Crear nuevo formulario"
+          className="flex flex-col items-center justify-center cursor-pointer p-2 hover:bg-gray-100 rounded-md"
+        >
+          <UserAddOutlined className="text-2xl" />
+          <span className="text-xs mt-1">Nuevo usuario</span>
+        </div>
       ),
       key: "actions",
-      width: 80,
+      width: 100,
       align: "center",
       render: (_: any, record) => (
-        <>
+        <div className="flex gap-2 justify-center">
           <FormOutlined
             onClick={() => {
               setSelected(record);
               setModalOpen(true);
             }}
-            style={{ cursor: "pointer", marginRight: 8 }}
+            className="cursor-pointer"
           />
+          <QrcodeOutlined onClick={handleShowQr} className="cursor-pointer" />
           <DeleteOutlined
             onClick={() => onDelete(record)}
-            style={{ cursor: "pointer" }}
+            className="cursor-pointer"
           />
-        </>
+        </div>
       ),
     },
     {
       title: "Id",
       dataIndex: "id",
       key: "id",
+      width: 120,
       sorter: (a, b) => a.id.localeCompare(b.id),
       ellipsis: true,
     },
@@ -100,6 +118,7 @@ const UsersTable: React.FC<Props> = ({
       title: "Nombre",
       dataIndex: "nombre",
       key: "nombre",
+      width: 240,
       sorter: (a, b) => a.nombre.localeCompare(b.nombre),
       ellipsis: true,
     },
@@ -108,7 +127,7 @@ const UsersTable: React.FC<Props> = ({
       dataIndex: "contraseña",
       key: "contraseña",
       render: () => "•••••••", // siempre oculto
-      width: 120,
+      width: 160,
     },
     {
       title: "Activo",
@@ -118,7 +137,7 @@ const UsersTable: React.FC<Props> = ({
       onFilter: (val, rec) => rec.activo === val,
       render: (v) => (v ? "✔️" : ""),
       sorter: (a, b) => Number(a.activo) - Number(b.activo),
-      width: 100,
+      width: 120,
     },
     {
       title: "Perfil",
@@ -128,7 +147,7 @@ const UsersTable: React.FC<Props> = ({
       onFilter: (val, rec) => rec.perfil === val,
       sorter: (a, b) => a.perfil.localeCompare(b.perfil),
       ellipsis: true,
-      width: 140,
+      width: 170,
     },
     {
       title: "Email",
@@ -153,6 +172,11 @@ const UsersTable: React.FC<Props> = ({
         initialValues={selected ?? undefined}
         onCancel={handleCancel}
         onSave={handleSave}
+      />
+      <QrModal
+        open={QrModalOpen}
+        onClose={() => setQrModalOpen(false)}
+        qrSrc="https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=Ejemplo"
       />
     </>
   );

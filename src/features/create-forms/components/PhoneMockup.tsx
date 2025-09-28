@@ -9,7 +9,6 @@ import {
 import { Button, DatePicker, Input, Select, Switch, Typography } from "antd";
 
 import signatureIcon from "@/assets/signature_icon.svg";
-import { useFormulario } from "@/features/forms-list/hooks/useFormularios";
 
 import { ElementItem } from "..";
 import { PageValues } from "./PageEditModal";
@@ -23,12 +22,18 @@ interface PhoneMockupProps {
   selectedPage: PageValues;
   pages: PageValues[]; // 👈 todas las páginas
   onPageChange: (page: PageValues) => void;
+  formulario?: any; // 👈 nuevo
+  isLoading: boolean; // 👈 nuevo
+  isError: boolean; // 👈 nuevo
   keyType?: string;
   onEditElement?: (index: number) => void;
 }
 
 const PhoneMockup: React.FC<PhoneMockupProps> = ({
   formId,
+  formulario,
+  isLoading,
+  isError,
   onBack,
   selectedElements,
   pages,
@@ -36,8 +41,6 @@ const PhoneMockup: React.FC<PhoneMockupProps> = ({
   selectedPage,
   onEditElement,
 }) => {
-  const { data: formulario, isLoading } = useFormulario(String(formId));
-
   const currentIndex = pages.findIndex((p) => p.title === selectedPage.title);
   const totalPages = pages.length;
 
@@ -57,6 +60,12 @@ const PhoneMockup: React.FC<PhoneMockupProps> = ({
 
   let currentGroupName: string | null = null;
 
+  if (isLoading) return <div>Cargando…</div>;
+  if (isError) return <div>Cargando...</div>;
+  if (!formulario) return <div>Cargando...</div>;
+
+  console.warn("selected_ ", selectedElements);
+
   return (
     <div className="w-80 h-[600px] border border-gray-300 rounded-3xl shadow-lg flex flex-col overflow-hidden bg-white">
       {/* Header */}
@@ -67,7 +76,7 @@ const PhoneMockup: React.FC<PhoneMockupProps> = ({
       {/* Subtítulo */}
       <div className="px-4 py-2 border-b">
         <Text strong>
-          {selectedPage.title} (ID: {formId})
+          {selectedPage.title} (ID: {selectedPage.id})
         </Text>
       </div>
 
@@ -77,6 +86,10 @@ const PhoneMockup: React.FC<PhoneMockupProps> = ({
           <p className="text-gray-500">
             Selecciona un elemento de la barra izquierda
           </p>
+        )}
+
+        {formulario === undefined && (
+          <p className="text-gray-500">Cargando formulario...</p>
         )}
 
         {selectedElements.map((element, index) => {
@@ -106,7 +119,7 @@ const PhoneMockup: React.FC<PhoneMockupProps> = ({
 
           return (
             <div key={index} className={`mb-4 ${indentClass}`}>
-              {element.type === "texto" && (
+              {(element.type === "texto" || element.type === "text") && (
                 <div className="flex flex-row gap-4 items-center">
                   <HighlightOutlined
                     className="cursor-pointer"
@@ -131,7 +144,7 @@ const PhoneMockup: React.FC<PhoneMockupProps> = ({
                 </div>
               )}
 
-              {element.type === "switch" && (
+              {(element.type === "switch" || element.type === "boolean") && (
                 <div className="flex flex-row gap-4 items-center w-full">
                   <HighlightOutlined
                     className="cursor-pointer"
@@ -165,7 +178,7 @@ const PhoneMockup: React.FC<PhoneMockupProps> = ({
                 </div>
               )}
 
-              {element.type === "fecha" && (
+              {(element.type === "fecha" || element.type === "date") && (
                 <div className="flex flex-row gap-4 items-center">
                   <HighlightOutlined
                     className="cursor-pointer"

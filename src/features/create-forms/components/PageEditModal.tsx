@@ -17,6 +17,7 @@ import { type PaginaAPI } from "../services/pages.services";
 
 /** Forma de los datos de página */
 export interface PageValues {
+  id?: string;
   sequence: number;
   description: string;
   title: string;
@@ -47,6 +48,7 @@ const PageEditModal: FC<PageEditModalProps> = ({
   ...modalProps
 }) => {
   const [form] = Form.useForm<PageValues>();
+
   const { mutate: createPage, isPending, error } = useCreatePagina(formId!);
 
   // const handleFinish = (values: PageValues) => {
