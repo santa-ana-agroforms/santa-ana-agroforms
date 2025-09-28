@@ -2,7 +2,7 @@ import { render, screen } from '@testing-library/react';
 import BaseModal from '@/components/BaseModal';
 
 describe('BaseModal', () => {
-  test('Cuando visible=true muestra título y contenido', () => {
+  test('Muestra título y contenido cuando está visible', () => {
     render(
       <BaseModal title="Nuevo" open onCancel={() => {}}>
         <div>Contenido del modal</div>
@@ -12,9 +12,9 @@ describe('BaseModal', () => {
     expect(screen.getByText('Contenido del modal')).toBeInTheDocument();
   });
 
-  test('Cuando visible=false no muestra contenido', () => {
+  test('Cuando no muestra contenido', () => {
     render(
-      <BaseModal title="X" visible={false} onCancel={() => {}}>
+      <BaseModal title="X" open={false} onCancel={() => {}}>
         <div>Contenido</div>
       </BaseModal>
     );

@@ -20,7 +20,7 @@ describe('EditUserModal', () => {
       />
     );
 
-    // Verificamos que los campos se rellenan (por su valor)
+    // Verificar que los campos se rellenan
     expect(screen.getByDisplayValue('USR-123')).toBeInTheDocument();
     expect(screen.getByDisplayValue('Mario')).toBeInTheDocument();
     expect(screen.getByDisplayValue('mariog@yahoo.com')).toBeInTheDocument();
