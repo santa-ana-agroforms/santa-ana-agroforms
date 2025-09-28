@@ -1,10 +1,12 @@
 // components/DataManualModal.tsx
-import React from "react";
+import React, { useEffect } from "react";
 
 import { CheckOutlined, CloseOutlined } from "@ant-design/icons";
 import { Button, Col, Form, Input, Row } from "antd";
 
 import BaseModal from "@/components/BaseModal";
+
+import { DataManualType } from "./data";
 
 export interface DataManualModalProps {
   /** Controla la visibilidad del modal */
@@ -12,7 +14,7 @@ export interface DataManualModalProps {
   /** Se dispara al cerrar sin guardar */
   onCancel: () => void;
   /** Se dispara al hacer submit exitoso del form */
-  onSubmit: (values: Record<string, any>) => void;
+  onSubmit: (values: DataManualType) => void;
   /** Valores iniciales (para editar) */
   initialValues?: Record<string, any>;
 }
@@ -25,10 +27,20 @@ const DataManualModal: React.FC<DataManualModalProps> = ({
 }) => {
   const [form] = Form.useForm();
 
-  const handleFinish = (values: Record<string, any>) => {
+  const handleFinish = (values: DataManualType) => {
     onSubmit(values);
     form.resetFields();
   };
+
+  useEffect(() => {
+    if (visible) {
+      if (initialValues) {
+        form.setFieldsValue(initialValues);
+      } else {
+        form.resetFields();
+      }
+    }
+  }, [initialValues, visible, form]);
 
   return (
     <BaseModal
@@ -49,16 +61,14 @@ const DataManualModal: React.FC<DataManualModalProps> = ({
           key="cancel"
           shape="circle"
           icon={<CloseOutlined />}
-          onClick={onCancel}
+          onClick={() => {
+            onCancel();
+            form.resetFields();
+          }}
         />,
       ]}
     >
-      <Form
-        form={form}
-        layout="vertical"
-        initialValues={initialValues}
-        onFinish={handleFinish}
-      >
+      <Form form={form} layout="vertical" onFinish={handleFinish}>
         <Row gutter={24}>
           {/* Columna izquierda: Código + Campos impares */}
           <Col span={12}>

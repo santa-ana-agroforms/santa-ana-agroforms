@@ -19,7 +19,7 @@ const FormListPage: React.FC<FormListPageProps> = ({ onSelectForm }) => {
   const [isNewCategoryOpen, setIsNewCategoryOpen] = useState(false);
 
   return (
-    <div className="flex flex-col">
+    <div className="flex flex-col ">
       <div className="flex justify-between items-center w-full p-4">
         <div className="flex items-center gap-4">
           {/* Botón para crear categoria */}

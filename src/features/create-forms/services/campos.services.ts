@@ -33,7 +33,9 @@ export async function postCampoActualSingle(
 ) {
   if (!pageId) throw new Error("pageId es requerido");
 
-  const url = `${BASE}/api/paginas/${pageId}/campos-actual/`;
+  const url = `${BASE}/api/paginas/${pageId}/campos/`;
+
+  console.warn("Fetch páginas URL:", url);
 
   const res = await fetch(url, {
     method: "POST",

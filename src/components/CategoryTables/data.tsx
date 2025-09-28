@@ -5,7 +5,7 @@ import {
   FormOutlined,
   HolderOutlined,
   MoonOutlined,
-  PlusOutlined,
+  SignatureOutlined,
   SolutionOutlined,
 } from "@ant-design/icons";
 import { Dropdown, MenuProps, Tooltip } from "antd";
@@ -86,10 +86,14 @@ export const getColumns = (
   {
     title: (
       <>
-        <PlusOutlined
+        <div
           onClick={onAdd}
-          style={{ cursor: "pointer", fontSize: 16 }}
-        />
+          title="Crear nuevo formulario"
+          className="flex flex-col items-center justify-center cursor-pointer p-2 hover:bg-gray-100 rounded-md"
+        >
+          <SignatureOutlined className="text-2xl" />
+          <span className="text-xs mt-1">Nuevo formulario</span>
+        </div>
       </>
     ),
     dataIndex: "new_form",

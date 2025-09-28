@@ -14,6 +14,7 @@ export interface Formulario {
   id: number;
   nombre: string;
   descripcion?: string;
+  formulario_id?: string;
 }
 
 export interface CreateFormularioDto {
@@ -44,7 +45,7 @@ export async function getFormularios(options?: {
   signal?: AbortSignal;
 }): Promise<FormularioAPI[]> {
   const res = await fetch(
-    `${import.meta.env.VITE_API_BASE_URL}/api/formularios/`,
+    `${import.meta.env.VITE_API_BASE_URL}/api/formularios-lite/`,
     {
       headers: { Accept: "application/json" },
       signal: options?.signal,
@@ -87,12 +88,22 @@ export async function getFormularioById(
   id: string,
   opts?: { signal?: AbortSignal }
 ) {
-  const res = await fetch(
-    `${import.meta.env.VITE_API_BASE_URL}/api/formularios/${id}/`,
-    { signal: opts?.signal }
-  );
-  if (!res.ok) throw new Error("No se pudo cargar el formulario");
-  return res.json();
+  console.log("Llamando API con id:", id);
+  try {
+    const res = await fetch(
+      `${import.meta.env.VITE_API_BASE_URL}/api/formularios/${id}/`,
+      { signal: opts?.signal }
+    );
+    console.log("Respuesta de la API:", res);
+    if (!res.ok) throw new Error("No se pudo cargar el formulario");
+    return res.json();
+  } catch (err: any) {
+    if (err.name === "AbortError") {
+      console.warn("⚠️ Request abortada por React Query:", id);
+      return; // React Query manejará esto
+    }
+    throw err;
+  }
 }
 
 export async function deleteFormulario(

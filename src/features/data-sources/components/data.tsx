@@ -15,10 +15,26 @@ export interface ItemType {
   datos?: string;
 }
 
+export interface DataManualType {
+  key: string;
+  codigo: string;
+  descripcion: string;
+  campo1?: string;
+  campo2?: string;
+  campo3?: string;
+  campo4?: string;
+  campo5?: string;
+  campo6?: string;
+  campo7?: string;
+  campo8?: string;
+  campo9?: string;
+  campo10?: string;
+}
+
 export interface CategoryType {
   key: string;
   name: string;
-  items: ItemType[];
+  items: DataManualType[];
 }
 
 // --- Tus datos estáticos de categoría + filas ---
@@ -31,20 +47,7 @@ export const categories: CategoryType[] = [
   {
     key: "externa",
     name: "Externa",
-    items: [
-      {
-        key: "E1",
-        codigo: "Lotes",
-        descripcion: "Listado de Lotes",
-        campo1: "",
-        conexion: "Data Source=165…",
-        comando: "SELECT 0 as IdDato…",
-        intervalo: "10,00",
-        ultActualizacion: "29/06/2021",
-        ultMensaje: "OK",
-        datos: "Contenido",
-      },
-    ],
+    items: [],
   },
 ];
 
@@ -85,9 +88,13 @@ export const getColumns = (
     title: "Código",
     dataIndex: "codigo",
     key: "codigo",
-    filters: Array.from(
-      new Set(categories.flatMap((c) => c.items.map((i) => i.codigo)))
-    ).map((c) => ({ text: c, value: c })),
+    filters:
+      categories.some((c) => c.items.length > 0) ?
+        Array.from(
+          new Set(categories.flatMap((c) => c.items.map((i) => i.codigo)))
+        ).map((c) => ({ text: c, value: c }))
+      : undefined,
+
     filteredValue: filteredInfo.codigo || null,
     onFilter: (value, record) => record.codigo.includes(value as string),
     sorter: (a, b) => a.codigo.localeCompare(b.codigo),
@@ -99,9 +106,12 @@ export const getColumns = (
     title: "Descripción",
     dataIndex: "descripcion",
     key: "descripcion",
-    filters: Array.from(
-      new Set(categories.flatMap((c) => c.items.map((i) => i.descripcion)))
-    ).map((t) => ({ text: t, value: t })),
+    filters:
+      categories.some((c) => c.items.length > 0) ?
+        Array.from(
+          new Set(categories.flatMap((c) => c.items.map((i) => i.codigo)))
+        ).map((t) => ({ text: t, value: t }))
+      : undefined,
     filteredValue: filteredInfo.descripcion || null,
     onFilter: (value, record) => record.descripcion.includes(value as string),
     sorter: (a, b) => a.descripcion.localeCompare(b.descripcion),

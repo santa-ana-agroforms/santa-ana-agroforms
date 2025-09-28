@@ -140,9 +140,9 @@ const FormsLists: React.FC<FormsListsProps> = ({ onSelectForm }) => {
     }
 
     duplicate(selectedItem.id.toString(), {
-      onSuccess: (nuevo) => {
+      onSuccess: () => {
         message.success(
-          `Formulario "${selectedItem.titulo}" duplicado como "${nuevo.nombre}".`
+          `Formulario "${selectedItem.titulo}" duplicado correctamente.`
         );
         setIsDuplicateModalOpen(false);
         setSelectedItem(null);
@@ -182,9 +182,11 @@ const FormsLists: React.FC<FormsListsProps> = ({ onSelectForm }) => {
     [rows, sortedInfo, filteredInfo]
   );
 
+  console.warn("isLoading", isLoading, "data", categoriesData.length);
+
   return (
-    <div className="flex flex-col p-4 w-full gap-7">
-      {isLoading ?
+    <div className="flex flex-col p-4 w-full gap-7 ">
+      {isLoading || categoriesData.length === 0 ?
         <>
           <Skeleton active />
           <Skeleton active />

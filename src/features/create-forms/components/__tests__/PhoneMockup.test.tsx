@@ -3,25 +3,19 @@ import { MemoryRouter } from 'react-router-dom';
 import type { PageValues } from '../PageEditModal';
 import PhoneMockup from '@/features/create-forms/components/PhoneMockup';
 
-jest.mock('@/features/forms-list/hooks/useFormularios', () => ({
-  __esModule: true,
-  useFormulario: jest.fn(() => ({
-    data: { nombre: 'Demo' },
-    isLoading: false,
-    error: null,
-  })),
-}));
-
 describe('PhoneMockup', () => {
   test('renderiza encabezado con título de la página', () => {
     const mockPages: PageValues[] = [
-      { title: 'Página 1', description: '', sequence: 1 },
+      { id: 'p1' as any, title: 'Página 1', description: '', sequence: 1 },
     ];
 
     render(
-      <MemoryRouter initialEntries={['/?id=test&pageId=p1']}>
+      <MemoryRouter>
         <PhoneMockup
           formId="test"
+          formulario={{ nombre: 'Demo' }}
+          isLoading={false}
+          isError={false}
           pages={mockPages}
           selectedPage={mockPages[0]}
           selectedElements={[]}

@@ -61,7 +61,7 @@ const DataSourcesPage: React.FC = () => {
   };
 
   return (
-    <div className="flex flex-col w-full h-full gap-4">
+    <div className="flex flex-col w-full h-full gap-4 ">
       <DataSources />
     </div>
   );

@@ -1,5 +1,4 @@
 export type FieldJson = {
-  tipo: string; // ej: "numerico"
   clase: string; // ej: "number"
   nombre_campo: string; // del form: nombre
   etiqueta: string; // del form: etiqueta

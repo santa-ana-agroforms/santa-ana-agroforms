@@ -4,6 +4,7 @@ import React, { useCallback, useState } from "react";
 import { TableProps } from "antd";
 
 import CategoryTables from "@/components/CategoryTables";
+import DeleteFormModal from "@/components/CategoryTables/components/DeleteFormModal";
 import { categories, getColumns } from "@/features/data-sources/data";
 
 import DataModal from "./components/DataModal";
@@ -33,7 +34,9 @@ const DataSources: React.FC = () => {
   const [open, setOpen] = useState(false);
   const [selectedItem, setSelectedItem] = useState<ItemType | null>(null);
   const [modalVisible, setModalVisible] = useState(false);
+  const [modalDeleteVisible, setModalDeleteVisible] = useState(false);
   const [selected, setSelected] = useState<ItemType | null>(null);
+  const [data, setData] = useState(categories);
 
   const handleAdd = () => {
     setOpen(true);
@@ -42,11 +45,11 @@ const DataSources: React.FC = () => {
   const handleEdit = useCallback((record: ItemType) => {
     setOpen(true);
     setSelectedItem(record);
-    setModalVisible(true);
   }, []);
+
   const handleDelete = useCallback((_record: ItemType) => {
-    setOpen(false);
-    setModalVisible(false);
+    setSelectedItem(_record);
+    setModalDeleteVisible(true);
   }, []);
 
   const handleCreate = (values: NewFormValues) => {
@@ -86,9 +89,9 @@ const DataSources: React.FC = () => {
   };
 
   return (
-    <div className="flex flex-col w-full h-full gap-4">
+    <div className="flex flex-col w-full h-full gap-5">
       <CategoryTables<ItemType>
-        data={categories}
+        data={data}
         columns={columns}
         onTableChange={handleChange}
       />
@@ -101,8 +104,31 @@ const DataSources: React.FC = () => {
 
       <DataSourceModal
         visible={open}
+        initialValues={selectedItem || undefined}
         onCancel={() => setOpen(false)}
         onCreate={handleCreate}
+      />
+
+      <DeleteFormModal
+        open={modalDeleteVisible}
+        confirmText={`¿Estás seguro de querer borrar el dato: ${selectedItem?.descripcion}?`}
+        loading={false}
+        onConfirm={() => {
+          if (selectedItem) {
+            setData((prev) =>
+              prev.map((cat) => ({
+                ...cat,
+                items: cat.items.filter((it) => it.key !== selectedItem.key),
+              }))
+            );
+          }
+          setModalDeleteVisible(false);
+          setSelectedItem(null);
+        }}
+        onCancel={() => {
+          setModalDeleteVisible(false);
+          setSelectedItem(null);
+        }}
       />
       {/* Aquí podrías añadir tu modal de edición/creación usando `open`, `selectedItem`, `modalVisible`, etc. */}
     </div>
