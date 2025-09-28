@@ -30,7 +30,7 @@ import FormsSettings from '../Forms-Settings';
 
 describe('Forms-Settings', () => {
   test('muestra opciones de configuración visibles en el DOM', () => {
-    render(<FormsSettings compiledList={[]} />);
+    render(<FormsSettings compiledList={[]} pages={[]} />);
 
     // Usa heading exacto
     expect(screen.getByRole('heading', { name: /^Página$/i })).toBeInTheDocument();
