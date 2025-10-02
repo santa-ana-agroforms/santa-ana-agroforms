@@ -1,28 +1,32 @@
 import { clickMenu } from '../support/helpers';
 
-describe('DashboardPage (en /home)', () => {
+describe('DashboardPage', () => {
   beforeEach(() => {
     cy.visit('/home');
     clickMenu('Dashboard');
   });
 
   it('renderiza contenedor', () => {
-    cy.get('body').should('exist');
+    cy.contains('Dashboard').should('exist');
   });
 
-  it('gráficos o KPIs visibles (si hay)', () => {
-    cy.get('canvas, svg, [class*="chart"]').its('length').should('be.gte', 0);
+  it('muestra las 3 cards de métricas', () => {
+    cy.contains('Usuarios Totales').should('exist');
+    cy.contains('Usuarios Activos').should('exist');
+    cy.contains('% Activos').should('exist');
   });
 
-  it('muestra cards o paneles (si hay)', () => {
-    cy.get('.ant-card, [class*="card"]').its('length').should('be.gte', 0);
+  it('gráficas renderizan (canvas de @ant-design/charts)', () => {
+    cy.get('canvas').should('have.length.at.least', 4);
   });
 
-  it('sin errores JS obvios', () => {
-    cy.window().then((w) => expect(w).to.exist);
+  it('títulos de gráficas visibles', () => {
+    cy.contains('Cantidad de formularios recibidos por fecha').should('exist');
+    cy.contains('Respuestas por tipo de formulario').should('exist');
+    cy.contains('Cantidad de terminales por usuario').should('exist');
   });
 
   it('sidebar sigue visible', () => {
-    cy.contains('Dashboard');
+    cy.get('.ant-menu').should('exist');
   });
 });
