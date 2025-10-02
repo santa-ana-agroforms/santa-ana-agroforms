@@ -23,5 +23,5 @@ module.exports = {
   },
   setupFilesAfterEnv: ['<rootDir>/src/setupTests.ts'],
   testEnvironmentOptions: { url: 'http://localhost/' },
-  testPathIgnorePatterns: ['/node_modules/', '/dist/', '/build/'],
+  testPathIgnorePatterns: ['/node_modules/', '/dist/', '/build/', '/mocha_tests/','/cypress/','/selenium_tests/selenium/'],
 };
