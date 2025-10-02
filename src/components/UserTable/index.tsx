@@ -299,12 +299,11 @@ const UsersTable: React.FC<Props> = ({
     },
   ];
 
-  console.warn("selected: ", selected);
 
   return (
     <>
       <Table<UserType>
-        rowKey="key"
+        rowKey="correo"
         columns={columns}
         dataSource={data}
         onChange={onTableChange}

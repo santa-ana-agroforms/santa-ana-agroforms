@@ -186,7 +186,6 @@ const FormsLists: React.FC<FormsListsProps> = ({ onSelectForm, sortAsc }) => {
     [rows, sortedInfo, filteredInfo]
   );
 
-  console.warn("isLoading", isLoading, "data", categoriesData.length);
 
   return (
     <div className="flex flex-col p-4 w-full gap-7 ">

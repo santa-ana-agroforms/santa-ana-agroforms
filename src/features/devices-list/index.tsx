@@ -1,12 +1,11 @@
 // src/components/DevicesList/DevicesList.tsx
-import React, { useState, useCallback } from 'react';
-import { Button, Col, Input } from 'antd';
 import type { TableProps } from 'antd';
-import { FilterOutlined, ArrowUpOutlined } from '@ant-design/icons';
+import { Col, Input } from 'antd';
+import React, { useCallback, useState } from 'react';
 
 import DevicesTable, { ItemType as DeviceType } from '@/components/DeviceTables';
-import { devices } from './data';
 import { EditUserValues } from '@/components/DeviceTables/components/EditUserModal';
+import { devices } from './data';
 
 const DevicesList: React.FC = () => {
   // estados para búsqueda, filtros y orden
@@ -57,13 +56,9 @@ const DevicesList: React.FC = () => {
   return (
     <div className="flex flex-col p-4 w-full gap-7">
       <div className="flex justify-between items-center w-full">
-        {/* Botón de “Categoría” (igual que antes) */}
-        <Button icon={<FilterOutlined />} className="flex items-center gap-1">
-          Categoría <ArrowUpOutlined />
-        </Button>
 
         {/* Input.Search para filtrar */}
-        <Col className="w-60">
+        <Col className="w-full">
           <Input
             placeholder="Introduzca el texto a buscar..."
             allowClear

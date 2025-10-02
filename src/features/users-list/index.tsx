@@ -14,7 +14,6 @@ const UserList: React.FC = () => {
   const [filteredInfo, setFilteredInfo] = useState<Record<string, any>>({});
   const [sortedInfo, setSortedInfo] = useState<any>({});
 
-  console.warn("users: ", user);
 
   // filtrar globalmente según el texto
   const filteredData = user.filter((item) =>
@@ -24,7 +23,6 @@ const UserList: React.FC = () => {
       .includes(searchText.toLowerCase())
   );
 
-  console.warn(filteredData);
 
   // onChange estándar de ant-table
   const handleTableChange: TableProps<UserType>["onChange"] = (

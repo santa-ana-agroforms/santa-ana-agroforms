@@ -57,14 +57,12 @@ const PageSettings: React.FC<PageSettingsProps> = ({
     if (pages.length > 0) {
       const first = pages[0]; // siempre el primer elemento
       setSelectedId(first.id);
-      console.warn("COñoo", first);
     }
   }, [pages]);
 
   const handlePageSelect = (seq: number) => {
     const selected = pages.find((p) => p.sequence === seq);
     if (selected) {
-      console.warn("select: ", selected);
       onPageChange?.(selected); // ⬅️ avisa al padre
       setSelectedId(selected.id);
     }
@@ -78,10 +76,9 @@ const PageSettings: React.FC<PageSettingsProps> = ({
     console.log("Eliminar clicked");
   };
 
-  console.warn("pageiID: ", pageId);
 
   const handleContinue = async () => {
-    console.warn("➡️ JSONs compilados (front):", compiledList);
+    // console.warn("➡️ JSONs compilados (front):", compiledList);
 
     if (compiledList.length === 0) {
       message.warning("¡Necesitas seleccionar al menos un campo! ⚠️");
@@ -94,7 +91,6 @@ const PageSettings: React.FC<PageSettingsProps> = ({
       return;
     }
 
-    console.warn("pageID ENVIANDO: ", pageId);
 
     try {
       const { ok, errors } = await postCamposBulk({
@@ -102,7 +98,6 @@ const PageSettings: React.FC<PageSettingsProps> = ({
         campos: compiledList,
       });
 
-      console.warn("🌐 Resultados envío:", { ok, errors });
 
       if (errors.length) {
         message.error(
