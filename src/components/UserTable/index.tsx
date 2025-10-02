@@ -1,5 +1,5 @@
 // src/components/FormsLists/UsersTable.tsx
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 
 import {
   DeleteOutlined,
@@ -7,24 +7,36 @@ import {
   QrcodeOutlined,
   UserAddOutlined,
 } from "@ant-design/icons";
-import { Table, type TableProps } from "antd";
+import { message, Table, type TableProps } from "antd";
 import type { ColumnsType } from "antd/es/table";
+
+import { useCreateUsuario } from "@/features/users-list/hooks/useCreateUsuarios";
+import { useQrAuth } from "@/features/users-list/hooks/useQrAuth";
+import { useUpdateUsuario } from "@/features/users-list/hooks/useUpdateUsuario";
 
 import EditUserModal, {
   EditUserValues,
 } from "../DeviceTables/components/EditUserModal";
+import DeleteUserModal from "./components/DeleteUserModal";
 import QrModal from "./components/QrModal";
 
 // un modal específico para usuarios
 
 export interface UserType {
-  key: string;
-  id: string;
   nombre: string;
-  contraseña: string;
   activo: boolean;
-  perfil: string;
+  nombre_usuario: string;
   email: string;
+  roles: Array<{
+    id: string;
+    nombre: string;
+    descripcion?: string;
+  }>;
+}
+
+// Extender EditUserValues para que coincida con UserType
+interface EditUserFormValues extends EditUserValues {
+  roles: string[]; // IDs de roles como strings
 }
 
 interface Props {
@@ -43,9 +55,9 @@ const UsersTable: React.FC<Props> = ({
   onTableChange,
 }) => {
   // filtros únicos
-  const perfilFilters = Array.from(new Set(data.map((u) => u.perfil))).map(
-    (p) => ({ text: p, value: p })
-  );
+  const perfilFilters = Array.from(
+    new Set(data.map((u) => u.nombre_usuario))
+  ).map((p) => ({ text: p, value: p }));
   const activeFilters = [
     { text: "Sí", value: true },
     { text: "No", value: false },
@@ -56,6 +68,21 @@ const UsersTable: React.FC<Props> = ({
 
   const [QrModalOpen, setQrModalOpen] = useState(false);
 
+  const [deleteModalOpen, setDeleteModalOpen] = useState(false);
+  const [userToDelete, setUserToDelete] = useState<UserType | null>(null);
+
+  const {
+    startQr,
+    data: qrData,
+    loading: qrLoading,
+    error: qrError,
+    reset,
+  } = useQrAuth();
+
+  const { update } = useUpdateUsuario();
+
+  const { create, loading: creating } = useCreateUsuario();
+
   const handleAdd = () => {
     setSelected(null);
     setModalOpen(true);
@@ -63,16 +90,128 @@ const UsersTable: React.FC<Props> = ({
 
   const handleCancel = () => setModalOpen(false);
 
-  const handleShowQr = () => setQrModalOpen(true);
+  const handleShowQr = (record: UserType) => {
+    setSelected(record);
+    reset();
+    setQrModalOpen(true);
+  };
 
-  const handleSave = (values: EditUserValues) => {
+  function buildPatchPayload<T extends Record<string, any>>(
+    original: T,
+    edited: T
+  ): Partial<T> {
+    const payload: Partial<T> = {};
+
+    (Object.keys(edited) as (keyof T)[]).forEach((key) => {
+      const origVal = original[key];
+      const editVal = edited[key];
+
+      const areEqual =
+        Array.isArray(origVal) && Array.isArray(editVal) ?
+          JSON.stringify(origVal) === JSON.stringify(editVal)
+        : origVal === editVal;
+
+      if (!areEqual) {
+        payload[key] = editVal;
+      }
+    });
+
+    return payload;
+  }
+
+  const handleSave = async (values: EditUserFormValues) => {
     if (selected) {
-      onEdit({ ...selected, ...values });
+      // // 🟢 EDITAR → PATCH con solo cambios
+      // console.warn("selectededdd: ", selected);
+      const original = {
+        nombre: selected.nombre,
+        nombre_usuario: selected.nombre_usuario,
+        correo: selected.email,
+        activo: selected.activo,
+        roles: selected.roles.map((r) => r.id),
+      };
+
+      const edited = {
+        nombre: values.nombre,
+        nombre_usuario: values.nombre_usuario,
+        correo: values.email,
+        activo: values.activo,
+        roles: values.roles,
+      };
+
+      const payload = buildPatchPayload(original, edited);
+      // console.warn("PAYLAD: ", payload);
+      // console.warn("orginal : ", original);
+      // console.warn("edites: ", edited);
+      if (Object.keys(payload).length === 0) {
+        message.info("No hay cambios para guardar");
+        return;
+      }
+
+      try {
+        await update(selected.nombre_usuario, payload);
+        message.success("Usuario actualizado con éxito");
+        setModalOpen(false);
+      } catch (err: any) {
+        message.error(err.message || "Error al actualizar usuario");
+      }
     } else {
-      onCreate(values);
+      // 🟢 CREAR → POST con validación y errores detallados
+      try {
+        await create({
+          nombre_usuario: values.nombre_usuario,
+          nombre: values.nombre,
+          contrasena: values.contrasena ?? "",
+          activo: values.activo,
+          correo: values.email,
+          roles: values.roles,
+        });
+
+        message.success("Usuario creado con éxito");
+        setModalOpen(false);
+      } catch (err: any) {
+        console.warn("Error crudo:", err.message);
+
+        const errorMap: Record<string, string> = {
+          "Ensure this field has at least 8 characters.":
+            "La contraseña debe tener al menos 8 caracteres",
+          "This field is required.": "Este campo es obligatorio",
+          "Enter a valid email address.": "El email no es válido",
+        };
+
+        if (err.message) {
+          const jsonStart = err.message.indexOf("{");
+          if (jsonStart !== -1) {
+            try {
+              const jsonString = err.message.slice(jsonStart);
+              const parsed = JSON.parse(jsonString);
+
+              Object.entries(parsed).forEach(([field, msgs]) => {
+                (msgs as string[]).forEach((m) => {
+                  const msg = errorMap[m] ?? m;
+                  const capitalized =
+                    field.charAt(0).toUpperCase() + field.slice(1);
+                  message.error(`${capitalized}: ${msg}`);
+                });
+              });
+              return;
+            } catch (parseError) {
+              console.warn("No se pudo parsear el JSON:", parseError);
+            }
+          }
+        }
+
+        message.error(err.message || "Error al crear usuario");
+      }
     }
     setModalOpen(false);
   };
+
+  useEffect(() => {
+    if (QrModalOpen && selected) {
+      startQr(selected.nombre_usuario);
+    }
+  }, [QrModalOpen, selected, startQr]);
 
   const columns: ColumnsType<UserType> = [
     {
@@ -98,27 +237,25 @@ const UsersTable: React.FC<Props> = ({
             }}
             className="cursor-pointer"
           />
-          <QrcodeOutlined onClick={handleShowQr} className="cursor-pointer" />
+          <QrcodeOutlined
+            onClick={() => handleShowQr(record)}
+            className="cursor-pointer"
+          />
           <DeleteOutlined
-            onClick={() => onDelete(record)}
+            onClick={() => {
+              setUserToDelete(record);
+              setDeleteModalOpen(true);
+            }}
             className="cursor-pointer"
           />
         </div>
       ),
     },
     {
-      title: "Id",
-      dataIndex: "id",
-      key: "id",
-      width: 120,
-      sorter: (a, b) => a.id.localeCompare(b.id),
-      ellipsis: true,
-    },
-    {
       title: "Nombre",
-      dataIndex: "nombre",
+      dataIndex: "nombre_usuario",
       key: "nombre",
-      width: 240,
+      width: 260,
       sorter: (a, b) => a.nombre.localeCompare(b.nombre),
       ellipsis: true,
     },
@@ -140,23 +277,29 @@ const UsersTable: React.FC<Props> = ({
       width: 120,
     },
     {
-      title: "Perfil",
-      dataIndex: "perfil",
+      title: "Rol",
       key: "perfil",
       filters: perfilFilters,
-      onFilter: (val, rec) => rec.perfil === val,
-      sorter: (a, b) => a.perfil.localeCompare(b.perfil),
+      onFilter: (val, rec) => rec.nombre_usuario === val,
+      sorter: (a, b) => a.nombre_usuario.localeCompare(b.nombre_usuario),
       ellipsis: true,
-      width: 170,
+      width: 220,
+      render: (_, record) => (
+        <span title={record.roles.map((role) => role.nombre).join(", ")}>
+          {record.roles.map((role) => role.nombre).join(", ")}
+        </span>
+      ),
     },
     {
       title: "Email",
-      dataIndex: "email",
+      dataIndex: "correo",
       key: "email",
       sorter: (a, b) => a.email.localeCompare(b.email),
       ellipsis: true,
     },
   ];
+
+  console.warn("selected: ", selected);
 
   return (
     <>
@@ -169,14 +312,39 @@ const UsersTable: React.FC<Props> = ({
       />
       <EditUserModal
         visible={modalOpen}
-        initialValues={selected ?? undefined}
+        initialValues={
+          selected ?
+            {
+              ...selected,
+              roles: selected.roles.map((role) => role.id),
+            }
+          : undefined
+        }
         onCancel={handleCancel}
         onSave={handleSave}
+        creating={creating}
       />
       <QrModal
+        key={selected?.nombre_usuario}
         open={QrModalOpen}
         onClose={() => setQrModalOpen(false)}
-        qrSrc="https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=Ejemplo"
+        qrSrc={qrData?.qr}
+        qrUserName={selected?.nombre_usuario}
+      />
+      <DeleteUserModal
+        open={deleteModalOpen}
+        userName={userToDelete?.nombre_usuario}
+        onCancel={() => {
+          setDeleteModalOpen(false);
+          setUserToDelete(null);
+        }}
+        onConfirm={() => {
+          if (userToDelete) {
+            onDelete(userToDelete);
+          }
+          setDeleteModalOpen(false);
+          setUserToDelete(null);
+        }}
       />
     </>
   );

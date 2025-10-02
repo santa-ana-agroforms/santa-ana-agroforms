@@ -3,7 +3,6 @@ import React from "react";
 import { NavigateFunction } from "react-router-dom";
 
 import {
-  AuditOutlined,
   BarChartOutlined,
   CloudDownloadOutlined,
   DashboardOutlined,
@@ -16,8 +15,6 @@ import {
   QuestionOutlined,
   TableOutlined,
   TeamOutlined,
-  ThunderboltOutlined,
-  UserAddOutlined,
   UserOutlined,
 } from "@ant-design/icons";
 import { Avatar, Layout, Menu } from "antd";
@@ -88,21 +85,21 @@ export const AppSidebar: React.FC<AppSideBarProps> = ({
               icon: <DatabaseOutlined />,
               label: "Fuentes de Datos",
             },
-            {
-              key: "formularios",
-              icon: <AuditOutlined />,
-              label: "Asignación de Formularios",
-            },
-            {
-              key: "proceso",
-              icon: <ThunderboltOutlined />,
-              label: "Asignaciones en proceso",
-            },
-            {
-              key: "aprobacion",
-              icon: <UserAddOutlined />,
-              label: "Rutas de Aprobación",
-            },
+            // {
+            //   key: "formularios",
+            //   icon: <AuditOutlined />,
+            //   label: "Asignación de Formularios",
+            // },
+            // {
+            //   key: "proceso",
+            //   icon: <ThunderboltOutlined />,
+            //   label: "Asignaciones en proceso",
+            // },
+            // {
+            //   key: "aprobacion",
+            //   icon: <UserAddOutlined />,
+            //   label: "Rutas de Aprobación",
+            // },
             {
               key: "exportacion",
               icon: <CloudDownloadOutlined />,

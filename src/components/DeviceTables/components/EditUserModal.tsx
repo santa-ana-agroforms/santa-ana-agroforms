@@ -1,28 +1,32 @@
 // src/components/EditUserModal.tsx
-import React, { FC, useEffect } from 'react'
-import { Form, Input, Checkbox, Select, Button } from 'antd'
-import type { ModalProps } from 'antd'
-import { CheckOutlined, CloseOutlined } from '@ant-design/icons'
-import BaseModal from '@/components/BaseModal'
+import { FC, useEffect } from "react";
 
-const { Option } = Select
+import { Button, Checkbox, Form, Input, Select, type ModalProps } from "antd";
+
+import BaseModal from "@/components/BaseModal";
+import { useRoles } from "@/features/users-list/hooks/useRoles";
+
+const { Option } = Select;
 
 // La forma de los valores que devuelve el form
 export interface EditUserValues {
-  id: string
-  nombre: string
-  contrasena?: string
-  activo: boolean
-  email: string
+  id: string;
+  nombre: string;
+  nombre_usuario: string;
+  contrasena?: string;
+  activo: boolean;
+  email: string;
+  roles: string[];
 }
 
 // Props que recibe este modal
-export interface EditUserModalProps extends Omit<ModalProps, 'title'> {
-  visible: boolean
-  onCancel: () => void
+export interface EditUserModalProps extends Omit<ModalProps, "title"> {
+  visible: boolean;
+  onCancel: () => void;
   /** Callback con los valores al guardar */
-  onSave: (values: EditUserValues) => void
-  initialValues?: Partial<EditUserValues>
+  onSave: (values: EditUserValues) => void;
+  initialValues?: Partial<EditUserValues>;
+  creating?: boolean;
 }
 
 const EditUserModal: FC<EditUserModalProps> = ({
@@ -30,31 +34,31 @@ const EditUserModal: FC<EditUserModalProps> = ({
   onCancel,
   onSave,
   initialValues,
+  creating,
   ...modalProps
 }) => {
-  const [form] = Form.useForm<EditUserValues>()
+  const [form] = Form.useForm<EditUserValues>();
+  const { roles, loading, error } = useRoles();
 
   // Al mostrarse el modal, cargamos o reseteamos los valores
   useEffect(() => {
     if (visible) {
       if (initialValues) {
-        form.setFieldsValue(initialValues)
+        form.setFieldsValue(initialValues);
       } else {
-        form.resetFields()
+        form.resetFields();
       }
     }
-  }, [visible, initialValues, form])
+  }, [visible, initialValues, form]);
 
   const handleFinish = (values: EditUserValues) => {
-    onSave(values)
-    form.resetFields()
-    onCancel()
-  }
+    onSave(values); // 👈 delegamos al padre
+  };
 
   const handleCancel = () => {
-    form.resetFields()
-    onCancel()
-  }
+    form.resetFields();
+    onCancel();
+  };
 
   return (
     <BaseModal
@@ -70,84 +74,100 @@ const EditUserModal: FC<EditUserModalProps> = ({
         onFinish={handleFinish}
         initialValues={{ activo: false }}
       >
-        <div className='w-full pl-[2.7rem]'>
-            <Form.Item
-            label="Id"
-            name="id"
-            rules={[{ required: true, message: 'Por favor ingresa el Id' }]}
-            >
+        <div className="w-full pl-[0.375rem]">
+          <Form.Item
+            label="Nombre completo"
+            name="nombre"
+            rules={[{ required: true, message: "Por favor ingresa el nombre" }]}
+          >
             <Input />
-            </Form.Item>
+          </Form.Item>
         </div>
 
-    <div className='w-full pl-[0.375rem]'>
-        <Form.Item
-          label="Nombre"
-          name="nombre"
-          rules={[{ required: true, message: 'Por favor ingresa el nombre' }]}
-        >
-          <Input />
-        </Form.Item>
-    </div>
+        <div className="w-full pl-[0.125rem]">
+          <Form.Item
+            label="Nombre de usuario"
+            name="nombre_usuario"
+            rules={[{ required: true, message: "Por favor ingresa el nombre" }]}
+          >
+            <Input />
+          </Form.Item>
+        </div>
 
-    <div className='w-2/3'>
-        <Form.Item
-          label="Contraseña"
-          name="contrasena"
-        >
-          <Input.Password />
-        </Form.Item>
-    </div>
+        <div className="w-2/3 pl-13">
+          <Form.Item
+            label="Contraseña"
+            name="contrasena"
+            rules={[
+              { required: true, message: "Por favor ingresa la contraseña" },
+            ]}
+          >
+            <Input.Password />
+          </Form.Item>
+        </div>
 
-    <div className='flex-row-reverse pl-7'>
-            <Form.Item
+        <div className="flex-row-reverse pl-23">
+          <Form.Item
             name="activo"
             valuePropName="checked"
-            rules={[{ required: true, message: 'Marca para activar el usuario' }]}
+            rules={[
+              { required: true, message: "Marca para activar el usuario" },
+            ]}
+          >
+            <Checkbox className="flex-row-reverse">Activo</Checkbox>
+          </Form.Item>
+        </div>
+
+        <div className="w-full pl-25">
+          <Form.Item
+            label="Rol"
+            name="roles"
+            rules={[{ required: true, message: "Selecciona un rol" }]}
+          >
+            <Select
+              mode="multiple"
+              style={{ width: "100%" }}
+              placeholder="Selecciona los roles"
+              options={roles.map((rol) => ({
+                label: rol.nombre,
+                value: rol.id,
+              }))}
+            />
+          </Form.Item>
+        </div>
+
+        <div className="w-full pl-[1.65rem]">
+          <Form.Item
+            label="Email"
+            name="email"
+            rules={[{ type: "email", message: "El email no es válido" }]}
+          >
+            <Input />
+          </Form.Item>
+        </div>
+
+        <div className="flex justify-end h-9">
+          <Form.Item>
+            <Button
+              type="primary"
+              htmlType="submit"
+              loading={creating}
+              disabled={creating}
             >
-            <Checkbox className='flex-row-reverse'>Activo</Checkbox>
-            </Form.Item>
-    </div>
-
-    <div className='w-full pl-7'>
-        <Form.Item
-            label="Perfil"
-            name="perfil"
-            rules={[{ required: true, message: 'Selecciona un perfil' }]}
+              Guardar
+            </Button>
+            <Button
+              style={{ marginLeft: 8 }}
+              onClick={handleCancel}
+              disabled={creating}
             >
-            <Select placeholder="Selecciona perfil">
-                <Option value="Usuario">Usuario</Option>
-                <Option value="Administrador">Administrador</Option>
-            </Select>
-        </Form.Item>
-    </div>
-
-    <div className='w-full pl-[1.65rem]'>
-        <Form.Item
-          label="Email"
-          name="email"
-          rules={[
-            { required: true, message: 'Por favor ingresa el email' },
-            { type: 'email', message: 'El email no es válido' }
-          ]}
-        >
-          <Input />
-        </Form.Item>
-    </div>
-
-        <div className='flex justify-end h-9'>
-            <Form.Item>
-                <Button type="primary" htmlType="submit">
-                    Guardar
-                </Button>
-                <Button style={{ marginLeft: 8 }} onClick={handleCancel}>
-                    Cancelar
-                </Button>
-            </Form.Item>
+              Cancelar
+            </Button>
+          </Form.Item>
         </div>
       </Form>
     </BaseModal>
-  )
-}
+  );
+};
 
-export default EditUserModal
+export default EditUserModal;

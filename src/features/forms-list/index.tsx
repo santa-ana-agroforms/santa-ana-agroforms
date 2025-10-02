@@ -47,6 +47,7 @@ interface CategoryType {
 
 interface FormsListsProps {
   onSelectForm: (id: string | number) => void;
+  sortAsc: boolean;
 }
 
 type OnChange = NonNullable<TableProps<ItemType>["onChange"]>;
@@ -54,7 +55,7 @@ type GetSingle<T> = T extends (infer U)[] ? U : never;
 type Sorts = GetSingle<Parameters<OnChange>[2]>;
 type Filters = Parameters<OnChange>[1];
 
-const FormsLists: React.FC<FormsListsProps> = ({ onSelectForm }) => {
+const FormsLists: React.FC<FormsListsProps> = ({ onSelectForm, sortAsc }) => {
   const [filteredInfo, setFilteredInfo] = useState<Filters>({});
   const [sortedInfo, setSortedInfo] = useState<Sorts>({});
 
@@ -157,9 +158,12 @@ const FormsLists: React.FC<FormsListsProps> = ({ onSelectForm }) => {
 
   const { categoriesData, isLoading, error } = useFormsListsData();
 
-  // {
-  //   console.warn(categoriesData);
-  // }
+  const sortedCategories = useMemo(() => {
+    if (!categoriesData) return [];
+    return [...categoriesData].sort((a, b) =>
+      sortAsc ? a.name.localeCompare(b.name) : b.name.localeCompare(a.name)
+    );
+  }, [categoriesData, sortAsc]);
 
   const rows = useMemo(
     () => (categoriesData ?? []).flatMap((c) => c.items),
@@ -193,7 +197,7 @@ const FormsLists: React.FC<FormsListsProps> = ({ onSelectForm }) => {
         </>
       : <>
           <CategoryTables<ItemType>
-            data={categoriesData}
+            data={sortedCategories}
             columns={columns as TableColumnType<ItemType>[]}
             onTableChange={handleChange}
           />
