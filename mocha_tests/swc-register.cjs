@@ -1,30 +1,28 @@
-require('@swc/register')({
+require("@swc/register")({
   jsc: {
     parser: {
-      syntax: 'typescript',
+      syntax: "typescript",
       tsx: true,
       dynamicImport: true,
       decorators: false,
     },
     transform: {
       react: {
-        runtime: 'automatic',
+        runtime: "automatic",
         development: false,
       },
     },
-    target: 'es2020',
+    target: "es2020",
   },
   module: {
-    type: 'commonjs',
+    type: "commonjs",
     strict: false,
     strictMode: false,
     lazy: false,
     noInterop: false,
   },
-  ignore: [
-    /node_modules/,
-  ],
-  extensions: ['.ts', '.tsx', '.js', '.jsx'],
+  ignore: [/node_modules/],
+  extensions: [".ts", ".tsx", ".js", ".jsx"],
 });
 
 module.exports = {};

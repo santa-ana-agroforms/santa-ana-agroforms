@@ -1,31 +1,31 @@
 // src/components/DevicesList/DevicesList.tsx
-import React, { useState, useCallback } from 'react';
-import { Button, Col, Input } from 'antd';
-import type { TableProps } from 'antd';
-import { FilterOutlined, ArrowUpOutlined } from '@ant-design/icons';
+import React, { useCallback, useState } from "react";
 
-import DevicesTable from '@/components/DeviceTables';
-import { users } from './data';
-import { EditUserValues } from '@/components/DeviceTables/components/EditUserModal';
-import UsersTable from '@/components/UserTable';
-import { UserType } from '@/components/UserTable';
+import { ArrowUpOutlined, FilterOutlined } from "@ant-design/icons";
+import { Button, Col, Input, type TableProps } from "antd";
+
+import DevicesTable from "@/components/DeviceTables";
+import { EditUserValues } from "@/components/DeviceTables/components/EditUserModal";
+import UsersTable, { UserType } from "@/components/UserTable";
+
+import { users } from "./data";
 
 const UserList: React.FC = () => {
   // estados para búsqueda, filtros y orden
-  const [searchText, setSearchText] = useState('');
+  const [searchText, setSearchText] = useState("");
   const [filteredInfo, setFilteredInfo] = useState<Record<string, any>>({});
   const [sortedInfo, setSortedInfo] = useState<any>({});
 
   // filtrar globalmente según el texto
   const filteredData = users.filter((item) =>
     Object.values(item as unknown as Record<string, unknown>)
-      .join(' ')
+      .join(" ")
       .toLowerCase()
       .includes(searchText.toLowerCase())
   );
 
   // onChange estándar de ant-table
-  const handleTableChange: TableProps<UserType>['onChange'] = (
+  const handleTableChange: TableProps<UserType>["onChange"] = (
     _pagination,
     filters,
     sorter
@@ -34,23 +34,23 @@ const UserList: React.FC = () => {
     setSortedInfo(sorter);
   };
   const handleEdit = useCallback((rec: UserType) => {
-    console.log('EDIT:', rec);
+    console.log("EDIT:", rec);
     // aquí tu lógica para editar…
   }, []);
 
   const handleDelete = useCallback((rec: UserType) => {
-    console.log('DELETE:', rec);
+    console.log("DELETE:", rec);
     // aquí tu lógica para borrar…
   }, []);
 
   const handleIdClick = useCallback((id: string) => {
-    console.log('GO TO DETAIL FOR ID:', id);
+    console.log("GO TO DETAIL FOR ID:", id);
     // navegación o callback…
   }, []);
 
   // 1) Creamos el handler para “Crear” (onCreate)
   const handleCreate = useCallback((values: EditUserValues) => {
-    console.log('CREATE:', values);
+    console.log("CREATE:", values);
     // Aquí tu lógica para añadir el nuevo registro...
     // por ejemplo: llamar a tu API o actualizar el estado local
   }, []);
@@ -58,7 +58,6 @@ const UserList: React.FC = () => {
   return (
     <div className="flex flex-col p-4 w-full gap-7">
       <div className="flex justify-between items-center w-full">
-
         {/* Input.Search para filtrar */}
         <Col className="w-full">
           <Input
@@ -71,7 +70,12 @@ const UserList: React.FC = () => {
       </div>
 
       {/* Nuestra tabla “plana” sin Collapse */}
-      <UsersTable data={filteredData} onEdit={handleEdit} onDelete={handleDelete} onCreate={handleCreate}></UsersTable>
+      <UsersTable
+        data={filteredData}
+        onEdit={handleEdit}
+        onDelete={handleDelete}
+        onCreate={handleCreate}
+      ></UsersTable>
     </div>
   );
 };

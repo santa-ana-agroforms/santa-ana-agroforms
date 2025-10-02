@@ -1,19 +1,22 @@
-import { render, screen } from '@testing-library/react';
-import { MemoryRouter } from 'react-router-dom';
-import type { PageValues } from '../PageEditModal';
-import PhoneMockup from '@/features/create-forms/components/PhoneMockup';
+import { MemoryRouter } from "react-router-dom";
 
-describe('PhoneMockup', () => {
-  test('renderiza encabezado con título de la página', () => {
+import { render, screen } from "@testing-library/react";
+
+import PhoneMockup from "@/features/create-forms/components/PhoneMockup";
+
+import type { PageValues } from "../PageEditModal";
+
+describe("PhoneMockup", () => {
+  test("renderiza encabezado con título de la página", () => {
     const mockPages: PageValues[] = [
-      { id: 'p1' as any, title: 'Página 1', description: '', sequence: 1 },
+      { id: "p1" as any, title: "Página 1", description: "", sequence: 1 },
     ];
 
     render(
       <MemoryRouter>
         <PhoneMockup
           formId="test"
-          formulario={{ nombre: 'Demo' }}
+          formulario={{ nombre: "Demo" }}
           isLoading={false}
           isError={false}
           pages={mockPages}

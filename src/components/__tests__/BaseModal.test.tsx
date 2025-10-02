@@ -1,23 +1,24 @@
-import { render, screen } from '@testing-library/react';
-import BaseModal from '@/components/BaseModal';
+import { render, screen } from "@testing-library/react";
 
-describe('BaseModal', () => {
-  test('Muestra título y contenido cuando está visible', () => {
+import BaseModal from "@/components/BaseModal";
+
+describe("BaseModal", () => {
+  test("Muestra título y contenido cuando está visible", () => {
     render(
       <BaseModal title="Nuevo" open onCancel={() => {}}>
         <div>Contenido del modal</div>
       </BaseModal>
     );
-    expect(screen.getByText('Nuevo')).toBeInTheDocument();
-    expect(screen.getByText('Contenido del modal')).toBeInTheDocument();
+    expect(screen.getByText("Nuevo")).toBeInTheDocument();
+    expect(screen.getByText("Contenido del modal")).toBeInTheDocument();
   });
 
-  test('Cuando no muestra contenido', () => {
+  test("Cuando no muestra contenido", () => {
     render(
       <BaseModal title="X" open={false} onCancel={() => {}}>
         <div>Contenido</div>
       </BaseModal>
     );
-    expect(screen.queryByText('Contenido')).not.toBeInTheDocument();
+    expect(screen.queryByText("Contenido")).not.toBeInTheDocument();
   });
 });

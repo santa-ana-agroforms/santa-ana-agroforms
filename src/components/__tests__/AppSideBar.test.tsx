@@ -1,8 +1,9 @@
-import { render, screen } from '@testing-library/react';
-import userEvent from '@testing-library/user-event';
-import { AppSidebar } from '@/components/AppSideBar';
+import { render, screen } from "@testing-library/react";
+import userEvent from "@testing-library/user-event";
 
-describe('AppSideBar', () => {
+import { AppSidebar } from "@/components/AppSideBar";
+
+describe("AppSideBar", () => {
   test('Al hacer click en "Ayuda" cambia la selección y llama onSelect("5")', async () => {
     const user = userEvent.setup();
     const onSelect = jest.fn();
@@ -17,11 +18,11 @@ describe('AppSideBar', () => {
       />
     );
 
-    const ayuda = screen.getByRole('menuitem', { name: /Ayuda/i });
+    const ayuda = screen.getByRole("menuitem", { name: /Ayuda/i });
     await user.click(ayuda);
 
     expect(onSelect).toHaveBeenCalledTimes(1);
-    expect(onSelect).toHaveBeenCalledWith('5');
+    expect(onSelect).toHaveBeenCalledWith("5");
     expect(navigate).not.toHaveBeenCalled();
   });
 
@@ -39,11 +40,13 @@ describe('AppSideBar', () => {
       />
     );
 
-    const cerrarSesion = screen.getByRole('menuitem', { name: /Cerrar sesión/i });
+    const cerrarSesion = screen.getByRole("menuitem", {
+      name: /Cerrar sesión/i,
+    });
     await user.click(cerrarSesion);
 
     expect(navigate).toHaveBeenCalledTimes(1);
-    expect(navigate).toHaveBeenCalledWith('/');
+    expect(navigate).toHaveBeenCalledWith("/");
     // onSelect puede o no dispararse según la configuración
   });
 });

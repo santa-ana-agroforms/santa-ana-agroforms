@@ -1,9 +1,18 @@
-import { render, screen } from '@testing-library/react';
-import EditFieldModal from '@/features/create-forms/components/EditFieldModal';
+import { render, screen } from "@testing-library/react";
 
-describe('EditFieldModal', () => {
-  test('Muestra dialog con visible', () => {
-    render(<EditFieldModal visible onCancel={() => { } } onSave={() => { } } opcionesList={[]} gruposList={[]} />);
-    expect(screen.getByRole('dialog')).toBeInTheDocument();
+import EditFieldModal from "@/features/create-forms/components/EditFieldModal";
+
+describe("EditFieldModal", () => {
+  test("Muestra dialog con visible", () => {
+    render(
+      <EditFieldModal
+        visible
+        onCancel={() => {}}
+        onSave={() => {}}
+        opcionesList={[]}
+        gruposList={[]}
+      />
+    );
+    expect(screen.getByRole("dialog")).toBeInTheDocument();
   });
 });

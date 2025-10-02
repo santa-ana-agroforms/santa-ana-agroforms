@@ -1,17 +1,16 @@
-import { render, screen } from '@testing-library/react';
-import FlatTables, { type Category } from '@/components/FlatTables';
+import { render, screen } from "@testing-library/react";
+
+import FlatTables, { type Category } from "@/components/FlatTables";
 
 type Row = { key: string; nombre: string };
 
-describe('FlatTables', () => {
-  const columns = [
-    { title: 'Nombre', dataIndex: 'nombre', key: 'nombre' },
-  ];
+describe("FlatTables", () => {
+  const columns = [{ title: "Nombre", dataIndex: "nombre", key: "nombre" }];
 
-  test('Aplanar categorías y ocultar categorías vacías', () => {
+  test("Aplanar categorías y ocultar categorías vacías", () => {
     const data: Category<Row>[] = [
-      { key: 'a', name: 'Cat A', items: [{ key: '1', nombre: 'Uno' }] },
-      { key: 'b', name: 'Cat B', items: [] },
+      { key: "a", name: "Cat A", items: [{ key: "1", nombre: "Uno" }] },
+      { key: "b", name: "Cat B", items: [] },
     ];
 
     render(
@@ -22,10 +21,10 @@ describe('FlatTables', () => {
         hideEmptyCategories
       />
     );
-    expect(screen.getByText('Uno')).toBeInTheDocument();
-    expect(screen.queryByText('Cat B')).not.toBeInTheDocument();
+    expect(screen.getByText("Uno")).toBeInTheDocument();
+    expect(screen.queryByText("Cat B")).not.toBeInTheDocument();
 
-    const rows = screen.getAllByRole('row');
+    const rows = screen.getAllByRole("row");
     expect(rows.length).toBe(2);
   });
 });
