@@ -18,8 +18,8 @@
     "test:cypress:ci": "npm run build && start-server-and-test 'vite preview --port 5173' http://localhost:5173 'cypress run'",
     "test:cypress:open": "npm run build && start-server-and-test 'vite preview --port 5173' http://localhost:5173 'cypress open'",
     "test:cypress:dev": "start-server-and-test 'vite --port 5173' http://localhost:5173 'cypress run'",
-    "test:selenium": "node test/selenium/run-local.js",
-    "test:selenium:lambdatest": "node test/selenium/run-lt.js",
+    "test:selenium": "node selenium_tests/selenium/run-local.cjs",
+    "test:selenium:lambdatest": "node selenium_tests/selenium/run-lt.cjs",
     "test:all": "yarn test && yarn test:mocha && yarn test:cypress:ci && yarn test:selenium"
   },
   "husky": {
@@ -54,7 +54,7 @@
     "react": "18.2.0",
     "react-dom": "18.2.0",
     "react-router-dom": "^7.6.1",
-    "selenium-webdriver": "^4.35.0",
+    "selenium-webdriver": "^4.36.0",
     "snyk": "^1.1299.0",
     "ssf": "0.11.2",
     "wmf": "1.0.2",

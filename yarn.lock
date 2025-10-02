@@ -8252,15 +8252,15 @@ scroll-into-view-if-needed@^3.1.0:
   dependencies:
     compute-scroll-into-view "^3.0.2"
 
-selenium-webdriver@^4.35.0:
-  version "4.35.0"
-  resolved "https://registry.yarnpkg.com/selenium-webdriver/-/selenium-webdriver-4.35.0.tgz#2f769b8e0ca62817e275656a1eda5e6ea1ec4f66"
-  integrity sha512-Baaeiuyu7BIIsSYf0SI7Mi55gsNmdI00KM0Hcofw1RnAY+0QEVpdh5yAxueDxgTZS8vcbGZFU0NJ6Qc1riIrLg==
+selenium-webdriver@^4.36.0:
+  version "4.36.0"
+  resolved "https://registry.yarnpkg.com/selenium-webdriver/-/selenium-webdriver-4.36.0.tgz#71d12429d61ca56dc09e5f1895af422bc4986e9f"
+  integrity sha512-rZGqjXiqNVL6QNqKNEk5DPaIMPbvApcmAS9QsXyt5wT3sfTSHGCh4AX/YKeDTOwei1BOZDlPOKBd82WCosUt9w==
   dependencies:
     "@bazel/runfiles" "^6.3.1"
     jszip "^3.10.1"
-    tmp "^0.2.3"
-    ws "^8.18.2"
+    tmp "^0.2.5"
+    ws "^8.18.3"
 
 semver-compare@^1.0.0:
   version "1.0.0"
@@ -8799,7 +8799,7 @@ tmp@^0.0.33:
   dependencies:
     os-tmpdir "~1.0.2"
 
-tmp@^0.2.3, tmp@~0.2.4:
+tmp@^0.2.5, tmp@~0.2.4:
   version "0.2.5"
   resolved "https://registry.npmjs.org/tmp/-/tmp-0.2.5.tgz"
   integrity sha512-voyz6MApa1rQGUxT3E+BK7/ROe8itEx7vD8/HEvt4xwXucvQ5G5oeEiHkmHZJuBO21RpOf+YYm9MOivj709jow==
@@ -9214,7 +9214,7 @@ write-file-atomic@^5.0.1:
     imurmurhash "^0.1.4"
     signal-exit "^4.0.1"
 
-ws@^8.18.0, ws@^8.18.2:
+ws@^8.18.0, ws@^8.18.2, ws@^8.18.3:
   version "8.18.3"
   resolved "https://registry.npmjs.org/ws/-/ws-8.18.3.tgz"
   integrity sha512-PEIGCY5tSlUt50cqyMXfCzX+oOPqN0vuGqWzbcJ2xvnkzkq46oOpz7dQaTDBdfICb4N14+GARUDw2XV2N4tvzg==

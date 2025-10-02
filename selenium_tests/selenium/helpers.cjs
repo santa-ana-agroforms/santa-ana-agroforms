@@ -26,6 +26,24 @@ function ltCapabilities(name) {
   };
 }
 
+async function doLogin(driver) {
+  await driver.get(BASE + '/');
+  await driver.wait(until.elementLocated(By.css('input#login_username')), 10000);
+  
+  const username = await driver.findElement(By.css('input#login_username'));
+  const password = await driver.findElement(By.css('input#login_password'));
+  const submitBtn = await driver.findElement(By.css('button[type="submit"]'));
+  
+  await username.sendKeys('admin@test.com'); // Cambia por credenciales válidas
+  await password.sendKeys('password123');
+  await submitBtn.click();
+  
+  await driver.wait(until.urlContains('/home'), 10000);
+  await driver.wait(until.elementLocated(By.css('.ant-menu')), 10000);
+}
+
+module.exports = { BASE, buildLocal, buildLT, doLogin, By, until };
+
 async function buildLT(name) {
   const caps = ltCapabilities(name);
   return await new Builder()
