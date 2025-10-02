@@ -1,10 +1,10 @@
 import React from 'react';
 import { expect } from 'chai';
 import { render, screen } from '@testing-library/react';
-import { AppHeader } from '../../src/components/AppHeader';
-import { AppSidebar } from '../../src/components/AppSideBar';
-import BaseModal from '../../src/components/BaseModal';
-import { LoginCard } from '../../src/components/LoginCard';
+import { AppHeader } from '../../src/components/AppHeader.tsx';
+import { AppSidebar } from '../../src/components/AppSideBar.tsx';
+import BaseModal from '../../src/components/BaseModal.tsx';
+import { LoginCard } from '../../src/components/LoginCard.tsx';
 import UserTable from '../../src/components/UserTable';
 import FlatTables from '../../src/components/FlatTables';
 import DeviceTables from '../../src/components/DeviceTables';
@@ -18,7 +18,8 @@ describe('Components render', () => {
 
   it('AppSideBar renderiza menú', () => {
     render(<AppSidebar navigate={() => {}} collapsed={false} selectedKey="1" onSelect={() => {}} />);
-    expect(document.body.innerHTML.toLowerCase()).to.contain('menu');
+    const html = document.body.innerHTML.toLowerCase();
+    expect(html).to.contain('menu');
   });
 
   it('BaseModal acepta children', () => {
@@ -29,7 +30,8 @@ describe('Components render', () => {
 
   it('LoginCard renderiza formulario', () => {
     render(<LoginCard onFinish={() => {}} />);
-    expect(document.body.innerHTML.toLowerCase()).to.contain('usuario');
+    const html = document.body.innerHTML.toLowerCase();
+    expect(html).to.contain('usuario');
   });
 
   it('UserTable exporta componente', () => {
