@@ -34,6 +34,6 @@ module.exports = {
     "/build/",
     "/mocha_tests/",
     "/cypress/",
-    "/selenium_tests/selenium/",
+    "/selenium_tests/",
   ],
 };
