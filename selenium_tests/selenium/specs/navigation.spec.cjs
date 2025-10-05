@@ -1,4 +1,4 @@
-const { BASE, buildLocal, buildLT, doLogin, By, until } = require('../helpers.cjs');
+const { buildLocal, buildLT, doLogin, clickMenuByText, clickFirstMenu, By } = require('../helpers.cjs');
 const useLT = !!process.env.LT_USERNAME;
 const build = useLT ? buildLT : buildLocal;
 
@@ -10,31 +10,34 @@ describe('Selenium Navegación', function () {
     driver = await build('Nav');
     await doLogin(driver);
   });
-  
   after(async () => { if (driver) await driver.quit(); });
 
   it('menú Dashboard existe', async () => {
-    await driver.findElement(By.xpath("//span[contains(text(), 'Dashboard')]"));
-  });
-
-  it('submenú Formularios existe', async () => {
-    await driver.findElement(By.xpath("//span[contains(text(), 'Formularios')]"));
-  });
-
-  it('submenú Sesión existe', async () => {
-    await driver.findElement(By.xpath("//span[contains(text(), 'Sesión')]"));
+    const els = await driver.findElements(By.xpath("//span[normalize-space(text())='Dashboard']"));
+    if (!els.length) throw new Error('No encontré Dashboard en el menú');
   });
 
   it('puede hacer click en Dashboard', async () => {
-    const el = await driver.findElement(By.xpath("//span[contains(text(), 'Dashboard')]"));
-    await el.click();
-    await driver.sleep(1000);
+    await clickMenuByText(driver, 'Dashboard');
   });
 
-  it('puede abrir submenú Formularios', async () => {
-    const el = await driver.findElement(By.xpath("//span[contains(text(), 'Formularios')]"));
-    await el.click();
-    await driver.sleep(500);
-    await driver.findElement(By.xpath("//span[contains(text(), 'Listado')]"));
+  it('abre Formularios → Listado', async () => {
+    await clickMenuByText(driver, 'Formularios');
+    await clickMenuByText(driver, 'Listado');
+  });
+
+  it('abre Sesión → Terminales (o Dispositivos/Devices)', async () => {
+    await clickMenuByText(driver, 'Sesión');
+    await clickFirstMenu(driver, ['Terminales', 'Dispositivos', 'Devices']);
+  });
+
+  it('abre Sesión → Usuarios/Users', async () => {
+    await clickMenuByText(driver, 'Sesión');
+    await clickFirstMenu(driver, ['Usuarios', 'Users']);
+  });
+
+  it('abre Formularios → Fuentes de Datos', async () => {
+    await clickMenuByText(driver, 'Formularios');
+    await clickMenuByText(driver, 'Fuentes de Datos');
   });
 });

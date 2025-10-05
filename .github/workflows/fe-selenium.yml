@@ -1,0 +1,56 @@
+name: Selenium Tests Frontend
+
+on:
+  pull_request:
+    branches: [ "main", "dev" ]
+  push:
+    branches: [ "dev" ]
+
+jobs:
+  selenium:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: yarn
+
+      - name: Install deps
+        run: yarn install
+
+      - name: Build application
+        run: yarn build
+
+      - name: Download LambdaTest Tunnel
+        run: |
+          wget https://downloads.lambdatest.com/tunnel/v3/linux/64bit/LT_Linux.zip
+          unzip LT_Linux.zip
+      
+      - name: Start LambdaTest Tunnel
+        env:
+          LT_USERNAME: ${{ secrets.LT_USERNAME }}
+          LT_ACCESS_KEY: ${{ secrets.LT_ACCESS_KEY }}
+        run: |
+          ./LT --user ${LT_USERNAME} --key ${LT_ACCESS_KEY} --tunnelName GHActionsTunnel &
+          sleep 15
+
+      - name: Start preview server & Run tests
+        env:
+          LT_USERNAME: ${{ secrets.LT_USERNAME }}
+          LT_ACCESS_KEY: ${{ secrets.LT_ACCESS_KEY }}
+          BASE_URL: http://localhost:5173
+        run: |
+          yarn preview --port 5173 &
+          sleep 10
+          yarn test:selenium:lambdatest
+
+      - name: Upload screenshots on failure
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: selenium-screenshots
+          path: selenium_tests/selenium-error.png
+          if-no-files-found: ignore

@@ -18,7 +18,7 @@
     "test:cypress:ci": "npm run build && start-server-and-test 'vite preview --port 5173' http://localhost:5173 'cypress run'",
     "test:cypress:open": "npm run build && start-server-and-test 'vite preview --port 5173' http://localhost:5173 'cypress open'",
     "test:cypress:dev": "start-server-and-test 'vite --port 5173' http://localhost:5173 'cypress run'",
-    "test:selenium": "node selenium_tests/selenium/run-local.cjs",
+    "test:selenium": "start-server-and-test 'vite preview --port 5173' http://localhost:5173 'node selenium_tests/selenium/run-local.cjs'",
     "test:selenium:lambdatest": "node selenium_tests/selenium/run-lt.cjs",
     "test:all": "yarn test && yarn test:mocha && yarn test:cypress:ci && yarn test:selenium"
   },
