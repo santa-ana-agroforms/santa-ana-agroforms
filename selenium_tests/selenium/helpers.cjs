@@ -42,7 +42,7 @@ function ltCapabilities(name) {
       platformName: 'Windows 11',
       selenium_version: '4.21.0',
       tunnel: true,
-      tunnelName: process.env.CI ? GHActionsTunnel : 'SantaAnaTunnel',
+      tunnelName: process.env.CI ? 'GHActionsTunnel' : 'SantaAnaTunnel',
     },
   };
 }
