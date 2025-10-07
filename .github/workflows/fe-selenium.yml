@@ -1,4 +1,4 @@
-name: Selenium + LambdaTest Tests Frontend
+name: Selenium Local Tests Frontend
 
 on:
   pull_request:
@@ -24,29 +24,29 @@ jobs:
       - name: Build application
         run: yarn build
 
-      - name: Download LambdaTest Tunnel
+      # Instalar Chrome y ChromeDriver para Ubuntu
+      - name: Setup Chrome
+        uses: browser-actions/setup-chrome@latest
+        with:
+          chrome-version: stable
+
+      - name: Setup ChromeDriver
+        uses: nanasess/setup-chromedriver@master
+
+      # Verificar instalación
+      - name: Check Chrome and ChromeDriver
         run: |
-          wget https://downloads.lambdatest.com/tunnel/v3/linux/64bit/LT_Linux.zip
-          unzip LT_Linux.zip
-      
-      - name: Start LambdaTest Tunnel
-        env:
-          LT_USERNAME: ${{ secrets.LT_USERNAME }}
-          LT_ACCESS_KEY: ${{ secrets.LT_ACCESS_KEY }}
-        run: |
-          ./LT --user ${LT_USERNAME} --key ${LT_ACCESS_KEY} --tunnelName GHActionsTunnel &
-          sleep 15
+          google-chrome --version
+          chromedriver --version
 
       - name: Start preview server & Run tests
         env:
-          LT_USERNAME: ${{ secrets.LT_USERNAME }}
-          LT_ACCESS_KEY: ${{ secrets.LT_ACCESS_KEY }}
           BASE_URL: http://localhost:5173
           CI: true
         run: |
           yarn preview --port 5173 &
           sleep 10
-          yarn test:selenium:lambdatest
+          yarn test:selenium
 
       - name: Upload screenshots on failure
         if: failure()

@@ -1,4 +1,7 @@
-require('dotenv').config();
+if (!process.env.FORCE_LOCAL) {
+  require('dotenv').config();
+}
+
 const { Builder, By, until } = require('selenium-webdriver');
 const chrome = require('selenium-webdriver/chrome');
 
@@ -12,13 +15,24 @@ async function buildLocal() {
   options.addArguments('--no-proxy-server');
   options.addArguments('--proxy-server="direct://"');
   options.addArguments('--proxy-bypass-list=*');
-  
   options.addArguments('--disable-web-security');
   options.addArguments('--disable-features=IsolateOrigins,site-per-process');
   options.addArguments('--disable-blink-features=AutomationControlled');
-  options.addArguments('--start-maximized');
   
-  options.addArguments('--user-data-dir=C:\\temp\\selenium-chrome-profile');
+  if (process.env.CI) {
+    console.log('Modo CI detectado - ejecutando en headless');
+    options.addArguments('--headless=new');
+    options.addArguments('--no-sandbox');
+    options.addArguments('--disable-dev-shm-usage');
+    options.addArguments('--disable-gpu');
+    options.addArguments('--window-size=1920,1080');
+  } else {
+    options.addArguments('--start-maximized');
+    // Solo en Windows usar user-data-dir específico
+    if (process.platform === 'win32') {
+      options.addArguments('--user-data-dir=C:\\temp\\selenium-chrome-profile');
+    }
+  }
   
   const driver = await new Builder()
     .forBrowser('chrome')
@@ -125,13 +139,31 @@ async function clickMenuByText(driver, text) {
 
 async function clickFirstMenu(driver, labels) {
   await expandAllSubmenus(driver);
-  await driver.sleep(500);
+  await driver.sleep(1000); // Aumentado de 500ms a 1000ms
+  
   for (const txt of labels) {
     const els = await driver.findElements(By.xpath(`//span[normalize-space(text())='${txt}']`));
     if (els.length) {
-      await els[0].click();
-      await driver.sleep(1000);
-      return;
+      try {
+        // Esperar a que el elemento sea clickeable
+        await driver.wait(until.elementIsVisible(els[0]), 5000);
+        await driver.wait(until.elementIsEnabled(els[0]), 5000);
+        
+        // Scroll al elemento por si está fuera de vista
+        await driver.executeScript('arguments[0].scrollIntoView({block: "center"});', els[0]);
+        await driver.sleep(500);
+        
+        // Intentar click normal
+        await els[0].click();
+        await driver.sleep(1000);
+        return;
+      } catch (e) {
+        // Si falla, intentar con JavaScript click
+        console.log(`Click normal falló en "${txt}", intentando JS click...`);
+        await driver.executeScript('arguments[0].click();', els[0]);
+        await driver.sleep(1000);
+        return;
+      }
     }
   }
   throw new Error(`No encontré: ${labels.join(', ')}`);

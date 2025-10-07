@@ -1,6 +1,13 @@
 const Mocha = require('mocha');
 const path = require('path');
 
+// Establecer flag antes de cargar cualquier cosa
+process.env.FORCE_LOCAL = 'true';
+
+// Forzar modo local ignorando variables de LT
+delete process.env.LT_USERNAME;
+delete process.env.LT_ACCESS_KEY;
+
 const mocha = new Mocha({ timeout: 60000 });
 [
   'smoke.spec.cjs',
