@@ -1,14 +1,14 @@
 // services/forms.service.ts
-import axios from "axios";
 
+import { api } from "@/features/user-autentication/services/auth.service";
 import { FormularioAPI } from "./types";
 
-export const api = axios.create({
-  baseURL:
-    import.meta.env.VITE_API_BASE_URL ??
-    "https://unexpected-janine-uvg-9d84ed75.koyeb.app",
-  // headers: { Authorization: `Bearer ${token}` } // si aplica
-});
+// export const api = axios.create({
+//   baseURL:
+//     import.meta.env.VITE_API_BASE_URL ??
+//     "https://unexpected-janine-uvg-9d84ed75.koyeb.app",
+//   // headers: { Authorization: `Bearer ${token}` } // si aplica
+// });
 
 export interface Formulario {
   id: number;

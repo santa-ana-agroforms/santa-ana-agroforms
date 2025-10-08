@@ -1,10 +1,10 @@
 // src/components/LoginCard.tsx
 import React, { useState } from 'react'
 
-import { Form, Input, Button } from 'antd'
-import type { Rule } from 'antd/lib/form'
-import { UserOutlined, LockOutlined } from '@ant-design/icons'
 import logo from '@/assets/Santa-Ana-logo.png'
+import { LockOutlined, UserOutlined } from '@ant-design/icons'
+import { Button, Form, Input } from 'antd'
+import type { Rule } from 'antd/lib/form'
 
 interface Props {
   onFinish: (v: { username: string; password: string }) => void
