@@ -7,7 +7,6 @@ on:
       - "Dockerfile"
       - "nginx.conf"
       - "package.json"
-      - "package-lock.json"
       - "yarn.lock"
       - "src/**"
       - "public/**"

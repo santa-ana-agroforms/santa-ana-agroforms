@@ -11,8 +11,10 @@ ENV HUSKY=0
 
 # Copy dependency files and install packages
 COPY package.json yarn.lock ./
-RUN corepack enable && corepack prepare yarn@stable --activate
-RUN yarn install
+RUN corepack enable \
+ && corepack prepare yarn@1.22.22 --activate \
+ && yarn --version
+RUN yarn install --frozen-lockfile --network-timeout 600000
 
 # Copy the rest of the project files
 COPY . .
