@@ -1,22 +1,18 @@
-# --- Ignorar rutas de tooling y outputs del repositorio ---
-path:node_modules/**
-path:dist/**
-path:build/**
-path:coverage/**
-path:cypress/videos/**
-path:cypress/screenshots/**
-path:selenium_tests/**/artifacts/**
-path:mocha_tests/node_modules/**
-path:.scannerwork/**
-path:.husky/**
-path:.vscode/**
+# TruffleHog ignore patterns
 
-# --- Patrones públicos conocidos que no deben alertar ---
-# Claves públicas, certificados de pruebas, etc.
-pattern:-----BEGIN PUBLIC KEY-----
-pattern:sample_public_key
-pattern:example_fake_secret_
+# Ignorar rutas de tooling y outputs del repositorio
+node_modules/
+dist/
+build/
+coverage/
+cypress/videos/
+cypress/screenshots/
+selenium_tests/.*/artifacts/
+mocha_tests/node_modules/
+\.scannerwork/
+\.husky/
+\.vscode/
 
-# --- Archivos de configuración frecuentemente ruidosos (si existen) ---
-path:*.snap
-path:*.map
+# Archivos de configuración frecuentemente ruidosos
+.*\.snap$
+.*\.map$
