@@ -4,7 +4,6 @@ import { FC, useEffect } from "react";
 import { Button, Checkbox, Form, Input, Select, type ModalProps } from "antd";
 
 import BaseModal from "@/components/BaseModal";
-import { useRoles } from "@/features/users-list/hooks/useRoles";
 
 const { Option } = Select;
 
@@ -16,7 +15,8 @@ export interface EditUserValues {
   contrasena?: string;
   activo: boolean;
   email: string;
-  roles: string[];
+  acceso_web?: boolean;
+  //roles: string[];
 }
 
 // Props que recibe este modal
@@ -38,7 +38,7 @@ const EditUserModal: FC<EditUserModalProps> = ({
   ...modalProps
 }) => {
   const [form] = Form.useForm<EditUserValues>();
-  const { roles, loading, error } = useRoles();
+  //const { roles, loading, error } = useRoles();
 
   // Al mostrarse el modal, cargamos o reseteamos los valores
   useEffect(() => {
@@ -118,21 +118,15 @@ const EditUserModal: FC<EditUserModalProps> = ({
           </Form.Item>
         </div>
 
-        <div className="w-full pl-25">
+        <div className="w-full pl-[5.9%]">
           <Form.Item
-            label="Rol"
-            name="roles"
-            rules={[{ required: true, message: "Selecciona un rol" }]}
+            name="acceso_web"
+            valuePropName="checked"
+            rules={[
+              { required: true, message: "Marca para activar acceso a la web" },
+            ]}
           >
-            <Select
-              mode="multiple"
-              style={{ width: "100%" }}
-              placeholder="Selecciona los roles"
-              options={roles.map((rol) => ({
-                label: rol.nombre,
-                value: rol.id,
-              }))}
-            />
+            <Checkbox className="flex-row-reverse">Acceso a la web</Checkbox>
           </Form.Item>
         </div>
 

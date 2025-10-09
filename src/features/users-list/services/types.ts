@@ -7,9 +7,10 @@ export interface Rol {
 export interface Usuario {
   nombre_usuario: string;
   nombre: string;
-  correo: string;
+  email: string;
   activo: boolean;
-  roles: Rol[];
+  acceso_web?: boolean;
+  //roles: Rol[];
 }
 
 export interface QrStartResponse {
@@ -27,10 +28,10 @@ export interface Rol {
 export interface CreateUsuarioPayload {
   nombre_usuario: string;
   nombre: string;
-  contrasena: string;
+  password: string;
   activo: boolean;
   correo?: string;
-  roles: string[]; // IDs de los roles
+  acceso_web?: boolean;
 }
 
 export interface UsuarioResponse {

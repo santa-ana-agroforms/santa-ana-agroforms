@@ -27,11 +27,12 @@ export interface UserType {
   activo: boolean;
   nombre_usuario: string;
   email: string;
-  roles: Array<{
-    id: string;
-    nombre: string;
-    descripcion?: string;
-  }>;
+  acceso_web?: boolean;
+  // roles: Array<{
+  //   id: string;
+  //   nombre: string;
+  //   descripcion?: string;
+  // }>;
 }
 
 // Extender EditUserValues para que coincida con UserType
@@ -81,7 +82,7 @@ const UsersTable: React.FC<Props> = ({
 
   const { update } = useUpdateUsuario();
 
-  const { create, loading: creating } = useCreateUsuario();
+  const { create, loading: creating, error} = useCreateUsuario();
 
   const handleAdd = () => {
     setSelected(null);
@@ -128,7 +129,7 @@ const UsersTable: React.FC<Props> = ({
         nombre_usuario: selected.nombre_usuario,
         correo: selected.email,
         activo: selected.activo,
-        roles: selected.roles.map((r) => r.id),
+        acceso_web: selected.acceso_web,
       };
 
       const edited = {
@@ -136,11 +137,11 @@ const UsersTable: React.FC<Props> = ({
         nombre_usuario: values.nombre_usuario,
         correo: values.email,
         activo: values.activo,
-        roles: values.roles,
+        acceso_web: values.acceso_web,
       };
 
       const payload = buildPatchPayload(original, edited);
-      // console.warn("PAYLAD: ", payload);
+
       // console.warn("orginal : ", original);
       // console.warn("edites: ", edited);
       if (Object.keys(payload).length === 0) {
@@ -161,10 +162,10 @@ const UsersTable: React.FC<Props> = ({
         await create({
           nombre_usuario: values.nombre_usuario,
           nombre: values.nombre,
-          contrasena: values.contrasena ?? "",
+          password: values.contrasena ?? "",
           activo: values.activo,
           correo: values.email,
-          roles: values.roles,
+          acceso_web: values.acceso_web
         });
 
         message.success("Usuario creado con éxito");
@@ -276,20 +277,20 @@ const UsersTable: React.FC<Props> = ({
       sorter: (a, b) => Number(a.activo) - Number(b.activo),
       width: 120,
     },
-    {
-      title: "Rol",
-      key: "perfil",
-      filters: perfilFilters,
-      onFilter: (val, rec) => rec.nombre_usuario === val,
-      sorter: (a, b) => a.nombre_usuario.localeCompare(b.nombre_usuario),
-      ellipsis: true,
-      width: 220,
-      render: (_, record) => (
-        <span title={record.roles.map((role) => role.nombre).join(", ")}>
-          {record.roles.map((role) => role.nombre).join(", ")}
-        </span>
-      ),
-    },
+    // {
+    //   title: "Rol",
+    //   key: "perfil",
+    //   filters: perfilFilters,
+    //   onFilter: (val, rec) => rec.nombre_usuario === val,
+    //   sorter: (a, b) => a.nombre_usuario.localeCompare(b.nombre_usuario),
+    //   ellipsis: true,
+    //   width: 220,
+    //   render: (_, record) => (
+    //     <span title={record.roles.map((role) => role.nombre).join(", ")}>
+    //       {record.roles.map((role) => role.nombre).join(", ")}
+    //     </span>
+    //   ),
+    // },
     {
       title: "Email",
       dataIndex: "correo",
@@ -315,7 +316,7 @@ const UsersTable: React.FC<Props> = ({
           selected ?
             {
               ...selected,
-              roles: selected.roles.map((role) => role.id),
+              //roles: selected.roles.map((role) => role.id),
             }
           : undefined
         }

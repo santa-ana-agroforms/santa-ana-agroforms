@@ -1,7 +1,6 @@
 // services/forms.service.ts
 
 import { api } from "@/features/user-autentication/services/auth.service";
-import { FormularioAPI } from "./types";
 
 // export const api = axios.create({
 //   baseURL:
@@ -41,18 +40,9 @@ api.interceptors.request.use((config) => {
   return config;
 });
 
-export async function getFormularios(options?: {
-  signal?: AbortSignal;
-}): Promise<FormularioAPI[]> {
-  const res = await fetch(
-    `${import.meta.env.VITE_API_BASE_URL}/api/formularios-lite/`,
-    {
-      headers: { Accept: "application/json" },
-      signal: options?.signal,
-    }
-  );
-  if (!res.ok) throw new Error("Error al obtener formularios");
-  return res.json();
+export async function getFormularios() {
+  const res = await api.get("/api/formularios-lite/");
+  return res.data;
 }
 
 export async function createFormulario(
