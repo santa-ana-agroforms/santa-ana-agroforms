@@ -5,10 +5,12 @@ import React from 'react'
 import { useNavigate } from 'react-router-dom'
 import SantaAna from '../assets/Santa-Ana.jpg'
 import { LoginCard } from '../components/LoginCard'
+import { toAuthUser, useAuth } from './AuthContext'
 
 export const LoginPage: React.FC = () => {
   const navigate = useNavigate()
-  const { mutateAsync: login } = useLogin();
+  const { mutateAsync: login, isPending } = useLogin();
+  const { setUser } = useAuth();
 
   const handleLogin = async (values: { username: string; password: string }) => {
     try {
@@ -19,14 +21,13 @@ export const LoginPage: React.FC = () => {
       });
 
       if (data?.ok) {
+        setUser(toAuthUser(data.user));
         message.success(`Bienvenido ${data.user.nombre}`);
         navigate("/home");
       } else {
         message.error("Usuario o contraseña incorrectos");
-        console.warn("Error de login:", data);
       }
     } catch (error: any) {
-      console.warn("Error de autenticación:", error);
       message.error("Usuario o contraseña incorrectos");
     }
   };
@@ -39,7 +40,7 @@ export const LoginPage: React.FC = () => {
 
       {/* contenedor del formulario */}
       <div className="relative z-10 flex items-center justify-center h-full">
-        <LoginCard onFinish={handleLogin} />
+        <LoginCard onFinish={handleLogin} isPending={isPending} />
       </div>
     </div>
   )

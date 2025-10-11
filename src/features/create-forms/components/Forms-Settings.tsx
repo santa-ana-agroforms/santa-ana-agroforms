@@ -34,7 +34,7 @@ const PageSettings: React.FC<PageSettingsProps> = ({
   );
 
   // Solo un estado para el ID seleccionado
-  const [selectedId, setSelectedId] = useState<string | undefined>(undefined);
+  const [selectedId, setSelectedId] = useState<string | number | undefined>(undefined);
 
   const { mutateAsync: postCamposBulk, isPending: sendingBulk } =
     usePostCamposActualBatch();
@@ -145,7 +145,6 @@ const PageSettings: React.FC<PageSettingsProps> = ({
               <div className="absolute z-10 w-full mt-1 bg-white border border-gray-200 rounded-md shadow-lg max-h-60 overflow-auto">
                 {pages.map((p) => (
                   <div
-                    key={p.sequence}
                     className={`px-3 py-2 cursor-pointer hover:bg-gray-100 ${
                       selectedSeq === p.sequence ?
                         "bg-blue-50 text-blue-600"

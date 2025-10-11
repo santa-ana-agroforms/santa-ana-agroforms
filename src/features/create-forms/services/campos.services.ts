@@ -1,9 +1,7 @@
 // src/create-forms/services/campos.service.ts
+import { api } from "@/features/user-autentication/services/auth.service";
+import type { AxiosError } from "axios";
 import { FieldJson } from "../types";
-
-const BASE =
-  import.meta.env.VITE_API_BASE_URL?.replace(/\/$/, "") ||
-  "http://127.0.0.1:8084"; // ← según tu log
 
 export type CampoAPI = FieldJson;
 
@@ -14,15 +12,27 @@ function sanitize<T>(data: T): T {
   );
 }
 
-async function readError(res: Response) {
-  try {
-    const data = await res.clone().json();
-    return JSON.stringify(data);
-  } catch {}
-  try {
-    return await res.clone().text();
-  } catch {}
-  return res.statusText;
+function extractAxiosError(e: unknown) {
+  const err = e as AxiosError<any>;
+  const status = err?.response?.status;
+
+  // 1) Si el backend devolvió JSON, lo serializamos
+  const data = err?.response?.data;
+  if (data && typeof data === "object") {
+    try {
+      return { status, detail: JSON.stringify(data) };
+    } catch {
+      /* no-op */
+    }
+  }
+
+  // 2) Si devolvió texto plano
+  if (typeof data === "string" && data.trim()) {
+    return { status, detail: data };
+  }
+
+  // 3) Fallback al message
+  return { status, detail: err?.message ?? "Error desconocido" };
 }
 
 /** POST de un (1) campo: body = {tipo, clase, nombre_campo, etiqueta, ...} */
@@ -33,26 +43,22 @@ export async function postCampoActualSingle(
 ) {
   if (!pageId) throw new Error("pageId es requerido");
 
-  const url = `${BASE}/api/paginas/${pageId}/campos/`;
+  const url = `/api/paginas/${pageId}/campos/`;
 
-  console.warn("Fetch páginas URL:", url);
+  try {
+    const res = await api.post(url, sanitize(campo), {
+      signal: opts?.signal,
+      // axios setea headers JSON automáticamente; no hace falta sobrescribirlos
+    });
 
-  const res = await fetch(url, {
-    method: "POST",
-    headers: {
-      Accept: "application/json",
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify(sanitize(campo)), // 👈 objeto, NO array, NO wrapper
-    signal: opts?.signal,
-  });
-
-  if (!res.ok) {
-    const detail = await readError(res);
-    throw new Error(`Error al enviar campo (${res.status}): ${detail}`);
+    // Igual que antes: si no hay body o no es JSON, devolvemos null
+    return res?.data ?? null;
+  } catch (e) {
+    const { status, detail } = extractAxiosError(e);
+    throw new Error(
+      `Error al enviar campo (${status ?? "sin status"}): ${detail}`
+    );
   }
-
-  return res.json().catch(() => null);
 }
 
 /** Helper para enviar una lista secuencialmente (con reporte de errores) */

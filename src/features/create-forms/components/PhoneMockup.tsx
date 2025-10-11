@@ -64,6 +64,8 @@ const PhoneMockup: React.FC<PhoneMockupProps> = ({
   if (isError) return <div>Cargando...</div>;
   if (!formulario) return <div>Cargando...</div>;
 
+  //console.warn("form: ", formulario, selectedPage);
+
 
   return (
     <div className="w-80 h-[600px] border border-gray-300 rounded-3xl shadow-lg flex flex-col overflow-hidden bg-white">

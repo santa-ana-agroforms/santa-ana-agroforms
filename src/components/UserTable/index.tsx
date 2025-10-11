@@ -122,8 +122,6 @@ const UsersTable: React.FC<Props> = ({
 
   const handleSave = async (values: EditUserFormValues) => {
     if (selected) {
-      // // 🟢 EDITAR → PATCH con solo cambios
-      // console.warn("selectededdd: ", selected);
       const original = {
         nombre: selected.nombre,
         nombre_usuario: selected.nombre_usuario,
@@ -142,8 +140,7 @@ const UsersTable: React.FC<Props> = ({
 
       const payload = buildPatchPayload(original, edited);
 
-      // console.warn("orginal : ", original);
-      // console.warn("edites: ", edited);
+
       if (Object.keys(payload).length === 0) {
         message.info("No hay cambios para guardar");
         return;
@@ -171,7 +168,6 @@ const UsersTable: React.FC<Props> = ({
         message.success("Usuario creado con éxito");
         setModalOpen(false);
       } catch (err: any) {
-        console.warn("Error crudo:", err.message);
 
         const errorMap: Record<string, string> = {
           "Ensure this field has at least 8 characters.":

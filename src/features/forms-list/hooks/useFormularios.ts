@@ -4,6 +4,8 @@ import { useEffect } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
 import {
+  crearAsignacion,
+  crearAsignacionMultipleUsuarios,
   createFormulario,
   CreateFormularioDto,
   deleteFormulario,
@@ -12,18 +14,19 @@ import {
   getFormularioById,
   getFormularios,
 } from "../services/forms-services";
+import { CreateAsignacionDto } from "../services/types";
 
 export function useFormularios() {
   const { data } = useQuery({
     queryKey: ["formularios"],
-    queryFn: ({ signal }) => getFormularios({ signal }),
+    queryFn: ({ signal }) => getFormularios(),
     staleTime: 60_000,
   });
 
   const qc = useQueryClient();
   useEffect(() => {
     if (data) {
-      data.forEach((f) => qc.setQueryData(["formulario", f.id], f));
+      data.forEach((f: any) => qc.setQueryData(["formulario", f.id], f));
     }
   }, [data, qc]);
 
@@ -32,14 +35,15 @@ export function useFormularios() {
 
 export function useFormulario(id: string) {
   const qc = useQueryClient();
-  return useQuery({
+  return useQuery<Formulario, Error>({
     queryKey: ["formulario", id],
-
     queryFn: ({ signal }) => getFormularioById(id, { signal }),
-    initialData: () => qc.getQueryData(["formulario", id]), // usa datos de la lista si ya están
-    placeholderData: (prev) => prev, // evita parpadeo
+    // muestra lo que haya en cache mientras se pide el detalle
+    placeholderData: () =>
+      qc.getQueryData<Formulario>(["formulario", id]),
+    // o 0 si quieres que siempre refetchee al montar
+    staleTime: 0,
     enabled: !!id,
-    staleTime: 60_000,
   });
 }
 
@@ -91,5 +95,28 @@ export function useDuplicateFormulario() {
     onError: (error) => {
       console.error("Error al duplicar formulario:", error);
     },
+  });
+}
+
+/** Hook simple: una asignación (usuario → formularios[]) */
+export function useCrearAsignacion() {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: (payload: CreateAsignacionDto) => crearAsignacion(payload),
+    // Opcional: invalidar algo si tu UI depende de ello
+    // onSuccess: () => qc.invalidateQueries({ queryKey: ["asignaciones"] }),
+  });
+}
+
+/**
+ * Hook batch: múltiples usuarios a la vez.
+ * Recibe { usuarios: string[], formularios: string[] }
+ */
+export function useCrearAsignacionMultiple() {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: (input: { usuarios: string[]; formularios: string[] }) =>
+      crearAsignacionMultipleUsuarios(input.usuarios, input.formularios),
+    // onSuccess: () => qc.invalidateQueries({ queryKey: ["asignaciones"] }),
   });
 }

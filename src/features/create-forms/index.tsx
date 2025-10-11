@@ -217,6 +217,7 @@ const CreateForms: React.FC<CreateFormsProps> = ({ formId, onBack }) => {
     title: "Generales",
   });
 
+
   useEffect(() => {
     if (formulario?.paginas) {
       const mappedPages: PageValues[] = formulario.paginas.map((p: any) => ({
@@ -227,14 +228,21 @@ const CreateForms: React.FC<CreateFormsProps> = ({ formId, onBack }) => {
       }));
       setPages(mappedPages);
 
-      // opcional: setear la primera página como seleccionada si aún no hay
-      if (mappedPages.length > 0 && !selectedPage) {
-        setSelectedPage(mappedPages[0]);
-      }
-    }
-  }, [formulario, selectedPage]);
+      console.warn("mapped:", mappedPages);
 
-  console.warn("mapped: ", pages);
+      if (mappedPages.length > 0 ) {
+        setSelectedPage(prev => {
+        const isSentinel = !prev || String(prev.id) === "0";
+        const stillExists = prev && mappedPages.some(p => String(p.id) === String(prev.id));
+        if (isSentinel || !stillExists) return mappedPages[0];
+        // opcional: sincroniza datos (title/description) con el backend si cambiaron
+        const updated = mappedPages.find(p => String(p.id) === String(prev.id))!;
+        return updated;
+      });
+  }
+    }
+  }, [formulario]);
+
 
   const handleEditDelete = () => {
     const pageKey = selectedPage.sequence;
@@ -274,6 +282,7 @@ const CreateForms: React.FC<CreateFormsProps> = ({ formId, onBack }) => {
     setEditInitialValues(undefined);
     setEditVariant(undefined);
   };
+
 
   const currentElements = elementsByPage[selectedPage.sequence] ?? [];
 

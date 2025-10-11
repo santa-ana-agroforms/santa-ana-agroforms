@@ -19,8 +19,12 @@ import NewFormModal, {
 import SuspendFormModal from "@/components/CategoryTables/components/SuspendFormModal";
 import { getColumns } from "@/components/CategoryTables/data";
 
+import AssignFormModal from "@/components/CategoryTables/components/AssignFormModal";
+import { useUsuarios } from "../users-list/hooks/useUsuarios";
+import { Usuario } from "../users-list/services/types";
 import { useFormsListsData } from "./hooks/useFormsListsData";
 import {
+  useCrearAsignacionMultiple,
   useDeleteFormulario,
   useDuplicateFormulario,
 } from "./hooks/useFormularios";
@@ -56,6 +60,9 @@ type Sorts = GetSingle<Parameters<OnChange>[2]>;
 type Filters = Parameters<OnChange>[1];
 
 const FormsLists: React.FC<FormsListsProps> = ({ onSelectForm, sortAsc }) => {
+
+  const { data: usuarios = [], isLoading: isLoadingUsuarios } = useUsuarios();
+
   const [filteredInfo, setFilteredInfo] = useState<Filters>({});
   const [sortedInfo, setSortedInfo] = useState<Sorts>({});
 
@@ -69,14 +76,21 @@ const FormsLists: React.FC<FormsListsProps> = ({ onSelectForm, sortAsc }) => {
   //Modal para duplicar
   const [isDuplicateModalOpen, setIsDuplicateModalOpen] = useState(false);
 
-  //Modal para duplicar
+  //Modal para suspender
   const [isSuspendModalOpen, setIsSuspendModalOpen] = useState(false);
+
+  // Modal Asignar
+  const [isAssignModalOpen, setIsAssignModalOpen] = useState(false);
+  //const [assigning, setAssigning] = useState(false);
 
   const { mutate: deleteForm, isPending: isDeletingForm } =
     useDeleteFormulario();
 
   const { mutate: duplicate, isPending: isDuplicateForm } =
     useDuplicateFormulario();
+
+  const { mutate: asignarMultiple, isPending: assigning } = 
+    useCrearAsignacionMultiple();
 
   const handleAdd = () => {
     setOpen(true);
@@ -107,6 +121,11 @@ const FormsLists: React.FC<FormsListsProps> = ({ onSelectForm, sortAsc }) => {
   const handleSuspend = useCallback((record: ItemType) => {
     setSelectedItem(record); // Guarda el registro seleccionado
     setIsSuspendModalOpen(true); // Abre el modal
+  }, []);
+
+  const handleAssignOpen = useCallback((record: ItemType) => {
+    setSelectedItem(record);
+    setIsAssignModalOpen(true);
   }, []);
 
   const handleCreate = (values: NewFormValues) => {
@@ -156,6 +175,43 @@ const FormsLists: React.FC<FormsListsProps> = ({ onSelectForm, sortAsc }) => {
     });
   }, [selectedItem, duplicate]);
 
+  const handleAssignConfirm = useCallback(
+    async (userIds: string[]) => {
+      if (!selectedItem) {
+        message.warning("No hay un formulario seleccionado para asignar.");
+        return;
+      }
+      asignarMultiple(
+        { usuarios: userIds, formularios: [String(selectedItem.id)] },
+        {
+          onSuccess: ({ ok, errors }) => {
+            if (ok.length) {
+              const done =
+                ok.length === 1 ? ok[0].usuario : `${ok.length} usuarios`;
+              message.success(
+                `Formulario "${selectedItem.titulo}" asignado a ${done}.`
+              );
+            }
+            if (errors.length) {
+              message.error(
+                `No se pudo asignar a ${errors.length} usuario(s).`
+              );
+              // opcional: console.table(errors);
+            }
+            setIsAssignModalOpen(false);
+            setSelectedItem(null);
+          },
+          onError: (err: any) => {
+            message.error(
+              err?.message ?? "No se pudo asignar el formulario. Intenta de nuevo."
+            );
+          },
+        }
+      );
+    },
+    [selectedItem, asignarMultiple]
+  );
+
   const { categoriesData, isLoading, error } = useFormsListsData();
 
   const sortedCategories = useMemo(() => {
@@ -170,6 +226,16 @@ const FormsLists: React.FC<FormsListsProps> = ({ onSelectForm, sortAsc }) => {
     [categoriesData]
   );
 
+  const userOptions = useMemo(
+    () =>
+      (usuarios as Usuario[]).map((u) => ({
+        label: u.nombre?.trim() || u.nombre_usuario || u.email,
+        value: u.nombre_usuario,          // usamos nombre_usuario como id único
+        disabled: u.activo === false,     // si quieres deshabilitar inactivos
+      })),
+    [usuarios]
+  );
+
   const columns = useMemo(
     () =>
       getColumns(
@@ -181,7 +247,8 @@ const FormsLists: React.FC<FormsListsProps> = ({ onSelectForm, sortAsc }) => {
         handleEdit,
         handleDelete,
         handleDuplicate,
-        handleSuspend
+        handleSuspend,
+        handleAssignOpen
       ),
     [rows, sortedInfo, filteredInfo]
   );
@@ -253,6 +320,17 @@ const FormsLists: React.FC<FormsListsProps> = ({ onSelectForm, sortAsc }) => {
               setIsSuspendModalOpen(false);
               setSelectedItem(null);
             }}
+          />
+
+          <AssignFormModal
+            open={isAssignModalOpen}
+            onCancel={() => {
+              setIsAssignModalOpen(false);
+            }}
+            options={userOptions}
+            loadingOptions={isLoadingUsuarios}
+            submitting={assigning}
+            onAssign={handleAssignConfirm}
           />
         </>
       }

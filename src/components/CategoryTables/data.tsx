@@ -81,7 +81,8 @@ export const getColumns = (
   onEdit: (record: ItemType) => void,
   onDelete: (record: ItemType) => void,
   onDuplicate: (record: ItemType) => void,
-  onSuspend: (record: ItemType) => void
+  onSuspend: (record: ItemType) => void,
+  onAssign: (record: ItemType) => void
 ): ColumnType<ItemType>[] => [
   {
     title: (
@@ -104,7 +105,10 @@ export const getColumns = (
       <>
         <div className="flex flex-row gap-2">
           <Tooltip title="Asignar formulario">
-            <SolutionOutlined style={{ cursor: "pointer" }} />
+            <SolutionOutlined style={{ cursor: "pointer" }} onClick={(e) => {
+              e.stopPropagation();
+              onAssign(record);
+            }} />
           </Tooltip>
           <Tooltip title="Editar formulario">
             <FormOutlined
