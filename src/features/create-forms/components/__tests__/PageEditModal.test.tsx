@@ -1,16 +1,17 @@
-import { render, screen } from '@testing-library/react';
-import PageEditModal from '@/features/create-forms/components/PageEditModal';
+import { render, screen } from "@testing-library/react";
 
-jest.mock('@/features/create-forms/hooks/useCreatePage', () => ({
+import PageEditModal from "@/features/create-forms/components/PageEditModal";
+
+jest.mock("@/features/create-forms/hooks/useCreatePage", () => ({
   useCreatePagina: () => ({ mutate: jest.fn(), isPending: false, error: null }),
 }));
 
-describe('PageEditModal', () => {
-  test('Renderizar diálogo al editar página (shape PaginaAPI)', () => {
+describe("PageEditModal", () => {
+  test("Renderizar diálogo al editar página (shape PaginaAPI)", () => {
     const initialValues = {
-      id: 'p1',
-      nombre: 'Página 1',
-      descripcion: '',
+      id: "p1",
+      nombre: "Página 1",
+      descripcion: "",
       secuencia: 1,
     };
 
@@ -25,6 +26,6 @@ describe('PageEditModal', () => {
       />
     );
 
-    expect(screen.getByRole('dialog')).toBeInTheDocument();
+    expect(screen.getByRole("dialog")).toBeInTheDocument();
   });
 });

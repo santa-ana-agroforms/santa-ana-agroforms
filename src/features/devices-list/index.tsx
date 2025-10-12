@@ -1,4 +1,5 @@
 // src/components/DevicesList/DevicesList.tsx
+<<<<<<< HEAD
 import type { TableProps } from 'antd';
 import { Col, Input } from 'antd';
 import React, { useCallback, useState } from 'react';
@@ -6,23 +7,36 @@ import React, { useCallback, useState } from 'react';
 import DevicesTable, { ItemType as DeviceType } from '@/components/DeviceTables';
 import { EditUserValues } from '@/components/DeviceTables/components/EditUserModal';
 import { devices } from './data';
+=======
+import React, { useCallback, useState } from "react";
+
+import { ArrowUpOutlined, FilterOutlined } from "@ant-design/icons";
+import { Button, Col, Input, type TableProps } from "antd";
+
+import DevicesTable, {
+  ItemType as DeviceType,
+} from "@/components/DeviceTables";
+import { EditUserValues } from "@/components/DeviceTables/components/EditUserModal";
+
+import { devices } from "./data";
+>>>>>>> 3d0b0bc47cf700228bfb51b8e76d69525dc15466
 
 const DevicesList: React.FC = () => {
   // estados para búsqueda, filtros y orden
-  const [searchText, setSearchText] = useState('');
+  const [searchText, setSearchText] = useState("");
   const [filteredInfo, setFilteredInfo] = useState<Record<string, any>>({});
   const [sortedInfo, setSortedInfo] = useState<any>({});
 
   // filtrar globalmente según el texto
   const filteredData = devices.filter((item) =>
     Object.values(item as unknown as Record<string, unknown>)
-      .join(' ')
+      .join(" ")
       .toLowerCase()
       .includes(searchText.toLowerCase())
   );
 
   // onChange estándar de ant-table
-  const handleTableChange: TableProps<DeviceType>['onChange'] = (
+  const handleTableChange: TableProps<DeviceType>["onChange"] = (
     _pagination,
     filters,
     sorter
@@ -32,23 +46,23 @@ const DevicesList: React.FC = () => {
   };
 
   const handleEdit = useCallback((rec: DeviceType) => {
-    console.log('EDIT:', rec);
+    console.log("EDIT:", rec);
     // aquí tu lógica para editar…
   }, []);
 
   const handleDelete = useCallback((rec: DeviceType) => {
-    console.log('DELETE:', rec);
+    console.log("DELETE:", rec);
     // aquí tu lógica para borrar…
   }, []);
 
   const handleIdClick = useCallback((id: string) => {
-    console.log('GO TO DETAIL FOR ID:', id);
+    console.log("GO TO DETAIL FOR ID:", id);
     // navegación o callback…
   }, []);
 
   // 1) Creamos el handler para “Crear” (onCreate)
   const handleCreate = useCallback((values: EditUserValues) => {
-    console.log('CREATE:', values);
+    console.log("CREATE:", values);
     // Aquí tu lógica para añadir el nuevo registro...
     // por ejemplo: llamar a tu API o actualizar el estado local
   }, []);

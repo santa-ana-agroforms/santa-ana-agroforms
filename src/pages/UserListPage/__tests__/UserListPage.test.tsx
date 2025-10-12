@@ -1,9 +1,10 @@
-import { render, screen } from '@testing-library/react';
-import UserListPage from '@/pages/UserListPage';
+import { render, screen } from "@testing-library/react";
 
-describe('UserListPage', () => {
-  test('renderiza tabla de usuarios', () => {
+import UserListPage from "@/pages/UserListPage";
+
+describe("UserListPage", () => {
+  test("renderiza tabla de usuarios", () => {
     render(<UserListPage />);
-    expect(screen.getByRole('table', { hidden: true })).toBeInTheDocument();
+    expect(screen.getByRole("table", { hidden: true })).toBeInTheDocument();
   });
 });

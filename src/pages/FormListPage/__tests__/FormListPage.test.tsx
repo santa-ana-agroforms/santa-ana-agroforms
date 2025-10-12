@@ -1,8 +1,9 @@
-import { render, screen } from '@testing-library/react';
-import userEvent from '@testing-library/user-event';
-import FormListPage from '@/pages/FormListPage';
+import { render, screen } from "@testing-library/react";
+import userEvent from "@testing-library/user-event";
 
-jest.mock('@/features/forms-list/hooks/useCategorias', () => ({
+import FormListPage from "@/pages/FormListPage";
+
+jest.mock("@/features/forms-list/hooks/useCategorias", () => ({
   useCategorias: () => ({
     categorias: [],
     categoriasLoading: false,
@@ -12,32 +13,42 @@ jest.mock('@/features/forms-list/hooks/useCategorias', () => ({
   useCreateCategoria: () => ({ mutate: jest.fn(), isPending: false }),
 }));
 
-jest.mock('@/features/forms-list/hooks/useFormularios', () => ({
+jest.mock("@/features/forms-list/hooks/useFormularios", () => ({
   useCreateFormulario: () => ({ mutate: jest.fn(), isPending: false }),
 }));
 
-jest.mock('@/features/forms-list', () => ({
+jest.mock("@/features/forms-list", () => ({
   __esModule: true,
   default: () => <div data-testid="forms-lists-stub" />,
 }));
 
-describe('FormListPage', () => {
-  test('Muestra botones de Categoría y Nuevo + input de búsqueda', () => {
+describe("FormListPage", () => {
+  test("Muestra botones de Categoría y Nuevo + input de búsqueda", () => {
     render(<FormListPage onSelectForm={() => {}} />);
-    expect(screen.getByRole('button', { name: /Categoría/i })).toBeInTheDocument();
-    expect(screen.getByPlaceholderText(/Introduzca el texto a buscar/i)).toBeInTheDocument();
-    expect(screen.getByRole('button', { name: /Crear categoria/i })).toBeInTheDocument();
+    expect(
+      screen.getByRole("button", { name: /Categoría/i })
+    ).toBeInTheDocument();
+    expect(
+      screen.getByPlaceholderText(/Introduzca el texto a buscar/i)
+    ).toBeInTheDocument();
+    expect(
+      screen.getByRole("button", { name: /Crear categoria/i })
+    ).toBeInTheDocument();
   });
 
   test('Al hacer click en "Nuevo" se abre el modal de "Nueva Categoría"', async () => {
     const user = userEvent.setup();
     render(<FormListPage onSelectForm={() => {}} />);
 
-    const nuevo = screen.getByRole('button', { name: /Crear categoria/i });
+    const nuevo = screen.getByRole("button", { name: /Crear categoria/i });
     await user.click(nuevo);
 
-    expect(await screen.findByText('Nueva Categoría')).toBeInTheDocument();
-    expect(screen.getByRole('button', { name: /Guardar/i })).toBeInTheDocument();
-    expect(screen.getByRole('button', { name: /Cancelar/i })).toBeInTheDocument();
+    expect(await screen.findByText("Nueva Categoría")).toBeInTheDocument();
+    expect(
+      screen.getByRole("button", { name: /Guardar/i })
+    ).toBeInTheDocument();
+    expect(
+      screen.getByRole("button", { name: /Cancelar/i })
+    ).toBeInTheDocument();
   });
 });

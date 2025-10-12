@@ -1,10 +1,12 @@
-import '@testing-library/jest-dom';
-import { TextEncoder, TextDecoder } from 'util';
+import "@testing-library/jest-dom";
+
+import { TextDecoder, TextEncoder } from "util";
 
 if (!(global as any).TextEncoder) (global as any).TextEncoder = TextEncoder;
-if (!(global as any).TextDecoder) (global as any).TextDecoder = TextDecoder as any;
+if (!(global as any).TextDecoder)
+  (global as any).TextDecoder = TextDecoder as any;
 
-Object.defineProperty(window, 'matchMedia', {
+Object.defineProperty(window, "matchMedia", {
   writable: true,
   value: jest.fn().mockImplementation((query: string) => ({
     matches: false,
@@ -18,24 +20,28 @@ Object.defineProperty(window, 'matchMedia', {
   })),
 });
 
-const _getComputedStyle = window.getComputedStyle?.bind(window) as typeof window.getComputedStyle;
+const _getComputedStyle = window.getComputedStyle?.bind(
+  window
+) as typeof window.getComputedStyle;
 window.getComputedStyle = ((elt: Element) => {
-  return _getComputedStyle ? _getComputedStyle(elt) : ({ getPropertyValue: () => '' } as any);
+  return _getComputedStyle ?
+      _getComputedStyle(elt)
+    : ({ getPropertyValue: () => "" } as any);
 }) as typeof window.getComputedStyle;
 
-jest.mock('@ant-design/plots', () => {
-  const React = require('react');
-  const stub =
-    (testId: string) =>
-    (props: any) =>
-      React.createElement('div', { 'data-testid': props?.['data-testid'] || testId });
+jest.mock("@ant-design/plots", () => {
+  const React = require("react");
+  const stub = (testId: string) => (props: any) =>
+    React.createElement("div", {
+      "data-testid": props?.["data-testid"] || testId,
+    });
 
   return {
     __esModule: true,
-    Line: stub('ant-plot-line'),
-    Column: stub('ant-plot-column'),
-    Pie: stub('ant-plot-pie'),
-    Area: stub('ant-plot-area'),
+    Line: stub("ant-plot-line"),
+    Column: stub("ant-plot-column"),
+    Pie: stub("ant-plot-pie"),
+    Area: stub("ant-plot-area"),
   };
 });
 
@@ -47,20 +53,28 @@ type Filter = (msg: string, args: unknown[]) => boolean;
 const toMsg = (args: unknown[]) =>
   args
     .map((a) =>
-      typeof a === 'string' ? a : a instanceof Error ? a.message : (() => {
-        try { return JSON.stringify(a); } catch { return String(a); }
-      })()
+      typeof a === "string" ? a
+      : a instanceof Error ? a.message
+      : (() => {
+          try {
+            return JSON.stringify(a);
+          } catch {
+            return String(a);
+          }
+        })()
     )
-    .join(' ');
+    .join(" ");
 
 const shouldIgnore = (filters: Filter[], msg: string, args: unknown[]) =>
   filters.some((f) => f(msg, args));
 
 const errorFilters: Filter[] = [
-  (m) => m.includes('[antd: Modal] `visible` is deprecated'),
+  (m) => m.includes("[antd: Modal] `visible` is deprecated"),
   (m) => /Not implemented:\s*window\.getComputedStyle/i.test(m),
   (m) => /Each child in a list should have a unique "key" prop/i.test(m),
-  (m) => /not wrapped in act/i.test(m) && /(rc-menu|antd[\/\\]lib[\/\\]menu)/i.test(m),
+  (m) =>
+    /not wrapped in act/i.test(m) &&
+    /(rc-menu|antd[\/\\]lib[\/\\]menu)/i.test(m),
 ];
 
 const warnFilters: Filter[] = [
@@ -68,25 +82,25 @@ const warnFilters: Filter[] = [
   (m) => /^paginas:\s*/i.test(m),
 ];
 
-const SHOW_IGNORED = process.env.SHOW_IGNORED_LOGS === '1';
+const SHOW_IGNORED = process.env.SHOW_IGNORED_LOGS === "1";
 
 beforeAll(() => {
-  jest.spyOn(console, 'error').mockImplementation((...args: unknown[]) => {
+  jest.spyOn(console, "error").mockImplementation((...args: unknown[]) => {
     const msg = toMsg(args);
     if (shouldIgnore(errorFilters, msg, args)) {
-      if (SHOW_IGNORED) originalError('[IGNORED error]', ...args as any);
+      if (SHOW_IGNORED) originalError("[IGNORED error]", ...(args as any));
       return;
     }
-    originalError(...args as any);
+    originalError(...(args as any));
   });
 
-  jest.spyOn(console, 'warn').mockImplementation((...args: unknown[]) => {
+  jest.spyOn(console, "warn").mockImplementation((...args: unknown[]) => {
     const msg = toMsg(args);
     if (shouldIgnore(warnFilters, msg, args)) {
-      if (SHOW_IGNORED) originalWarn('[IGNORED warn]', ...args as any);
+      if (SHOW_IGNORED) originalWarn("[IGNORED warn]", ...(args as any));
       return;
     }
-    originalWarn(...args as any);
+    originalWarn(...(args as any));
   });
 });
 

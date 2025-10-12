@@ -1,0 +1,18 @@
+# TruffleHog ignore patterns
+
+# Ignorar rutas de tooling y outputs del repositorio
+node_modules/
+dist/
+build/
+coverage/
+cypress/videos/
+cypress/screenshots/
+selenium_tests/.*/artifacts/
+mocha_tests/node_modules/
+\.scannerwork/
+\.husky/
+\.vscode/
+
+# Archivos de configuración frecuentemente ruidosos
+.*\.snap$
+.*\.map$

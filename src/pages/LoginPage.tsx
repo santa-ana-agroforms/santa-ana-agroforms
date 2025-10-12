@@ -1,4 +1,5 @@
 // src/pages/LoginPage.tsx
+<<<<<<< HEAD
 import { useLogin } from '@/features/user-autentication/hooks/useAuth'
 import { message } from 'antd'
 import React from 'react'
@@ -30,18 +31,33 @@ export const LoginPage: React.FC = () => {
     } catch (error: any) {
       message.error("Usuario o contraseña incorrectos");
     }
+=======
+import React from "react";
+import { useNavigate } from "react-router-dom";
+
+import SantaAna from "../assets/Santa-Ana.jpg";
+import { LoginCard } from "../components/LoginCard";
+
+export const LoginPage: React.FC = () => {
+  const navigate = useNavigate();
+
+  const onFinish = (values: { username: string; password: string }) => {
+    console.log("Login datos:", values);
+    // aquí tu llamada real al API…
+    const fakeOk = true;
+    if (fakeOk) navigate("/home");
+>>>>>>> 3d0b0bc47cf700228bfb51b8e76d69525dc15466
   };
 
   return (
-   <div
+    <div
       className="relative h-screen w-screen bg-center bg-cover"
       style={{ backgroundImage: `url(${SantaAna})` }}
     >
-
       {/* contenedor del formulario */}
       <div className="relative z-10 flex items-center justify-center h-full">
         <LoginCard onFinish={handleLogin} isPending={isPending} />
       </div>
     </div>
-  )
-}
+  );
+};

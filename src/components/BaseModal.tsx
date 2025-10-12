@@ -1,14 +1,15 @@
 // components/BaseModal.tsx
-import React, { ReactNode } from 'react'
-import { Modal } from 'antd'
-import type { ModalProps } from 'antd'
-import { CloseOutlined } from '@ant-design/icons'
+import React, { ReactNode } from "react";
 
-export interface BaseModalProps extends Omit<ModalProps, 'title' | 'closeIcon'> {
+import { CloseOutlined } from "@ant-design/icons";
+import { Modal, type ModalProps } from "antd";
+
+export interface BaseModalProps
+  extends Omit<ModalProps, "title" | "closeIcon"> {
   /** Título que aparecerá en la cabecera */
-  title: ReactNode
+  title: ReactNode;
   /** Contenido interno del modal */
-  children: ReactNode
+  children: ReactNode;
 }
 
 const BaseModal: React.FC<BaseModalProps> = ({
@@ -31,6 +32,6 @@ const BaseModal: React.FC<BaseModalProps> = ({
     <div className="border-t border-gray-300 mt-3 mb-6" />
     {children}
   </Modal>
-)
+);
 
-export default BaseModal
+export default BaseModal;

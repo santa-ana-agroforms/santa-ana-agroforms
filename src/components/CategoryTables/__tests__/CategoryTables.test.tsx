@@ -1,20 +1,19 @@
-import { render, screen } from '@testing-library/react';
-import userEvent from '@testing-library/user-event';
-import CategoryTables, { type Category } from '@/components/CategoryTables';
+import { render, screen } from "@testing-library/react";
+import userEvent from "@testing-library/user-event";
+
+import CategoryTables, { type Category } from "@/components/CategoryTables";
 
 type Row = { key: string; nombre: string };
 
-describe('CategoryTables', () => {
-  const columns = [
-    { title: 'Nombre', dataIndex: 'nombre', key: 'nombre' },
-  ];
+describe("CategoryTables", () => {
+  const columns = [{ title: "Nombre", dataIndex: "nombre", key: "nombre" }];
 
-  test('Renderiza encabezados de categorías y muestra filas al expandir', async () => {
+  test("Renderiza encabezados de categorías y muestra filas al expandir", async () => {
     const user = userEvent.setup();
 
     const data: Category<Row>[] = [
-      { key: 'a', name: 'Cat A', items: [{ key: '1', nombre: 'Uno' }] },
-      { key: 'b', name: 'Cat B', items: [{ key: '2', nombre: 'Dos' }] },
+      { key: "a", name: "Cat A", items: [{ key: "1", nombre: "Uno" }] },
+      { key: "b", name: "Cat B", items: [{ key: "2", nombre: "Dos" }] },
     ];
 
     render(
@@ -26,8 +25,8 @@ describe('CategoryTables', () => {
     );
 
     // Headers visibles
-    const headerA = screen.getByRole('button', { name: /Categoría:\s*Cat A/i });
-    const headerB = screen.getByRole('button', { name: /Categoría:\s*Cat B/i });
+    const headerA = screen.getByRole("button", { name: /Categoría:\s*Cat A/i });
+    const headerB = screen.getByRole("button", { name: /Categoría:\s*Cat B/i });
     expect(headerA).toBeInTheDocument();
     expect(headerB).toBeInTheDocument();
 
@@ -36,11 +35,11 @@ describe('CategoryTables', () => {
     await user.click(headerB);
 
     // Filas visibles
-    expect(screen.getByText('Uno')).toBeInTheDocument();
-    expect(screen.getByText('Dos')).toBeInTheDocument();
+    expect(screen.getByText("Uno")).toBeInTheDocument();
+    expect(screen.getByText("Dos")).toBeInTheDocument();
   });
 
-  test('Soporta lista vacía sin crashear', () => {
+  test("Soporta lista vacía sin crashear", () => {
     render(
       <CategoryTables<Row>
         data={[]}

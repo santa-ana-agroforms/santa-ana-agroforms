@@ -1,6 +1,7 @@
 // src/components/LoginCard.tsx
-import React, { useState } from 'react'
+import React, { useState } from "react";
 
+<<<<<<< HEAD
 import logo from '@/assets/Santa-Ana-logo.png'
 import { LockOutlined, UserOutlined } from '@ant-design/icons'
 import { Button, Form, Input } from 'antd'
@@ -14,36 +15,59 @@ interface Props {
 export const LoginCard: React.FC<Props> = ({ onFinish, isPending }) => {
   const [form] = Form.useForm<{ username: string; password: string }>()
   const [loading, setLoading] = useState(false)
+=======
+import { LockOutlined, UserOutlined } from "@ant-design/icons";
+import { Button, Form, Input } from "antd";
+import type { Rule } from "antd/lib/form";
 
-  const handleFinish = async (values: { username: string; password: string }) => {
+import logo from "@/assets/Santa-Ana-logo.png";
+
+interface Props {
+  onFinish: (v: { username: string; password: string }) => void;
+}
+
+export const LoginCard: React.FC<Props> = ({ onFinish }) => {
+  const [form] = Form.useForm<{ username: string; password: string }>();
+  const [loading, setLoading] = useState(false);
+>>>>>>> 3d0b0bc47cf700228bfb51b8e76d69525dc15466
+
+  const handleFinish = async (values: {
+    username: string;
+    password: string;
+  }) => {
     setLoading(true);
+<<<<<<< HEAD
     await new Promise((resolve) => setTimeout(resolve, 1200))
     onFinish(values);
     setLoading(false);
   }
+=======
+    await new Promise((resolve) => setTimeout(resolve, 1200));
+    setLoading(false);
+    onFinish(values);
+  };
+>>>>>>> 3d0b0bc47cf700228bfb51b8e76d69525dc15466
 
   console.warn("isPending: ", isPending);
 
   return (
     <div className="w-full max-w-md bg-white p-8 rounded-2xl shadow-2xl">
-
-    <div className='w-full h-1/2 pb-5 bg-white flex justify-center'>
-      <img
-        src={logo}
-        className="h-full object-contain"
-      />
-    </div>
+      <div className="w-full h-1/2 pb-5 bg-white flex justify-center">
+        <img src={logo} className="h-full object-contain" />
+      </div>
 
       <Form
         form={form}
         name="login"
         layout="vertical"
         onFinish={handleFinish}
-        initialValues={{ username: '', password: '' }}
+        initialValues={{ username: "", password: "" }}
       >
         <Form.Item
           name="username"
-          rules={[{ required: true, message: 'Por favor ingresa tu usuario' } as Rule]}
+          rules={[
+            { required: true, message: "Por favor ingresa tu usuario" } as Rule,
+          ]}
         >
           <Input
             size="large"
@@ -56,7 +80,12 @@ export const LoginCard: React.FC<Props> = ({ onFinish, isPending }) => {
 
         <Form.Item
           name="password"
-          rules={[{ required: true, message: 'Por favor ingresa tu contraseña' } as Rule]}
+          rules={[
+            {
+              required: true,
+              message: "Por favor ingresa tu contraseña",
+            } as Rule,
+          ]}
         >
           <Input.Password
             size="large"
@@ -79,11 +108,14 @@ export const LoginCard: React.FC<Props> = ({ onFinish, isPending }) => {
         </Form.Item>
 
         <div className="text-center">
-          <a href="/reset-password" className="text-sm text-gray-200 hover:underline">
+          <a
+            href="/reset-password"
+            className="text-sm text-gray-200 hover:underline"
+          >
             ¿Olvidaste tu contraseña?
           </a>
         </div>
       </Form>
     </div>
-  )
-}
+  );
+};

@@ -1,17 +1,23 @@
-import { render, screen } from '@testing-library/react';
-import CreateFormsPage from '@/pages/CreateFormsPage';
+import { render, screen } from "@testing-library/react";
+
+import CreateFormsPage from "@/pages/CreateFormsPage";
 
 // Mock para feature de crear formularios
-jest.mock('@/features/create-forms', () => ({
+jest.mock("@/features/create-forms", () => ({
   __esModule: true,
   default: () => <div data-testid="create-forms-stub" />,
 }));
 
-describe('CreateFormsPage', () => {
-  test('se monta la página y renderiza el feature', () => {
-    render(<CreateFormsPage formId={''} onBack={function (): void {
-        throw new Error('Function not implemented.');
-    } } />);
-    expect(screen.getByTestId('create-forms-stub')).toBeInTheDocument();
+describe("CreateFormsPage", () => {
+  test("se monta la página y renderiza el feature", () => {
+    render(
+      <CreateFormsPage
+        formId={""}
+        onBack={function (): void {
+          throw new Error("Function not implemented.");
+        }}
+      />
+    );
+    expect(screen.getByTestId("create-forms-stub")).toBeInTheDocument();
   });
 });

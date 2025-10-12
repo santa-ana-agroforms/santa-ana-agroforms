@@ -1,0 +1,11 @@
+# Snyk (https://snyk.io) policy file
+version: v1.28.0
+ignore:
+  SNYK-JS-XLSX-5457926:
+    - '*':
+        reason: Dependencia necesaria para funciones críticas del proyecto. No existe una alternativa disponible.
+        expires: 2026-10-05T00:00:00.000Z
+  SNYK-JS-XLSX-6252523:
+    - '*':
+        reason: Dependencia necesaria para funciones críticas del proyecto. No existe una alternativa disponible.
+        expires: 2026-10-05T00:00:00.000Z
