@@ -1,23 +1,21 @@
 // src/components/DevicesList/DevicesList.tsx
 import React, { useCallback, useState } from "react";
 
-import { ArrowUpOutlined, FilterOutlined } from "@ant-design/icons";
-import { Button, Col, Input, type TableProps } from "antd";
+import { Col, Input, Skeleton, type TableProps } from "antd";
 
-import DevicesTable from "@/components/DeviceTables";
 import { EditUserValues } from "@/components/DeviceTables/components/EditUserModal";
 import UsersTable, { UserType } from "@/components/UserTable";
 
-import { users } from "./data";
+import { useUsuarios } from "./hooks/useUsuarios";
 
 const UserList: React.FC = () => {
-  // estados para búsqueda, filtros y orden
+  const { data: user = [], isLoading, error } = useUsuarios();
   const [searchText, setSearchText] = useState("");
   const [filteredInfo, setFilteredInfo] = useState<Record<string, any>>({});
   const [sortedInfo, setSortedInfo] = useState<any>({});
 
   // filtrar globalmente según el texto
-  const filteredData = users.filter((item) =>
+  const filteredData = user.filter((item) =>
     Object.values(item as unknown as Record<string, unknown>)
       .join(" ")
       .toLowerCase()
@@ -69,13 +67,21 @@ const UserList: React.FC = () => {
         </Col>
       </div>
 
-      {/* Nuestra tabla “plana” sin Collapse */}
-      <UsersTable
-        data={filteredData}
-        onEdit={handleEdit}
-        onDelete={handleDelete}
-        onCreate={handleCreate}
-      ></UsersTable>
+      {isLoading || user.length === 0 ?
+        <>
+          <Skeleton active />
+          <Skeleton active />
+        </>
+      : <>
+          {/* Nuestra tabla “plana” sin Collapse */}
+          <UsersTable
+            data={filteredData}
+            onEdit={handleEdit}
+            onDelete={handleDelete}
+            onCreate={handleCreate}
+          />
+        </>
+      }
     </div>
   );
 };

@@ -20,6 +20,7 @@ import DevicesListPage from "../DevicesListPage";
 import ExportProcessPages from "../ExportProcessPage";
 import FormAssignmentPage from "../FormAssignmentPage";
 import FormListPage from "../FormListPage";
+import HelpSystemPage from "../HelpSystemPage";
 import UserListPage from "../UserListPage";
 import { titles } from "./data";
 
@@ -140,6 +141,7 @@ export const HomePage: React.FC = () => {
             )}
 
             {selectedKey === "1" && activeFormId === null && <DashboardPage />}
+            {selectedKey === "5" && activeFormId === null && <HelpSystemPage />}
           </Content>
         </Layout>
       </Layout>

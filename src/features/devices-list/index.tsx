@@ -1,8 +1,7 @@
 // src/components/DevicesList/DevicesList.tsx
 import React, { useCallback, useState } from "react";
 
-import { ArrowUpOutlined, FilterOutlined } from "@ant-design/icons";
-import { Button, Col, Input, type TableProps } from "antd";
+import { Col, Input, type TableProps } from "antd";
 
 import DevicesTable, {
   ItemType as DeviceType,
@@ -60,13 +59,8 @@ const DevicesList: React.FC = () => {
   return (
     <div className="flex flex-col p-4 w-full gap-7">
       <div className="flex justify-between items-center w-full">
-        {/* Botón de “Categoría” (igual que antes) */}
-        <Button icon={<FilterOutlined />} className="flex items-center gap-1">
-          Categoría <ArrowUpOutlined />
-        </Button>
-
         {/* Input.Search para filtrar */}
-        <Col className="w-60">
+        <Col className="w-full">
           <Input
             placeholder="Introduzca el texto a buscar..."
             allowClear

@@ -9,9 +9,10 @@ import logo from "@/assets/Santa-Ana-logo.png";
 
 interface Props {
   onFinish: (v: { username: string; password: string }) => void;
+  isPending: boolean;
 }
 
-export const LoginCard: React.FC<Props> = ({ onFinish }) => {
+export const LoginCard: React.FC<Props> = ({ onFinish, isPending }) => {
   const [form] = Form.useForm<{ username: string; password: string }>();
   const [loading, setLoading] = useState(false);
 
@@ -21,9 +22,11 @@ export const LoginCard: React.FC<Props> = ({ onFinish }) => {
   }) => {
     setLoading(true);
     await new Promise((resolve) => setTimeout(resolve, 1200));
-    setLoading(false);
     onFinish(values);
+    setLoading(false);
   };
+
+  console.warn("isPending: ", isPending);
 
   return (
     <div className="w-full max-w-md bg-white p-8 rounded-2xl shadow-2xl">
@@ -75,7 +78,7 @@ export const LoginCard: React.FC<Props> = ({ onFinish }) => {
             type="primary"
             htmlType="submit"
             block
-            loading={loading}
+            loading={isPending || loading}
             className="bg-blue-500 hover:bg-blue-600 border-none text-black text-lg"
           >
             Entrar

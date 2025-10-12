@@ -2,8 +2,9 @@
 import React from "react";
 import { NavigateFunction } from "react-router-dom";
 
+import { useLogout } from "@/features/user-autentication/hooks/useAuth";
+import { useAuth } from "@/pages/AuthContext";
 import {
-  AuditOutlined,
   BarChartOutlined,
   CloudDownloadOutlined,
   DashboardOutlined,
@@ -16,11 +17,9 @@ import {
   QuestionOutlined,
   TableOutlined,
   TeamOutlined,
-  ThunderboltOutlined,
-  UserAddOutlined,
-  UserOutlined,
+  UserOutlined
 } from "@ant-design/icons";
-import { Avatar, Layout, Menu } from "antd";
+import { Avatar, Layout, Menu, message } from "antd";
 
 const { Sider } = Layout;
 
@@ -36,7 +35,28 @@ export const AppSidebar: React.FC<AppSideBarProps> = ({
   collapsed,
   selectedKey,
   onSelect,
-}) => (
+}) => {
+
+  const { mutate: doLogout, isPending } = useLogout();
+  const { user } = useAuth();
+
+   const handleLogout = () => {
+      if (isPending) return;
+
+      doLogout(undefined, {
+        onSuccess: (res) => {
+          message.success(res?.message ?? "Sesión cerrada");
+          navigate("/");
+        },
+        onError: (err: any) => {
+          message.error(err?.message ?? "No se pudo cerrar sesión");
+          // igual navegamos si quieres salir pase lo que pase:
+          navigate("/");
+        },
+      });
+    };
+
+  return(
   <Sider
     trigger={null}
     collapsible
@@ -45,6 +65,7 @@ export const AppSidebar: React.FC<AppSideBarProps> = ({
     className="h-full"
     width={260}
   >
+    
     <div className="logo p-4 flex flex-row items-center justify-self-start w-full text-white">
       {/* Avatar */}
       <Avatar size={45} icon={<UserOutlined />} />
@@ -53,7 +74,7 @@ export const AppSidebar: React.FC<AppSideBarProps> = ({
       {!collapsed && (
         <div className="flex flex-col ml-4">
           {/* Rol */}
-          <span className="text-xl font-bold">Administrador</span>
+          <span className="text-xl font-bold">{user?.nombre_usuario || 'Usuario'}</span>
 
           {/* Estado online */}
           <div className="flex items-center mt-1">
@@ -88,21 +109,21 @@ export const AppSidebar: React.FC<AppSideBarProps> = ({
               icon: <DatabaseOutlined />,
               label: "Fuentes de Datos",
             },
-            {
-              key: "formularios",
-              icon: <AuditOutlined />,
-              label: "Asignación de Formularios",
-            },
-            {
-              key: "proceso",
-              icon: <ThunderboltOutlined />,
-              label: "Asignaciones en proceso",
-            },
-            {
-              key: "aprobacion",
-              icon: <UserAddOutlined />,
-              label: "Rutas de Aprobación",
-            },
+            // {
+            //   key: "formularios",
+            //   icon: <AuditOutlined />,
+            //   label: "Asignación de Formularios",
+            // },
+            // {
+            //   key: "proceso",
+            //   icon: <ThunderboltOutlined />,
+            //   label: "Asignaciones en proceso",
+            // },
+            // {
+            //   key: "aprobacion",
+            //   icon: <UserAddOutlined />,
+            //   label: "Rutas de Aprobación",
+            // },
             {
               key: "exportacion",
               icon: <CloudDownloadOutlined />,
@@ -145,10 +166,12 @@ export const AppSidebar: React.FC<AppSideBarProps> = ({
         {
           key: "7",
           icon: <PoweroffOutlined />,
-          label: "Cerrar sesión",
-          onClick: () => navigate("/"),
+          label: isPending ? "Cerrando sesión..." : "Cerrar sesión",
+          onClick: handleLogout,
+          disabled: isPending,
         },
       ]}
     />
   </Sider>
-);
+  )
+};

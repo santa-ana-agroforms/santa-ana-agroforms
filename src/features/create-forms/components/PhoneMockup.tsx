@@ -64,7 +64,8 @@ const PhoneMockup: React.FC<PhoneMockupProps> = ({
   if (isError) return <div>Cargando...</div>;
   if (!formulario) return <div>Cargando...</div>;
 
-  console.warn("selected_ ", selectedElements);
+  //console.warn("form: ", formulario, selectedPage);
+
 
   return (
     <div className="w-80 h-[600px] border border-gray-300 rounded-3xl shadow-lg flex flex-col overflow-hidden bg-white">
@@ -227,29 +228,16 @@ const PhoneMockup: React.FC<PhoneMockupProps> = ({
 
       {/* Footer con botones */}
       <div className="flex justify-between px-4 py-3 border-t">
-        {/* <Button type="primary" danger onClick={onBack}>
-          Regresar
-        </Button>
-        <Button
-          type="primary"
-          style={{ backgroundColor: "#52c41a", borderColor: "#52c41a" }}
-          onClick={() => console.warn("XD")}
-          //loading={sendingBulk}
-          //disabled={sendingBulk}
-        >
-          Continuar
-        </Button> */}
-
         <Button
           icon={<LeftOutlined />}
           onClick={handlePrev}
           disabled={totalPages <= 1 || currentIndex === 0}
-        ></Button>
+        />
         <Button
           icon={<RightOutlined />}
           onClick={handleNext}
           disabled={totalPages <= 1 || currentIndex === totalPages - 1}
-        ></Button>
+        />
       </div>
     </div>
   );

@@ -5,9 +5,8 @@ import {
   Button,
   Form,
   Input,
-  InputNumber,
   message,
-  type ModalProps,
+  type ModalProps
 } from "antd";
 
 import BaseModal from "@/components/BaseModal";
@@ -17,7 +16,7 @@ import { type PaginaAPI } from "../services/pages.services";
 
 /** Forma de los datos de página */
 export interface PageValues {
-  id?: string;
+  id?: string | number;
   sequence: number;
   description: string;
   title: string;
@@ -60,37 +59,60 @@ const PageEditModal: FC<PageEditModalProps> = ({
   // En tu componente PageEditModal, cambia la función mapToDto:
   function mapToDto(values: PageValues) {
     return {
-      sequence: values.sequence,
       description: values.description.trim(),
       title: values.title.trim(),
     };
   }
 
   const handleFinish = (values: PageValues) => {
-    if (!values.title?.trim()) {
-      message.warning("El título es obligatorio.");
-      return;
-    }
+  if (!values.title?.trim()) {
+    message.warning("El título es obligatorio.");
+    return;
+  }
+  if (!values.description?.trim()) {
+    message.warning("La descripción es obligatoria.");
+    return;
+  }
 
-    if (!values.description?.trim()) {
-      message.warning("La descripción es obligatoria.");
-      return;
-    }
+  createPage(mapToDto(values), {
+      onSuccess: (data: any) => {
+        // Tu backend devuelve { ok: true, id_pagina: string }
+        const newId =
+          data?.id_pagina ??
+          data?.pagina?.id_pagina ?? // por si en algún caso viene anidado
+          data?.pagina?.id ?? null;
 
-    createPage(mapToDto(values), {
-      onSuccess: () => {
+        if (!newId) {
+          console.warn("⚠️ Respuesta sin id de página:", data);
+          message.warning("Se creó la página, pero no llegó el ID.");
+        }
+
+        // construimos la “nueva página” con fallback a los valores del form
+        const nuevaPagina = {
+          id: String(newId ?? values.id ?? ""),          // 👈 IMPORTANTE: incluir id
+          sequence: data?.pagina?.secuencia ?? values.sequence,
+          title: data?.pagina?.nombre ?? values.title,
+          description: data?.pagina?.descripcion ?? values.description,
+        } satisfies PageValues;
+
         message.success("Página creada correctamente");
-        onUpdate(values);
+        try {
+          onUpdate(nuevaPagina); // <- si aquí truena, verás el catch
+        } catch (e) {
+          console.error("onUpdate lanzó error:", e);
+          throw e; // deja que React Query lo trate como error
+        }
         form.resetFields();
         onCancel();
       },
+
       onError: (err: any) => {
-        message.error(
-          err?.message ?? "No se pudo actualizar la página. Intenta de nuevo."
-        );
+        console.warn("error.mesg: ", err?.message);
+        message.error(err?.message ?? "No se pudo crear la página. Intenta de nuevo.");
       },
     });
   };
+
 
   const handleCancel = () => {
     form.resetFields();
@@ -114,7 +136,7 @@ const PageEditModal: FC<PageEditModalProps> = ({
       >
         <div className="grid grid-cols-1 gap-0 px-6 py-4">
           {/* Secuencia */}
-          <Form.Item
+          {/* <Form.Item
             label="Secuencia"
             name="sequence"
             rules={[
@@ -140,7 +162,7 @@ const PageEditModal: FC<PageEditModalProps> = ({
             ]}
           >
             <InputNumber min={1} className="w-full" />
-          </Form.Item>
+          </Form.Item> */}
 
           {/* Título */}
           <Form.Item

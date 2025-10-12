@@ -38,3 +38,10 @@ export interface CategoryType {
   name: string;
   items: ItemType[];
 }
+
+export interface CreateAsignacionDto {
+  /** username */
+  usuario: string;
+  /** lista de ids de formularios (uuid o id que tu backend espera) */
+  formularios: string[];
+}

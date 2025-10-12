@@ -14,6 +14,8 @@ export function useCreatePagina(formId: string) {
   type Pagina = AgregarPaginaResponse["pagina"];
   type Ctx = { previous?: Pagina[] };
 
+  
+
   return useMutation<AgregarPaginaResponse, Error, CreatePaginaDto, Ctx>({
     mutationFn: (payload) => createPagina(formId, payload),
 
@@ -29,9 +31,11 @@ export function useCreatePagina(formId: string) {
       }
     },
 
+
     onSuccess: (resp) => {
+      const pagina = resp?.pagina;
       // resp ya es AgregarPaginaResponse
-      qc.setQueryData<Pagina>(["pagina", resp.pagina.id], resp.pagina);
+      qc.setQueryData<Pagina>(["pagina", pagina.id], resp.pagina);
       qc.invalidateQueries({ queryKey: ["paginas", formId] });
       qc.invalidateQueries({ queryKey: ["formulario", formId] });
     },

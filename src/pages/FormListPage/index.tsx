@@ -2,6 +2,7 @@
 import React, { useState } from "react";
 
 import {
+  ArrowDownOutlined,
   ArrowUpOutlined,
   FilterOutlined,
   PlusSquareOutlined,
@@ -17,6 +18,7 @@ interface FormListPageProps {
 
 const FormListPage: React.FC<FormListPageProps> = ({ onSelectForm }) => {
   const [isNewCategoryOpen, setIsNewCategoryOpen] = useState(false);
+  const [sortAsc, setSortAsc] = useState(true);
 
   return (
     <div className="flex flex-col ">
@@ -30,8 +32,14 @@ const FormListPage: React.FC<FormListPageProps> = ({ onSelectForm }) => {
             Crear categoria
           </Button>
           {/* Botón de Categoría */}
-          <Button icon={<FilterOutlined />}>
-            Categoría <ArrowUpOutlined />
+          <Button
+            icon={<FilterOutlined />}
+            onClick={() => setSortAsc((prev) => !prev)}
+          >
+            Categoría{" "}
+            {sortAsc ?
+              <ArrowUpOutlined />
+            : <ArrowDownOutlined />}
           </Button>
         </div>
 
@@ -43,7 +51,7 @@ const FormListPage: React.FC<FormListPageProps> = ({ onSelectForm }) => {
           />
         </Col>
       </div>
-      <FormsLists onSelectForm={onSelectForm} />
+      <FormsLists onSelectForm={onSelectForm} sortAsc={sortAsc} />
 
       <NewCategoryModal
         visible={isNewCategoryOpen}
