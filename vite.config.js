@@ -1,4 +1,5 @@
 import { fileURLToPath, URL } from "url";
+
 import tailwindcss from "@tailwindcss/vite";
 import react from "@vitejs/plugin-react";
 import { defineConfig } from "vite";
@@ -14,7 +15,7 @@ const DEV_CSP = [
   "style-src 'self' 'unsafe-inline'",
   "img-src 'self' data: blob:",
   "font-src 'self'",
-  "connect-src 'self' ws: wss: http://localhost:5173 https://unexpected-janine-uvg-9d84ed75.koyeb.app https://*.koyeb.app",
+  "connect-src 'self' ws: wss: http://localhost:5173 https://santa-ana-api.onrender.com https://unexpected-janine-uvg-9d84ed75.koyeb.app https://*.koyeb.app",
   "media-src 'self' blob:",
   "worker-src 'self' blob:",
   "form-action 'self'",
@@ -29,7 +30,10 @@ function cspHeaderPlugin() {
         res.setHeader("Referrer-Policy", "strict-origin-when-cross-origin");
         res.setHeader("X-Content-Type-Options", "nosniff");
         res.setHeader("X-Frame-Options", "DENY");
-        res.setHeader("Permissions-Policy", "geolocation=(), microphone=(), camera=(), accelerometer=(), gyroscope=(), payment=()");
+        res.setHeader(
+          "Permissions-Policy",
+          "geolocation=(), microphone=(), camera=(), accelerometer=(), gyroscope=(), payment=()"
+        );
         res.setHeader("Cross-Origin-Opener-Policy", "same-origin");
         res.setHeader("Cross-Origin-Resource-Policy", "same-origin");
         next();
