@@ -1,19 +1,24 @@
 // src/pages/LoginPage.tsx
-<<<<<<< HEAD
-import { useLogin } from '@/features/user-autentication/hooks/useAuth'
-import { message } from 'antd'
-import React from 'react'
-import { useNavigate } from 'react-router-dom'
-import SantaAna from '../assets/Santa-Ana.jpg'
-import { LoginCard } from '../components/LoginCard'
-import { toAuthUser, useAuth } from './AuthContext'
+import React from "react";
+import { useNavigate } from "react-router-dom";
+
+import { message } from "antd";
+
+import { useLogin } from "@/features/user-autentication/hooks/useAuth";
+
+import SantaAna from "../assets/Santa-Ana.jpg";
+import { LoginCard } from "../components/LoginCard";
+import { toAuthUser, useAuth } from "./AuthContext";
 
 export const LoginPage: React.FC = () => {
-  const navigate = useNavigate()
+  const navigate = useNavigate();
   const { mutateAsync: login, isPending } = useLogin();
   const { setUser } = useAuth();
 
-  const handleLogin = async (values: { username: string; password: string }) => {
+  const handleLogin = async (values: {
+    username: string;
+    password: string;
+  }) => {
     try {
       // Llamamos el hook (usa tu endpoint POST /api/auth/login/)
       const data = await login({
@@ -31,22 +36,6 @@ export const LoginPage: React.FC = () => {
     } catch (error: any) {
       message.error("Usuario o contraseña incorrectos");
     }
-=======
-import React from "react";
-import { useNavigate } from "react-router-dom";
-
-import SantaAna from "../assets/Santa-Ana.jpg";
-import { LoginCard } from "../components/LoginCard";
-
-export const LoginPage: React.FC = () => {
-  const navigate = useNavigate();
-
-  const onFinish = (values: { username: string; password: string }) => {
-    console.log("Login datos:", values);
-    // aquí tu llamada real al API…
-    const fakeOk = true;
-    if (fakeOk) navigate("/home");
->>>>>>> 3d0b0bc47cf700228bfb51b8e76d69525dc15466
   };
 
   return (

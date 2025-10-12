@@ -1,21 +1,6 @@
 // src/components/LoginCard.tsx
 import React, { useState } from "react";
 
-<<<<<<< HEAD
-import logo from '@/assets/Santa-Ana-logo.png'
-import { LockOutlined, UserOutlined } from '@ant-design/icons'
-import { Button, Form, Input } from 'antd'
-import type { Rule } from 'antd/lib/form'
-
-interface Props {
-  onFinish: (v: { username: string; password: string }) => void
-  isPending: boolean;
-}
-
-export const LoginCard: React.FC<Props> = ({ onFinish, isPending }) => {
-  const [form] = Form.useForm<{ username: string; password: string }>()
-  const [loading, setLoading] = useState(false)
-=======
 import { LockOutlined, UserOutlined } from "@ant-design/icons";
 import { Button, Form, Input } from "antd";
 import type { Rule } from "antd/lib/form";
@@ -24,29 +9,22 @@ import logo from "@/assets/Santa-Ana-logo.png";
 
 interface Props {
   onFinish: (v: { username: string; password: string }) => void;
+  isPending: boolean;
 }
 
-export const LoginCard: React.FC<Props> = ({ onFinish }) => {
+export const LoginCard: React.FC<Props> = ({ onFinish, isPending }) => {
   const [form] = Form.useForm<{ username: string; password: string }>();
   const [loading, setLoading] = useState(false);
->>>>>>> 3d0b0bc47cf700228bfb51b8e76d69525dc15466
 
   const handleFinish = async (values: {
     username: string;
     password: string;
   }) => {
     setLoading(true);
-<<<<<<< HEAD
-    await new Promise((resolve) => setTimeout(resolve, 1200))
-    onFinish(values);
-    setLoading(false);
-  }
-=======
     await new Promise((resolve) => setTimeout(resolve, 1200));
-    setLoading(false);
     onFinish(values);
+    setLoading(false);
   };
->>>>>>> 3d0b0bc47cf700228bfb51b8e76d69525dc15466
 
   console.warn("isPending: ", isPending);
 

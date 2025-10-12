@@ -1,7 +1,6 @@
 // src/components/DevicesList/DevicesList.tsx
 import React, { useCallback, useState } from "react";
 
-<<<<<<< HEAD
 import { Col, Input, Skeleton, type TableProps } from "antd";
 
 import { EditUserValues } from "@/components/DeviceTables/components/EditUserModal";
@@ -11,23 +10,9 @@ import { useUsuarios } from "./hooks/useUsuarios";
 
 const UserList: React.FC = () => {
   const { data: user = [], isLoading, error } = useUsuarios();
-=======
-import { ArrowUpOutlined, FilterOutlined } from "@ant-design/icons";
-import { Button, Col, Input, type TableProps } from "antd";
-
-import DevicesTable from "@/components/DeviceTables";
-import { EditUserValues } from "@/components/DeviceTables/components/EditUserModal";
-import UsersTable, { UserType } from "@/components/UserTable";
-
-import { users } from "./data";
-
-const UserList: React.FC = () => {
-  // estados para búsqueda, filtros y orden
->>>>>>> 3d0b0bc47cf700228bfb51b8e76d69525dc15466
   const [searchText, setSearchText] = useState("");
   const [filteredInfo, setFilteredInfo] = useState<Record<string, any>>({});
   const [sortedInfo, setSortedInfo] = useState<any>({});
-
 
   // filtrar globalmente según el texto
   const filteredData = user.filter((item) =>
@@ -36,7 +21,6 @@ const UserList: React.FC = () => {
       .toLowerCase()
       .includes(searchText.toLowerCase())
   );
-
 
   // onChange estándar de ant-table
   const handleTableChange: TableProps<UserType>["onChange"] = (
@@ -83,7 +67,6 @@ const UserList: React.FC = () => {
         </Col>
       </div>
 
-<<<<<<< HEAD
       {isLoading || user.length === 0 ?
         <>
           <Skeleton active />
@@ -99,15 +82,6 @@ const UserList: React.FC = () => {
           />
         </>
       }
-=======
-      {/* Nuestra tabla “plana” sin Collapse */}
-      <UsersTable
-        data={filteredData}
-        onEdit={handleEdit}
-        onDelete={handleDelete}
-        onCreate={handleCreate}
-      ></UsersTable>
->>>>>>> 3d0b0bc47cf700228bfb51b8e76d69525dc15466
     </div>
   );
 };
