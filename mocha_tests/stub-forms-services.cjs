@@ -1,98 +1,93 @@
-// Mock completo para forms-services que evita cualquier inicialización de axios
-const mockAxiosInstance = {
+// Mock de axios instance para forms-services
+const mockApi = {
   defaults: {
-    baseURL: process.env.VITE_API_BASE_URL || "http://localhost:5173",
+    baseURL: 'http://localhost:5173',
     headers: {
       common: {},
-      get: {},
-      post: {},
-      put: {},
-      delete: {},
     },
   },
   interceptors: {
     request: {
-      use: (fulfilled, rejected) => {
-        // Retorna un id para simular el registro
-        return 0;
-      },
-      eject: () => {},
       handlers: [
         {
-          fulfilled: async (config) => {
-            // Simula el interceptor CSRF
-            if (
-              config.method &&
-              ["post", "put", "patch", "delete"].includes(
-                config.method.toLowerCase()
-              )
-            ) {
-              if (config.headers && config.headers.set) {
-                config.headers.set("X-CSRFToken", "mock-csrf-token");
-              }
+          fulfilled: (config) => {
+            // Simular el interceptor CSRF
+            if (config.method && ['post', 'put', 'patch', 'delete'].includes(config.method.toLowerCase())) {
+              config.headers = config.headers || {};
+              config.headers['X-CSRFToken'] = 'mock-csrf-token';
             }
             return config;
           },
+          rejected: null,
         },
       ],
+      use: function(fulfilled, rejected) {
+        this.handlers.push({ fulfilled, rejected });
+        return this.handlers.length - 1;
+      },
+      eject: function(id) {
+        if (this.handlers[id]) {
+          this.handlers[id] = null;
+        }
+      },
     },
     response: {
-      use: () => {},
-      eject: () => {},
+      handlers: [],
+      use: function(fulfilled, rejected) {
+        this.handlers.push({ fulfilled, rejected });
+        return this.handlers.length - 1;
+      },
+      eject: function(id) {
+        if (this.handlers[id]) {
+          this.handlers[id] = null;
+        }
+      },
     },
   },
   get: async (url, config) => ({
     data: [],
     status: 200,
-    statusText: "OK",
+    statusText: 'OK',
     headers: {},
-    config: config || {},
+    config: { url, ...config },
   }),
   post: async (url, data, config) => ({
-    data: { ok: true },
+    data: data || {},
     status: 201,
-    statusText: "Created",
+    statusText: 'Created',
     headers: {},
-    config: config || {},
+    config: { url, data, ...config },
   }),
   put: async (url, data, config) => ({
-    data: { ok: true },
+    data: data || {},
     status: 200,
-    statusText: "OK",
+    statusText: 'OK',
     headers: {},
-    config: config || {},
+    config: { url, data, ...config },
+  }),
+  patch: async (url, data, config) => ({
+    data: data || {},
+    status: 200,
+    statusText: 'OK',
+    headers: {},
+    config: { url, data, ...config },
   }),
   delete: async (url, config) => ({
     data: null,
     status: 204,
-    statusText: "No Content",
+    statusText: 'No Content',
     headers: {},
-    config: config || {},
-  }),
-  patch: async (url, data, config) => ({
-    data: { ok: true },
-    status: 200,
-    statusText: "OK",
-    headers: {},
-    config: config || {},
-  }),
-  request: async (config) => ({
-    data: {},
-    status: 200,
-    statusText: "OK",
-    headers: {},
-    config: config || {},
+    config: { url, ...config },
   }),
 };
 
+// Exportar funciones stub y la instancia api
 module.exports = {
-  __esModule: true,
-  default: {},
-  api: mockAxiosInstance,
-  listarFormularios: async () => [],
-  obtenerFormulario: async () => null,
-  crearFormulario: async () => ({ ok: true }),
-  actualizarFormulario: async () => ({ ok: true }),
-  eliminarFormulario: async () => ({ ok: true }),
-  duplicarFormulario: async () => ({ ok: true }),
+  api: mockApi,
+  getFormularios: async () => [],
+  getFormularioById: async (id) => ({ id, nombre: 'Mock Form' }),
+  createFormulario: async (data) => ({ ...data, id: 1 }),
+  updateFormulario: async (id, data) => ({ id, ...data }),
+  deleteFormulario: async (id) => ({ success: true }),
+  duplicarFormulario: async (id) => ({ id: id + 1, nombre: 'Copia' }),
 };

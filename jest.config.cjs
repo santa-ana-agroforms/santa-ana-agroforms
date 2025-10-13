@@ -36,4 +36,7 @@ module.exports = {
     "/cypress/",
     "/selenium_tests/",
   ],
+  transformIgnorePatterns: [
+    "node_modules/(?!(react-pdf|pdfjs-dist)/)",
+  ],
 };

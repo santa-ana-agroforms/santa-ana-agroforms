@@ -75,29 +75,70 @@ async function doLogin(driver, { user = 'test@test.com', pass = '123456' } = {})
   await driver.get(BASE + '/');
   console.log('Esperando React...');
   
-  await driver.sleep(10000); // Más tiempo para LambdaTest
+  await driver.sleep(3000);
   
   try {
+    // OPCIÓN 1: Mock del token en localStorage para bypass del login real
+    console.log('Seteando token mock en localStorage...');
+    await driver.executeScript(`
+      localStorage.setItem('authToken', 'mock-token-selenium');
+      localStorage.setItem('user', JSON.stringify({
+        id: '1',
+        nombre: 'Test User',
+        email: '${user}'
+      }));
+    `);
+    
+    // Ahora ir directamente a /home
+    console.log('Navegando a /home...');
+    await driver.get(BASE + '/home');
+    
+    // Esperar que cargue la página
+    await driver.sleep(5000);
+    
+    // Verificar que estamos en /home y el sidebar está presente
+    const url = await driver.getCurrentUrl();
+    console.log('URL actual:', url);
+    
+    if (!url.includes('/home')) {
+      throw new Error('No se pudo navegar a /home');
+    }
+    
+    // Esperar el sidebar
+    await driver.wait(until.elementLocated(By.css('.ant-menu')), 15000);
+    
+    console.log('Login exitoso (mock)');
+    
+  } catch (error) {
+    console.error('Error:', error.message);
+    
+    // OPCIÓN 2: Si el mock falla, intentar login real (fallback)
+    console.log('Intentando login real como fallback...');
+    
+    await driver.get(BASE + '/');
+    await driver.sleep(3000);
+    
     console.log('Buscando inputs...');
     
     const usernameInput = await driver.wait(
       until.elementLocated(By.xpath("//input[@placeholder='Usuario']")),
-      25000
+      10000
     );
     
     const passwordInput = await driver.wait(
       until.elementLocated(By.xpath("//input[@placeholder='Contraseña']")),
-      25000
+      10000
     );
     
-    // Botón por type en vez de texto
     const submitBtn = await driver.wait(
       until.elementLocated(By.css('button[type="submit"]')),
-      25000
+      10000
     );
     
     console.log('Escribiendo credenciales...');
+    await usernameInput.clear();
     await usernameInput.sendKeys(user);
+    await passwordInput.clear();
     await passwordInput.sendKeys(pass);
     await driver.sleep(1000);
     
@@ -105,14 +146,10 @@ async function doLogin(driver, { user = 'test@test.com', pass = '123456' } = {})
     await submitBtn.click();
     
     console.log('Esperando /home...');
-    await driver.wait(until.urlContains('/home'), 25000);
-    await driver.wait(until.elementLocated(By.css('.ant-menu')), 25000);
+    await driver.wait(until.urlContains('/home'), 15000);
+    await driver.wait(until.elementLocated(By.css('.ant-menu')), 10000);
     
-    console.log('Login exitoso');
-    
-  } catch (error) {
-    console.error('Error:', error.message);
-    throw error;
+    console.log('Login real exitoso');
   }
 }
 

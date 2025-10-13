@@ -14,7 +14,7 @@ const DEV_CSP = [
   "style-src 'self' 'unsafe-inline'",
   "img-src 'self' data: blob:",
   "font-src 'self'",
-  "connect-src 'self' ws: wss: http://localhost:5173 https://unexpected-janine-uvg-9d84ed75.koyeb.app https://*.koyeb.app",
+  "connect-src 'self' ws: wss: http://localhost:5173 https://santa-ana-api.onrender.com http://127.0.0.1:8081 http://localhost:8081",
   "media-src 'self' blob:",
   "worker-src 'self' blob:",
   "form-action 'self'",
@@ -48,7 +48,7 @@ export default defineConfig({
   server: {
     proxy: {
       "/api": {
-        target: "https://unexpected-janine-uvg-9d84ed75.koyeb.app",
+        target: "https://santa-ana-api.onrender.com",
         changeOrigin: true,
         secure: true,
       },

@@ -3,12 +3,13 @@ import React from "react";
 import { render } from "@testing-library/react";
 import { expect } from "chai";
 
+import { renderWithProviders } from '../test-helpers'; // ⬅️ Agregar
 import { LoginCard } from "../../src/components/LoginCard";
 
 describe("Integración básica", () => {
   it("componentes React se renderizan sin errores", () => {
     // Verificar que el sistema de rendering funciona
-    const { container } = render(<LoginCard onFinish={() => {}} />);
+    const { container } = renderWithProviders(<LoginCard onFinish={() => { } } isPending={false} />);
     expect(container).to.exist;
     expect(container.querySelector("form")).to.exist;
   });

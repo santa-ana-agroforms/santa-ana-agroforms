@@ -44,7 +44,7 @@
     "cfb": "1.2.2",
     "codepage": "1.15.0",
     "crc-32": "1.2.2",
-    "cypress": "^15.3.0",
+    "cypress": "^15.4.0",
     "eslint-config-prettier": "^10.1.5",
     "eslint-plugin-prettier": "^5.5.1",
     "frac": "1.1.2",

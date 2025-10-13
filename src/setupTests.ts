@@ -2,6 +2,21 @@ import "@testing-library/jest-dom";
 
 import { TextDecoder, TextEncoder } from "util";
 
+Object.defineProperty(globalThis, 'import', {
+  value: {
+    meta: {
+      env: {
+        BASE_URL: 'http://localhost:5173',
+        VITE_API_BASE_URL: 'https://santa-ana-api.onrender.com',
+        VITE_API_MOBILE_URL: 'https://santaana-api-latest.onrender.com',
+        VITE_API_MOBILE_KEY: 'mF8arVnkjwqjpye6r0ZRnIyJq8yLa2_ZSqHxHbXqV24',
+      },
+    },
+  },
+  writable: true,
+  configurable: true,
+});
+
 if (!(global as any).TextEncoder) (global as any).TextEncoder = TextEncoder;
 if (!(global as any).TextDecoder)
   (global as any).TextDecoder = TextDecoder as any;
@@ -44,6 +59,48 @@ jest.mock("@ant-design/plots", () => {
     Area: stub("ant-plot-area"),
   };
 });
+
+jest.mock("@/features/user-autentication/services/auth.service", () => {
+  const api = {
+    defaults: { headers: { common: {} as Record<string, string> } },
+    get: jest.fn(),
+    post: jest.fn(),
+    put: jest.fn(),
+    delete: jest.fn(),
+  };
+
+  return {
+    api,
+    loginUser: jest.fn(async () => ({ access_token: "t", refresh_token: "r", user: { nombre: "Test" } })),
+    logoutUser: jest.fn(async () => ({})),
+    refreshToken: jest.fn(async () => ({ access_token: "t2" })),
+  };
+});
+
+jest.mock("@/features/users-list/hooks/useQrAuth", () => ({
+  useQrAuth: jest.fn(() => ({
+    data: null,
+    loading: false,
+    error: null,
+    startQr: jest.fn(),
+  })),
+}));
+
+// Mock de react-pdf
+jest.mock("react-pdf", () => ({
+  Document: ({ children, onLoadSuccess }: any) => {
+    if (onLoadSuccess) {
+      setTimeout(() => onLoadSuccess({ numPages: 1 }), 0);
+    }
+    return children || null;
+  },
+  Page: () => "MockPDFPage",
+  pdfjs: {
+    GlobalWorkerOptions: {
+      workerSrc: "",
+    },
+  },
+}));
 
 const originalError = console.error;
 const originalWarn = console.warn;

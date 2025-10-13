@@ -3,6 +3,8 @@ import React from "react";
 import { render, screen } from "@testing-library/react";
 import { expect } from "chai";
 
+import { renderWithProviders } from '../test-helpers';
+
 import { AppHeader } from "../../src/components/AppHeader.tsx";
 import { AppSidebar } from "../../src/components/AppSideBar.tsx";
 import BaseModal from "../../src/components/BaseModal.tsx";
@@ -19,7 +21,7 @@ describe("Components render", () => {
   });
 
   it("AppSideBar renderiza menú", () => {
-    render(
+    renderWithProviders( // ⬅️ Cambiar a renderWithProviders
       <AppSidebar
         navigate={() => {}}
         collapsed={false}
@@ -42,7 +44,7 @@ describe("Components render", () => {
   });
 
   it("LoginCard renderiza formulario", () => {
-    render(<LoginCard onFinish={() => {}} />);
+    renderWithProviders(<LoginCard onFinish={() => { } } isPending={false} />);
     const html = document.body.innerHTML.toLowerCase();
     expect(html).to.contain("usuario");
   });

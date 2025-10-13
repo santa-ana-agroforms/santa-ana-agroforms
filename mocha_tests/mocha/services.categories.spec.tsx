@@ -1,7 +1,6 @@
 import { expect } from "chai";
 import nock from "nock";
-
-import { api } from "../../src/features/forms-list/services/forms-services.ts";
+import { api } from "../../src/features/user-autentication/services/auth.service";
 
 describe("services/categories (vía axios api base)", () => {
   it("GET /api/categories/ 200", async () => {

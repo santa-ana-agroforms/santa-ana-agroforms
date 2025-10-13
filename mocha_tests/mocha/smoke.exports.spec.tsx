@@ -1,11 +1,11 @@
 import { expect } from "chai";
 
-import * as FormsSvc from "../../src/features/forms-list/services/forms-services.ts";
+import { api } from "../../src/features/user-autentication/services/auth.service";
 import * as Types from "../../src/features/forms-list/services/types.ts";
 
 describe("Smoke de exports", () => {
   it("services exporta api", () => {
-    expect(FormsSvc.api).to.exist;
+    expect(api).to.exist;
   });
 
   it("types módulo existe", () => {
@@ -14,14 +14,14 @@ describe("Smoke de exports", () => {
   });
 
   it("services tiene métodos axios", () => {
-    expect(FormsSvc.api.get).to.be.a("function");
-    expect(FormsSvc.api.post).to.be.a("function");
-    expect(FormsSvc.api.put).to.be.a("function");
-    expect(FormsSvc.api.delete).to.be.a("function");
+    expect(api.get).to.be.a("function");
+    expect(api.post).to.be.a("function");
+    expect(api.put).to.be.a("function");
+    expect(api.delete).to.be.a("function");
   });
 
   it("api tiene configuración base", () => {
-    expect(FormsSvc.api.defaults).to.exist;
-    expect(FormsSvc.api.defaults.baseURL).to.be.a("string");
+    expect(api.defaults).to.exist;
+    expect(api.defaults.baseURL).to.be.a("string");
   });
 });

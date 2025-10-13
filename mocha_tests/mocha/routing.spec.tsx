@@ -3,16 +3,17 @@ import React from "react";
 import { render } from "@testing-library/react";
 import { expect } from "chai";
 
+import { renderApp } from '../test-helpers';
 import App from "../../src/App.tsx";
 
 describe("Routing básico", () => {
   it("App renderiza", () => {
-    const { container } = render(<App />);
+    const { container } = renderApp(<App />);
     expect(container).to.exist;
   });
 
   it("incluye layout base", () => {
-    const { container } = render(<App />);
+    const { container } = renderApp(<App />);
     expect(container.innerHTML).to.be.a("string");
   });
 

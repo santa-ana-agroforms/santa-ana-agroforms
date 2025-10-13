@@ -1,21 +1,55 @@
-import { render, screen } from "@testing-library/react";
+import { render, screen, waitFor } from "@/test-utils";
 import userEvent from "@testing-library/user-event";
+import UsersListFeature from "../index";
+import { api } from "@/features/user-autentication/services/auth.service";
 
-import UsersListFeature from "@/features/users-list";
+const mockUsuarios = [
+  {
+    nombre_usuario: "user1",
+    nombre: "Usuario 1",
+    email: "user1@test.com",
+    activo: true,
+  },
+  {
+    nombre_usuario: "user2",
+    nombre: "Usuario 2",
+    email: "user2@test.com",
+    activo: true,
+  },
+];
 
 describe("UsersListFeature", () => {
-  test("muestra tabla de usuarios", () => {
-    render(<UsersListFeature />);
-    expect(screen.getByRole("table", { hidden: true })).toBeInTheDocument();
+  beforeEach(() => {
+    // Mock del api.get antes de cada test
+    (api.get as jest.Mock).mockResolvedValue({ data: mockUsuarios });
   });
-});
 
-describe("UsersListFeature (buscador)", () => {
-  test("permite escribir en el filtro", async () => {
-    const user = userEvent.setup();
+  afterEach(() => {
+    jest.clearAllMocks();
+  });
+
+  test("muestra tabla de usuarios", async () => {
     render(<UsersListFeature />);
-    const search = screen.getByPlaceholderText(/Buscar|Search|Filtrar/i);
-    await user.type(search, "mario");
-    expect(search).toHaveValue("mario");
+
+    await waitFor(() => {
+      expect(screen.getByRole("table")).toBeInTheDocument();
+    });
+  });
+
+  describe("(buscador)", () => {
+    test("permite escribir en el filtro", async () => {
+      render(<UsersListFeature />);
+
+      // Esperar a que cargue
+      await waitFor(() => {
+        expect(screen.getByRole("table")).toBeInTheDocument();
+      });
+
+      const input = screen.getByPlaceholderText(/Introduzca el texto a buscar/i);
+      
+      await userEvent.type(input, "user1");
+      
+      expect(input).toHaveValue("user1");
+    });
   });
 });

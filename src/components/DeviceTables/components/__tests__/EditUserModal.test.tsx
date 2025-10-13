@@ -7,7 +7,7 @@ import EditUserModal, {
 describe("EditUserModal", () => {
   test("Muestra initialValues cuando visible=true", () => {
     const initial: EditUserValues = {
-      id: "USR-123",
+      nombre_usuario: "USR-123",
       nombre: "Mario",
       email: "mariog@yahoo.com",
       activo: true,
