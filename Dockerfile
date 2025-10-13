@@ -6,11 +6,9 @@ RUN corepack enable \
  && yarn --version
 
 COPY package.json yarn.lock ./
-RUN yarn install --frozen-lockfile --network-timeout 600000
+RUN yarn install --network-timeout 600000
 
 COPY . .
-
-RUN yarn install --frozen-lockfile --check-files --network-timeout 600000
 
 RUN yarn build
 
