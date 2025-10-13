@@ -34,6 +34,16 @@ export interface AgregarPaginaResponse {
   pagina: PaginaAPI;
 }
 
+export interface UpdatePaginaDto {
+  title?: string;
+  description?: string;
+}
+
+export interface UpdatePaginaResponse {
+  detail?: string;
+  pagina?: PaginaAPI;
+}
+
 // ----------------------
 // Helpers
 // ----------------------
@@ -113,7 +123,6 @@ export async function createPagina(
   throw new Error("Respuesta inesperada de crear página");
 }
 
-
 export async function getPaginas(opts?: {
   signal?: AbortSignal;
   formId?: string;
@@ -133,4 +142,41 @@ export async function getPaginas(opts?: {
     opts?.formId ? raw.filter((p) => p.formulario === opts.formId) : raw;
 
   return filtered.map(normalizePagina);
+}
+
+/**
+ * Actualiza una página existente (PATCH /api/paginas/{pageId}/)
+ */
+export async function patchPagina(
+  pageId: string,
+  dto: UpdatePaginaDto,
+  opts?: { signal?: AbortSignal }
+): Promise<UpdatePaginaResponse> {
+  if (!pageId) throw new Error("pageId es requerido");
+
+  const body = {
+    nombre: dto.title,
+    descripcion: dto.description,
+  };
+
+  const res = await api.patch(`/api/paginas/${pageId}/`, body, {
+    signal: opts?.signal,
+  });
+
+  const data = res.data;
+
+  // Formateamos la respuesta en un objeto coherente
+  const pagina: PaginaAPI = {
+    id: String(data.id_pagina ?? pageId),
+    secuencia: Number(data.secuencia ?? 1),
+    nombre: data.nombre ?? dto.title ?? "",
+    descripcion: data.descripcion ?? dto.description ?? "",
+    indexVersion: data.index_version,
+    formularioId: data.formulario,
+  };
+
+  return {
+    detail: data.detail ?? "Página actualizada correctamente",
+    pagina,
+  };
 }

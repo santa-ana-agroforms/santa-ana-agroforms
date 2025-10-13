@@ -13,8 +13,14 @@ import {
   Formulario,
   getFormularioById,
   getFormularios,
+  suspendFormulario,
+  updateFormulario,
 } from "../services/forms-services";
-import { CreateAsignacionDto } from "../services/types";
+import {
+  CreateAsignacionDto,
+  FormularioAPI,
+  UpdateFormularioDto,
+} from "../services/types";
 
 export function useFormularios() {
   const { data } = useQuery({
@@ -39,8 +45,7 @@ export function useFormulario(id: string) {
     queryKey: ["formulario", id],
     queryFn: ({ signal }) => getFormularioById(id, { signal }),
     // muestra lo que haya en cache mientras se pide el detalle
-    placeholderData: () =>
-      qc.getQueryData<Formulario>(["formulario", id]),
+    placeholderData: () => qc.getQueryData<Formulario>(["formulario", id]),
     // o 0 si quieres que siempre refetchee al montar
     staleTime: 0,
     enabled: !!id,
@@ -118,5 +123,53 @@ export function useCrearAsignacionMultiple() {
     mutationFn: (input: { usuarios: string[]; formularios: string[] }) =>
       crearAsignacionMultipleUsuarios(input.usuarios, input.formularios),
     // onSuccess: () => qc.invalidateQueries({ queryKey: ["asignaciones"] }),
+  });
+}
+
+export function useSuspendFormulario() {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: (id: string) => suspendFormulario(id),
+    onSuccess: (suspendido, id) => {
+      // 🔄 Actualiza el formulario suspendido en cache
+      qc.setQueryData<Formulario[]>(["formularios"], (prev) =>
+        prev ?
+          prev.map((f) => (f.id.toString() === id ? suspendido : f))
+        : [suspendido]
+      );
+      qc.setQueryData(["formulario", id], suspendido);
+    },
+    onError: (error) => {
+      console.error("Error al suspender formulario:", error);
+      // opcional: notificación o mensaje visual
+    },
+  });
+}
+
+export function useUpdateFormulario() {
+  const qc = useQueryClient();
+
+  return useMutation({
+    mutationFn: ({
+      id,
+      payload,
+    }: {
+      id: string;
+      payload: UpdateFormularioDto;
+    }) => updateFormulario(id, payload),
+
+    onSuccess: (actualizado, { id }) => {
+      // Actualiza el cache individual
+      qc.setQueryData(["formulario", id], actualizado);
+
+      // Actualiza la lista de formularios
+      qc.setQueryData<FormularioAPI[]>(["formularios"], (prev) =>
+        prev ? prev.map((f) => (f.id === id ? actualizado : f)) : [actualizado]
+      );
+    },
+
+    onError: (error) => {
+      console.error("❌ Error al actualizar formulario:", error);
+    },
   });
 }

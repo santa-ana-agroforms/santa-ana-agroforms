@@ -17,6 +17,8 @@ export interface ItemType {
   estado: string;
   esPublico: boolean;
   autoEnvio: boolean;
+  forma_envio?: string;
+  descripcion?: string;
 }
 export interface CategoryType {
   key: string;
@@ -27,7 +29,7 @@ export interface CategoryType {
 export function useFormsListsData() {
   const categoriasQ = useQuery({
     queryKey: ["categorias"],
-    queryFn: ({ signal }) => getCategorias({ signal }),
+    queryFn: ({ signal }) => getCategorias(),
     staleTime: 5 * 60 * 1000, // 5 min "fresh" (ajusta o usa Infinity)
     gcTime: 30 * 60 * 1000, // v5: usa gcTime en lugar de cacheTime
     refetchOnWindowFocus: false,
@@ -36,7 +38,7 @@ export function useFormsListsData() {
 
   const formulariosQ = useQuery({
     queryKey: ["formularios"],
-    queryFn: ({ signal }) => getFormularios({ signal }),
+    queryFn: ({ signal }) => getFormularios(),
     staleTime: 5 * 60 * 1000,
     gcTime: 30 * 60 * 1000,
     refetchOnWindowFocus: false,
@@ -71,6 +73,8 @@ export function useFormsListsData() {
         estado: f.estado,
         esPublico: f.es_publico,
         autoEnvio: f.auto_envio,
+        forma_envio: f.forma_envio,
+        descripcion: f.descripcion,
       };
       cat.items.push(item);
     });

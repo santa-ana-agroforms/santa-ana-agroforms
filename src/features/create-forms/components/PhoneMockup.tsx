@@ -6,7 +6,15 @@ import {
   LeftOutlined,
   RightOutlined,
 } from "@ant-design/icons";
-import { Button, DatePicker, Input, Select, Switch, Typography } from "antd";
+import {
+  Button,
+  DatePicker,
+  Input,
+  Select,
+  Switch,
+  TimePicker,
+  Typography,
+} from "antd";
 
 import signatureIcon from "@/assets/signature_icon.svg";
 
@@ -65,7 +73,7 @@ const PhoneMockup: React.FC<PhoneMockupProps> = ({
   if (!formulario) return <div>Cargando...</div>;
 
   //console.warn("form: ", formulario, selectedPage);
-
+  console.warn("selectedElements: ", selectedElements);
 
   return (
     <div className="w-80 h-[600px] border border-gray-300 rounded-3xl shadow-lg flex flex-col overflow-hidden bg-white">
@@ -188,6 +196,19 @@ const PhoneMockup: React.FC<PhoneMockupProps> = ({
                   <div className="flex flex-col w-full">
                     <Text>{element.name}:</Text>
                     <DatePicker disabled />
+                  </div>
+                </div>
+              )}
+
+              {(element.type === "hora" || element.type === "hour") && (
+                <div className="flex flex-row gap-4 items-center">
+                  <HighlightOutlined
+                    className="cursor-pointer"
+                    onClick={() => onEditElement?.(index)}
+                  />
+                  <div className="flex flex-col w-full">
+                    <Text>{element.name}:</Text>
+                    <TimePicker disabled />
                   </div>
                 </div>
               )}

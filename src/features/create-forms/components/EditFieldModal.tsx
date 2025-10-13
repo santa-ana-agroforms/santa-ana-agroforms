@@ -174,6 +174,7 @@ const EditFieldModal: FC<EditFieldModalProps> = ({
     if (opcion === "Nombre") return { clase: "string" };
     if (variant === "switch") return { clase: "boolean" };
     if (variant === "fecha") return { clase: "date" };
+    if (variant === "hora") return { clase: "hour" };
     return { clase: "string" };
   };
 
@@ -189,7 +190,7 @@ const EditFieldModal: FC<EditFieldModalProps> = ({
     >
       <Form form={form} layout="horizontal" onFinish={handleFinish}>
         <div className="flex flex-row gap-24">
-          <Form.Item
+          {/* <Form.Item
             label="Secuencia"
             name="secuencia"
             rules={[
@@ -198,7 +199,7 @@ const EditFieldModal: FC<EditFieldModalProps> = ({
             className="flex-row-reverse"
           >
             <InputNumber min={0} className="w-full" />
-          </Form.Item>
+          </Form.Item> */}
 
           <Form.Item
             label="Nombre"

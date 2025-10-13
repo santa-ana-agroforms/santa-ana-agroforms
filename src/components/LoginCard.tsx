@@ -26,8 +26,6 @@ export const LoginCard: React.FC<Props> = ({ onFinish, isPending }) => {
     setLoading(false);
   };
 
-  console.warn("isPending: ", isPending);
-
   return (
     <div className="w-full max-w-md bg-white p-8 rounded-2xl shadow-2xl">
       <div className="w-full h-1/2 pb-5 bg-white flex justify-center">

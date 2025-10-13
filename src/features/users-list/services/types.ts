@@ -52,4 +52,6 @@ export interface UpdateUsuarioPayload {
   activo?: boolean;
   // Opcional: si PATCH en /usuarios/ también acepta actualizar roles
   roles?: string[]; // IDs de roles
+  acceso_web?: boolean;
+  password?: string;
 }

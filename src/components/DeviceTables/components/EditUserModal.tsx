@@ -4,6 +4,7 @@ import { FC, useEffect } from "react";
 import { Button, Checkbox, Form, Input, Select, type ModalProps } from "antd";
 
 import BaseModal from "@/components/BaseModal";
+import { useUpdateUsuario } from "@/features/users-list/hooks/useUpdateUsuario";
 
 const { Option } = Select;
 
@@ -40,6 +41,8 @@ const EditUserModal: FC<EditUserModalProps> = ({
   const [form] = Form.useForm<EditUserValues>();
   //const { roles, loading, error } = useRoles();
 
+  const { update, loading, error } = useUpdateUsuario();
+
   // Al mostrarse el modal, cargamos o reseteamos los valores
   useEffect(() => {
     if (visible) {
@@ -51,8 +54,8 @@ const EditUserModal: FC<EditUserModalProps> = ({
     }
   }, [visible, initialValues, form]);
 
-  const handleFinish = (values: EditUserValues) => {
-    onSave(values); // 👈 delegamos al padre
+  const handleFinish = async (values: EditUserValues) => {
+    onSave(values);
   };
 
   const handleCancel = () => {

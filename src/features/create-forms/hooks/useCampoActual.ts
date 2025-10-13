@@ -2,6 +2,7 @@
 import { useMutation } from "@tanstack/react-query";
 
 import {
+  patchCamposActualBatch,
   postCamposActualBatch,
   type CampoAPI,
 } from "../services/campos.services";
@@ -13,5 +14,13 @@ export function usePostCamposActualBatch() {
     mutationKey: ["campos-actual", "batch"],
     mutationFn: ({ pageId, campos }: BatchVars) =>
       postCamposActualBatch(pageId, campos),
+  });
+}
+
+export function usePatchCamposActualBatch() {
+  return useMutation({
+    mutationKey: ["campos-actual", "batch", "patch"],
+    mutationFn: ({ pageId, campos }: BatchVars) =>
+      patchCamposActualBatch(pageId, campos),
   });
 }

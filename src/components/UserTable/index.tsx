@@ -80,11 +80,14 @@ const UsersTable: React.FC<Props> = ({
     reset,
   } = useQrAuth();
 
-  const { update } = useUpdateUsuario();
+  const { update, loading: updating } = useUpdateUsuario();
 
-  const { create, loading: creating, error} = useCreateUsuario();
+  const { create, loading: creating, error } = useCreateUsuario();
+
+  const [creatingUser, setCreatingUser] = useState(Boolean);
 
   const handleAdd = () => {
+    setCreatingUser(true);
     setSelected(null);
     setModalOpen(true);
   };
@@ -122,6 +125,8 @@ const UsersTable: React.FC<Props> = ({
 
   const handleSave = async (values: EditUserFormValues) => {
     if (selected) {
+      setCreatingUser(false);
+
       const original = {
         nombre: selected.nombre,
         nombre_usuario: selected.nombre_usuario,
@@ -139,7 +144,6 @@ const UsersTable: React.FC<Props> = ({
       };
 
       const payload = buildPatchPayload(original, edited);
-
 
       if (Object.keys(payload).length === 0) {
         message.info("No hay cambios para guardar");
@@ -162,13 +166,12 @@ const UsersTable: React.FC<Props> = ({
           password: values.contrasena ?? "",
           activo: values.activo,
           correo: values.email,
-          acceso_web: values.acceso_web
+          acceso_web: values.acceso_web,
         });
 
         message.success("Usuario creado con éxito");
         setModalOpen(false);
       } catch (err: any) {
-
         const errorMap: Record<string, string> = {
           "Ensure this field has at least 8 characters.":
             "La contraseña debe tener al menos 8 caracteres",
@@ -229,6 +232,7 @@ const UsersTable: React.FC<Props> = ({
         <div className="flex gap-2 justify-center">
           <FormOutlined
             onClick={() => {
+              setCreatingUser(false);
               setSelected(record);
               setModalOpen(true);
             }}
@@ -296,7 +300,6 @@ const UsersTable: React.FC<Props> = ({
     },
   ];
 
-
   return (
     <>
       <Table<UserType>
@@ -318,7 +321,7 @@ const UsersTable: React.FC<Props> = ({
         }
         onCancel={handleCancel}
         onSave={handleSave}
-        creating={creating}
+        creating={updating || creating}
       />
       <QrModal
         key={selected?.nombre_usuario}
