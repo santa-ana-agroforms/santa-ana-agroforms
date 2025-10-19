@@ -14,7 +14,7 @@ const DEV_CSP = [
   "style-src 'self' 'unsafe-inline'",
   "img-src 'self' data: blob:",
   "font-src 'self'",
-  "connect-src 'self' ws: wss: http://localhost:5173 https://santa-ana-api.onrender.com http://127.0.0.1:8081 http://localhost:8081",
+  "connect-src 'self' ws: wss: http://127.0.0.1:5173 http://localhost:5173 https://santa-ana-api.onrender.com https://santaana-api-latest.onrender.com http://127.0.0.1:8081 http://localhost:8081",
   "media-src 'self' blob:",
   "worker-src 'self' blob:",
   "form-action 'self'",

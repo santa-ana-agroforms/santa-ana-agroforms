@@ -1,25 +1,23 @@
-// src/components/FormsLists/data.ts
+// src/components/CategoryTables/data.tsx
 import {
-  CopyOutlined,
   DeleteOutlined,
+  FileAddOutlined,
   FormOutlined,
-  HolderOutlined,
-  MoonOutlined,
-  SignatureOutlined,
-  SolutionOutlined,
 } from "@ant-design/icons";
-import { Dropdown, MenuProps, Tooltip } from "antd";
+import { Button, Typography } from "antd";
 import type { ColumnType } from "antd/es/table";
 
 export interface ItemType {
   key: string;
-  id: string | number;
-  titulo: string;
-  desde: string;
-  hasta: string;
-  estado: string;
-  esPublico: boolean;
-  autoEnvio: boolean;
+  codigo: string;
+  descripcion: string;
+  tipoFuente: string;
+  conexion?: string;
+  comando?: string;
+  intervalo?: string;
+  ultActualizacion?: string;
+  ultMensaje?: string;
+  datos?: string;
 }
 
 export interface CategoryType {
@@ -28,211 +26,365 @@ export interface CategoryType {
   items: ItemType[];
 }
 
-/** Construye el menú contextual por fila */
-const buildRowMenu = (
-  record: ItemType,
-  onDuplicate: (record: ItemType) => void,
-  onDelete: (record: ItemType) => void,
-  onSuspend: (record: ItemType) => void
-): MenuProps => ({
-  items: [
-    {
-      key: "duplicate",
-      icon: <CopyOutlined />,
-      label: "Duplicar",
-    },
-    {
-      key: "moon",
-      icon: <MoonOutlined />,
-      // Si aún no tienes acción para este, puedes dejarlo disabled o ponerle un handler después
-      label: "Suspender",
-    },
-    { type: "divider" },
-    {
-      key: "delete",
-      icon: <DeleteOutlined />,
-      label: "Eliminar",
-      danger: true,
-    },
-  ],
-  onClick: ({ key, domEvent }) => {
-    domEvent.stopPropagation(); // evita afectar selección de fila, etc.
-    if (key === "duplicate") onDuplicate(record);
-    if (key === "delete") onDelete(record);
-    if (key === "moon") onSuspend(record);
-    // if (key === "moon") { ...acción futura... }
+export const categories: CategoryType[] = [
+  {
+    key: "local",
+    name: "Local",
+    items: [
+      {
+        key: "1",
+        codigo: "Cabezal",
+        descripcion: "Cabezal",
+        tipoFuente: "Local",
+        conexion: "",
+        comando: "",
+        intervalo: "",
+        ultActualizacion: "04/04/2020",
+        ultMensaje: "",
+        datos: "Contenido",
+      },
+      {
+        key: "2",
+        codigo: "Confirmacion",
+        descripcion: "Confirmacion",
+        tipoFuente: "Local",
+        conexion: "",
+        comando: "",
+        intervalo: "",
+        ultActualizacion: "04/04/2020",
+        ultMensaje: "",
+        datos: "Contenido",
+      },
+      {
+        key: "3",
+        codigo: "Ejemplo",
+        descripcion: "Ejemplo",
+        tipoFuente: "Local",
+        conexion: "",
+        comando: "",
+        intervalo: "",
+        ultActualizacion: "05/12/2020",
+        ultMensaje: "",
+        datos: "Contenido",
+      },
+      {
+        key: "4",
+        codigo: "Empresas",
+        descripcion: "Empresas Cliente",
+        tipoFuente: "Local",
+        conexion: "",
+        comando: "",
+        intervalo: "",
+        ultActualizacion: "04/04/2020",
+        ultMensaje: "",
+        datos: "Contenido",
+      },
+      {
+        key: "5",
+        codigo: "Equipos",
+        descripcion: "Lista de Equipos",
+        tipoFuente: "Local",
+        conexion: "",
+        comando: "",
+        intervalo: "",
+        ultActualizacion: "25/11/2020",
+        ultMensaje: "",
+        datos: "Contenido",
+      },
+      {
+        key: "6",
+        codigo: "Flujo",
+        descripcion: "Flujo Aprobaciones",
+        tipoFuente: "Local",
+        conexion: "",
+        comando: "",
+        intervalo: "",
+        ultActualizacion: "04/11/2020",
+        ultMensaje: "",
+        datos: "Contenido",
+      },
+      {
+        key: "7",
+        codigo: "IPGact",
+        descripcion: "Actividades Palo…",
+        tipoFuente: "Local",
+        conexion: "",
+        comando: "",
+        intervalo: "",
+        ultActualizacion: "25/11/2020",
+        ultMensaje: "",
+        datos: "Contenido",
+      },
+      {
+        key: "8",
+        codigo: "IPGtp",
+        descripcion: "Tiempos Perdido…",
+        tipoFuente: "Local",
+        conexion: "",
+        comando: "",
+        intervalo: "",
+        ultActualizacion: "25/11/2020",
+        ultMensaje: "",
+        datos: "Contenido",
+      },
+      {
+        key: "9",
+        codigo: "Lotes",
+        descripcion: "Listado de Lotes…",
+        tipoFuente: "Local",
+        conexion: "",
+        comando: "",
+        intervalo: "",
+        ultActualizacion: "04/04/2020",
+        ultMensaje: "",
+        datos: "Contenido",
+      },
+      {
+        key: "10",
+        codigo: "Rutas de Envíos",
+        descripcion: "Envíos de correos",
+        tipoFuente: "Local",
+        conexion: "",
+        comando: "",
+        intervalo: "",
+        ultActualizacion: "18/09/2020",
+        ultMensaje: "",
+        datos: "Contenido",
+      },
+      {
+        key: "11",
+        codigo: "SubContratado",
+        descripcion: "SubContratado",
+        tipoFuente: "Local",
+        conexion: "",
+        comando: "",
+        intervalo: "",
+        ultActualizacion: "04/04/2020",
+        ultMensaje: "",
+        datos: "Contenido",
+      },
+      {
+        key: "12",
+        codigo: "Supervisor",
+        descripcion: "Supervisor",
+        tipoFuente: "Local",
+        conexion: "",
+        comando: "",
+        intervalo: "",
+        ultActualizacion: "04/04/2020",
+        ultMensaje: "",
+        datos: "Contenido",
+      },
+      {
+        key: "13",
+        codigo: "Supervisores",
+        descripcion: "Lista de Supervisores",
+        tipoFuente: "Local",
+        conexion: "",
+        comando: "",
+        intervalo: "",
+        ultActualizacion: "04/04/2020",
+        ultMensaje: "",
+        datos: "Contenido",
+      },
+      {
+        key: "14",
+        codigo: "Transportista",
+        descripcion: "Transportista",
+        tipoFuente: "Local",
+        conexion: "",
+        comando: "",
+        intervalo: "",
+        ultActualizacion: "04/04/2020",
+        ultMensaje: "",
+        datos: "Contenido",
+      },
+      {
+        key: "15",
+        codigo: "Trayecto",
+        descripcion: "Trayecto",
+        tipoFuente: "Local",
+        conexion: "",
+        comando: "",
+        intervalo: "",
+        ultActualizacion: "04/04/2020",
+        ultMensaje: "",
+        datos: "Contenido",
+      },
+      {
+        key: "16",
+        codigo: "Vagones",
+        descripcion: "Código de Vagones",
+        tipoFuente: "Local",
+        conexion: "",
+        comando: "",
+        intervalo: "",
+        ultActualizacion: "04/04/2020",
+        ultMensaje: "",
+        datos: "Contenido",
+      },
+    ],
   },
-});
+  {
+    key: "externa",
+    name: "Externa",
+    items: [
+      {
+        key: "E1",
+        codigo: "Lotes",
+        descripcion: "Listado de Lotes",
+        tipoFuente: "Externa",
+        conexion: "Data Source=165…",
+        comando: "SELECT 0 as IdDato…",
+        intervalo: "10,00",
+        ultActualizacion: "29/06/2021",
+        ultMensaje: "OK",
+        datos: "Contenido",
+      },
+    ],
+  },
+];
 
-/** Utilidad para crear filtros únicos a partir de las filas */
-const buildFilters = <K extends keyof ItemType>(rows: ItemType[], key: K) =>
-  Array.from(new Set(rows.map((r) => String(r[key])))).map((v) => ({
-    text: v,
-    value: v,
-  }));
-
-// --- Función para generar las columnas, recibiendo el estado de sort y filter ---
 export const getColumns = (
-  rows: ItemType[],
   sortedInfo: any,
   filteredInfo: any,
   onAdd: () => void,
-  onIdClick: (id: string | number) => void,
   onEdit: (record: ItemType) => void,
   onDelete: (record: ItemType) => void,
-  onDuplicate: (record: ItemType) => void,
-  onSuspend: (record: ItemType) => void,
-  onAssign: (record: ItemType) => void
+  onDatos?: (record: ItemType) => void
 ): ColumnType<ItemType>[] => [
   {
     title: (
-      <>
-        <div
-          onClick={onAdd}
-          title="Crear nuevo formulario"
-          className="flex flex-col items-center justify-center cursor-pointer p-2 hover:bg-gray-100 rounded-md"
-        >
-          <SignatureOutlined className="text-2xl" />
-          <span className="text-xs mt-1">Nuevo formulario</span>
-        </div>
-      </>
+      <Button
+        type="text"
+        onClick={onAdd}
+        title="Crear nuevo formulario"
+        className="flex flex-col items-center justify-center p-2 h-auto"
+      >
+        <FileAddOutlined className="text-2xl" />
+        <span className="text-xs mt-1">Nueva fuente de dato</span>
+      </Button>
     ),
-    dataIndex: "new_form",
-    key: "new_form",
-    width: 100,
+    dataIndex: "actions",
+    key: "actions",
+    width: 110,
     align: "center",
     render: (_: any, record: ItemType) => (
       <>
-        <div className="flex flex-row gap-2">
-          <Tooltip title="Asignar formulario">
-            <SolutionOutlined style={{ cursor: "pointer" }} onClick={(e) => {
-              e.stopPropagation();
-              onAssign(record);
-            }} />
-          </Tooltip>
-          <Tooltip title="Editar formulario">
-            <FormOutlined
-              onClick={() => onEdit(record)}
-              style={{ cursor: "pointer" }}
-            />
-          </Tooltip>
-
-          <Tooltip title="Más opciones">
-            <Dropdown
-              menu={buildRowMenu(record, onDuplicate, onDelete, onSuspend)}
-              trigger={["click"]} // opcional: ["click", "contextMenu"]
-              placement="bottomLeft"
-              getPopupContainer={(node) => node.parentElement || document.body}
-            >
-              <HolderOutlined
-                style={{ cursor: "pointer" }}
-                onClick={(e) => e.preventDefault()}
-              />
-            </Dropdown>
-          </Tooltip>
-
-          {/* <CopyOutlined
-            onClick={() => onDuplicate(record)}
-            style={{ cursor: "pointer" }}
-          />
-
-          <MoonOutlined style={{ cursor: "pointer" }} />
-
-          <DeleteOutlined
-            onClick={() => onDelete(record)}
-            style={{ cursor: "pointer", fontSize: 16 }}
-          /> */}
-        </div>
+        <FormOutlined
+          onClick={() => onEdit(record)}
+          style={{ cursor: "pointer" }}
+        />
+        <DeleteOutlined
+          onClick={() => onDelete(record)}
+          style={{ cursor: "pointer", marginLeft: 8 }}
+        />
       </>
     ),
   },
   {
-    title: "Título",
-    dataIndex: "titulo",
-    key: "titulo",
-    filters: buildFilters(rows, "titulo"),
-    filteredValue: filteredInfo.titulo || null,
-    onFilter: (value, record) => record.titulo.includes(value as string),
-    sorter: (a, b) => a.titulo.localeCompare(b.titulo),
-    sortOrder: sortedInfo.columnKey === "titulo" ? sortedInfo.order : null,
-    render: (value: number, record) => (
-      <a
-        onClick={() => onIdClick(record.id)}
-        style={{ cursor: "pointer", color: "#1890ff" }}
-      >
-        {value}
-      </a>
-    ),
+    title: "Código",
+    dataIndex: "codigo",
+    key: "codigo",
+    filters: Array.from(
+      new Set(categories.flatMap((c) => c.items.map((i) => i.codigo)))
+    ).map((c) => ({ text: c, value: c })),
+    filteredValue: filteredInfo.codigo || null,
+    onFilter: (value, record) => record.codigo.includes(value as string),
+    sorter: (a, b) => a.codigo.localeCompare(b.codigo),
+    sortOrder: sortedInfo.columnKey === "codigo" ? sortedInfo.order : null,
     ellipsis: true,
+    width: 120,
   },
   {
-    title: "Desde",
-    dataIndex: "desde",
-    key: "desde",
-    sorter: (a, b) => {
-      const [d1, m1, y1] = a.desde.split("/").map(Number);
-      const [d2, m2, y2] = b.desde.split("/").map(Number);
-      return (
-        new Date(y1, m1 - 1, d1).getTime() - new Date(y2, m2 - 1, d2).getTime()
-      );
-    },
-    sortOrder: sortedInfo.columnKey === "desde" ? sortedInfo.order : null,
-    width: 125,
-  },
-  {
-    title: "Hasta",
-    dataIndex: "hasta",
-    key: "hasta",
-    render: (t) => <span style={{ background: "#ffe58f" }}>{t}</span>,
-    sorter: (a, b) => {
-      const [d1, m1, y1] = a.hasta.split("/").map(Number);
-      const [d2, m2, y2] = b.hasta.split("/").map(Number);
-      return (
-        new Date(y1, m1 - 1, d1).getTime() - new Date(y2, m2 - 1, d2).getTime()
-      );
-    },
-    sortOrder: sortedInfo.columnKey === "hasta" ? sortedInfo.order : null,
-    width: 125,
-  },
-  {
-    title: "Estado",
-    dataIndex: "estado",
-    key: "estado",
-    filters: buildFilters(rows, "estado"),
-    filteredValue: filteredInfo.estado || null,
-    onFilter: (value, record) => record.estado.includes(value as string),
-    sorter: (a, b) => a.estado.localeCompare(b.estado),
-    sortOrder: sortedInfo.columnKey === "estado" ? sortedInfo.order : null,
+    title: "Descripción",
+    dataIndex: "descripcion",
+    key: "descripcion",
+    filters: Array.from(
+      new Set(categories.flatMap((c) => c.items.map((i) => i.descripcion)))
+    ).map((t) => ({ text: t, value: t })),
+    filteredValue: filteredInfo.descripcion || null,
+    onFilter: (value, record) => record.descripcion.includes(value as string),
+    sorter: (a, b) => a.descripcion.localeCompare(b.descripcion),
+    sortOrder: sortedInfo.columnKey === "descripcion" ? sortedInfo.order : null,
+    ellipsis: true,
     width: 160,
   },
   {
-    title: "¿Es Público?",
-    dataIndex: "esPublico",
-    key: "esPublico",
-    width: 140,
-    filters: [
-      { text: "Sí", value: true },
-      { text: "No", value: false },
-    ],
-    filteredValue: filteredInfo.esPublico || null,
-    onFilter: (value, record) => record.esPublico === value,
-    sorter: (a, b) => Number(a.esPublico) - Number(b.esPublico),
-    sortOrder: sortedInfo.columnKey === "esPublico" ? sortedInfo.order : null,
-    render: (val) => (val ? "✔️" : ""),
+    title: "Tipo fuente",
+    dataIndex: "tipoFuente",
+    key: "tipoFuente",
+    filters: Array.from(
+      new Set(categories.flatMap((c) => c.items.map((i) => i.tipoFuente)))
+    ).map((t) => ({ text: t, value: t })),
+    filteredValue: filteredInfo.tipoFuente || null,
+    onFilter: (value, record) => record.tipoFuente.includes(value as string),
+    sorter: (a, b) => a.tipoFuente.localeCompare(b.tipoFuente),
+    sortOrder: sortedInfo.columnKey === "tipoFuente" ? sortedInfo.order : null,
   },
   {
-    title: "¿Auto Envío?",
-    dataIndex: "autoEnvio",
-    key: "autoEnvio",
-    width: 140,
-    filters: [
-      { text: "Sí", value: true },
-      { text: "No", value: false },
-    ],
-    filteredValue: filteredInfo.autoEnvio || null,
-    onFilter: (value, record) => record.autoEnvio === value,
-    sorter: (a, b) => Number(a.autoEnvio) - Number(b.autoEnvio),
-    sortOrder: sortedInfo.columnKey === "autoEnvio" ? sortedInfo.order : null,
-    render: (val) => (val ? "✔️" : ""),
+    title: "Conexión",
+    dataIndex: "conexion",
+    key: "conexion",
+    ellipsis: true,
+    width: 100,
+  },
+  {
+    title: "Comando",
+    dataIndex: "comando",
+    key: "comando",
+    ellipsis: true,
+  },
+  {
+    title: "Intervalo (s)",
+    dataIndex: "intervalo",
+    key: "intervalo",
+    sorter: (a, b) => {
+      // ✅ Usar Number.parseFloat en lugar de parseFloat global
+      const na = Number.parseFloat(a.intervalo?.replace(",", ".") || "0");
+      const nb = Number.parseFloat(b.intervalo?.replace(",", ".") || "0");
+      return na - nb;
+    },
+    sortOrder: sortedInfo.columnKey === "intervalo" ? sortedInfo.order : null,
+  },
+  {
+    title: "Ult. Actualiz.",
+    dataIndex: "ultActualizacion",
+    key: "ultActualizacion",
+    sorter: (a, b) => {
+      const [d1, m1, y1] = a.ultActualizacion!.split("/").map(Number);
+      const [d2, m2, y2] = b.ultActualizacion!.split("/").map(Number);
+      return (
+        new Date(y1, m1 - 1, d1).getTime() - new Date(y2, m2 - 1, d2).getTime()
+      );
+    },
+    sortOrder:
+      sortedInfo.columnKey === "ultActualizacion" ? sortedInfo.order : null,
+  },
+  {
+    title: "Ult. Mensaje",
+    dataIndex: "ultMensaje",
+    key: "ultMensaje",
+    filters: Array.from(
+      new Set(categories.flatMap((c) => c.items.map((i) => i.ultMensaje || "")))
+    )
+      .filter((t) => t)
+      .map((t) => ({ text: t, value: t })),
+    filteredValue: filteredInfo.ultMensaje || null,
+    onFilter: (value, record) => record.ultMensaje === value,
+  },
+  {
+    title: "Datos",
+    dataIndex: "datos",
+    key: "datos",
+    ellipsis: true,
+    render: (text: string, record: ItemType) => (
+      <Typography.Link
+        style={{ cursor: "pointer" }}
+        onClick={() => onDatos && onDatos(record)}
+      >
+        {text}
+      </Typography.Link>
+    ),
   },
 ];

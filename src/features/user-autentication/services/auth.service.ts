@@ -35,15 +35,12 @@ export interface AuthResponse {
   };
 }
 
-
 export interface LogoutResponse {
   message?: string;
   error?: string;
 }
 
-
-
-// ✅ Interceptor de request — agrega token si existe
+// Interceptor de request – agrega token si existe
 api.interceptors.request.use((config) => {
   const token = localStorage.getItem("access_token");
   if (token) {
@@ -52,13 +49,17 @@ api.interceptors.request.use((config) => {
   return config;
 });
 
-// ✅ Interceptor de respuesta — refresca token si vence
+// Interceptor de respuesta – refresca token si vence
 api.interceptors.response.use(
   (response) => response,
   async (error) => {
     const originalRequest = error.config;
-    if (error.response?.status === 401 && !originalRequest._retry &&
-      !originalRequest.skipAuthRefresh) {
+
+    if (
+      error.response?.status === 401 &&
+      !originalRequest._retry &&
+      !originalRequest.skipAuthRefresh
+    ) {
       originalRequest._retry = true;
       const refresh = localStorage.getItem("refresh_token");
 
@@ -71,18 +72,18 @@ api.interceptors.response.use(
           localStorage.setItem("access_token", data.access_token);
           api.defaults.headers.common["Authorization"] = `Bearer ${data.access_token}`;
           originalRequest.headers.Authorization = `Bearer ${data.access_token}`;
-          return api(originalRequest); // reintenta
+          return api(originalRequest);
         } catch (err) {
           console.error("Error al refrescar token:", err);
           localStorage.clear();
           window.location.href = "/";
+          throw err;
         }
       }
     }
-    return Promise.reject(error);
+    throw error;
   }
 );
-
 
 export async function loginUser(payload: LoginDto): Promise<AuthResponse> {
   const { data } = await api.post<AuthResponse>("/api/auth/login/", payload);

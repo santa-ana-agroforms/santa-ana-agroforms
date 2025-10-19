@@ -7,7 +7,7 @@ import {
   QrcodeOutlined,
   UserAddOutlined,
 } from "@ant-design/icons";
-import { message, Table, type TableProps } from "antd";
+import { Button, message, Table, type TableProps } from "antd";
 import type { ColumnsType } from "antd/es/table";
 
 import { useCreateUsuario } from "@/features/users-list/hooks/useCreateUsuarios";
@@ -20,24 +20,16 @@ import EditUserModal, {
 import DeleteUserModal from "./components/DeleteUserModal";
 import QrModal from "./components/QrModal";
 
-// un modal específico para usuarios
-
 export interface UserType {
   nombre: string;
   activo: boolean;
   nombre_usuario: string;
   email: string;
   acceso_web?: boolean;
-  // roles: Array<{
-  //   id: string;
-  //   nombre: string;
-  //   descripcion?: string;
-  // }>;
 }
 
-// Extender EditUserValues para que coincida con UserType
 interface EditUserFormValues extends EditUserValues {
-  roles: string[]; // IDs de roles como strings
+  roles: string[];
 }
 
 interface Props {
@@ -48,6 +40,109 @@ interface Props {
   onTableChange?: TableProps<UserType>["onChange"];
 }
 
+const parseBackendError = (err: any): string[] => {
+  const errorMap: Record<string, string> = {
+    "Ensure this field has at least 8 characters.":
+      "La contraseña debe tener al menos 8 caracteres",
+    "This field is required.": "Este campo es obligatorio",
+    "Enter a valid email address.": "El email no es válido",
+  };
+
+  if (!err.message) return [err.message || "Error al crear usuario"];
+
+  const jsonStart = err.message.indexOf("{");
+  if (jsonStart === -1) return [err.message];
+
+  try {
+    const jsonString = err.message.slice(jsonStart);
+    const parsed = JSON.parse(jsonString);
+    
+    const errors: string[] = [];
+    Object.entries(parsed).forEach(([field, msgs]) => {
+      (msgs as string[]).forEach((m) => {
+        const msg = errorMap[m] ?? m;
+        const capitalized = field.charAt(0).toUpperCase() + field.slice(1);
+        errors.push(`${capitalized}: ${msg}`);
+      });
+    });
+    return errors;
+  } catch (parseError) {
+    console.warn("No se pudo parsear el JSON:", parseError);
+    return [err.message];
+  }
+};
+
+function buildPatchPayload<T extends Record<string, any>>(
+  original: T,
+  edited: T
+): Partial<T> {
+  const payload: Partial<T> = {};
+
+  (Object.keys(edited) as (keyof T)[]).forEach((key) => {
+    const origVal = original[key];
+    const editVal = edited[key];
+
+    const areEqual =
+      Array.isArray(origVal) && Array.isArray(editVal) ?
+        JSON.stringify(origVal) === JSON.stringify(editVal)
+      : origVal === editVal;
+
+    if (!areEqual) {
+      payload[key] = editVal;
+    }
+  });
+
+  return payload;
+}
+
+const handleUpdateUser = async (
+  selected: UserType,
+  values: EditUserFormValues,
+  update: (username: string, payload: any) => Promise<any>
+): Promise<boolean> => {
+  const original = {
+    nombre: selected.nombre,
+    nombre_usuario: selected.nombre_usuario,
+    correo: selected.email,
+    activo: selected.activo,
+    acceso_web: selected.acceso_web,
+  };
+
+  const edited = {
+    nombre: values.nombre,
+    nombre_usuario: values.nombre_usuario,
+    correo: values.email,
+    activo: values.activo,
+    acceso_web: values.acceso_web,
+  };
+
+  const payload = buildPatchPayload(original, edited);
+
+  if (Object.keys(payload).length === 0) {
+    message.info("No hay cambios para guardar");
+    return false;
+  }
+
+  await update(selected.nombre_usuario, payload);
+  message.success("Usuario actualizado con éxito");
+  return true;
+};
+
+const handleCreateUser = async (
+  values: EditUserFormValues,
+  create: (payload: any) => Promise<any>
+): Promise<void> => {
+  await create({
+    nombre_usuario: values.nombre_usuario,
+    nombre: values.nombre,
+    password: values.contrasena ?? "",
+    activo: values.activo,
+    correo: values.email,
+    acceso_web: values.acceso_web,
+  });
+  message.success("Usuario creado con éxito");
+};
+
 const UsersTable: React.FC<Props> = ({
   data,
   onEdit,
@@ -55,7 +150,6 @@ const UsersTable: React.FC<Props> = ({
   onCreate,
   onTableChange,
 }) => {
-  // filtros únicos
   const perfilFilters = Array.from(
     new Set(data.map((u) => u.nombre_usuario))
   ).map((p) => ({ text: p, value: p }));
@@ -81,8 +175,7 @@ const UsersTable: React.FC<Props> = ({
   } = useQrAuth();
 
   const { update } = useUpdateUsuario();
-
-  const { create, loading: creating, error} = useCreateUsuario();
+  const { create, loading: creating, error } = useCreateUsuario();
 
   const handleAdd = () => {
     setSelected(null);
@@ -97,111 +190,19 @@ const UsersTable: React.FC<Props> = ({
     setQrModalOpen(true);
   };
 
-  function buildPatchPayload<T extends Record<string, any>>(
-    original: T,
-    edited: T
-  ): Partial<T> {
-    const payload: Partial<T> = {};
-
-    (Object.keys(edited) as (keyof T)[]).forEach((key) => {
-      const origVal = original[key];
-      const editVal = edited[key];
-
-      const areEqual =
-        Array.isArray(origVal) && Array.isArray(editVal) ?
-          JSON.stringify(origVal) === JSON.stringify(editVal)
-        : origVal === editVal;
-
-      if (!areEqual) {
-        payload[key] = editVal;
-      }
-    });
-
-    return payload;
-  }
-
   const handleSave = async (values: EditUserFormValues) => {
-    if (selected) {
-      const original = {
-        nombre: selected.nombre,
-        nombre_usuario: selected.nombre_usuario,
-        correo: selected.email,
-        activo: selected.activo,
-        acceso_web: selected.acceso_web,
-      };
-
-      const edited = {
-        nombre: values.nombre,
-        nombre_usuario: values.nombre_usuario,
-        correo: values.email,
-        activo: values.activo,
-        acceso_web: values.acceso_web,
-      };
-
-      const payload = buildPatchPayload(original, edited);
-
-
-      if (Object.keys(payload).length === 0) {
-        message.info("No hay cambios para guardar");
-        return;
-      }
-
-      try {
-        await update(selected.nombre_usuario, payload);
-        message.success("Usuario actualizado con éxito");
+    try {
+      if (selected) {
+        const success = await handleUpdateUser(selected, values, update);
+        if (success) setModalOpen(false);
+      } else {
+        await handleCreateUser(values, create);
         setModalOpen(false);
-      } catch (err: any) {
-        message.error(err.message || "Error al actualizar usuario");
       }
-    } else {
-      // 🟢 CREAR → POST con validación y errores detallados
-      try {
-        await create({
-          nombre_usuario: values.nombre_usuario,
-          nombre: values.nombre,
-          password: values.contrasena ?? "",
-          activo: values.activo,
-          correo: values.email,
-          acceso_web: values.acceso_web
-        });
-
-        message.success("Usuario creado con éxito");
-        setModalOpen(false);
-      } catch (err: any) {
-
-        const errorMap: Record<string, string> = {
-          "Ensure this field has at least 8 characters.":
-            "La contraseña debe tener al menos 8 caracteres",
-          "This field is required.": "Este campo es obligatorio",
-          "Enter a valid email address.": "El email no es válido",
-        };
-
-        if (err.message) {
-          const jsonStart = err.message.indexOf("{");
-          if (jsonStart !== -1) {
-            try {
-              const jsonString = err.message.slice(jsonStart);
-              const parsed = JSON.parse(jsonString);
-
-              Object.entries(parsed).forEach(([field, msgs]) => {
-                (msgs as string[]).forEach((m) => {
-                  const msg = errorMap[m] ?? m;
-                  const capitalized =
-                    field.charAt(0).toUpperCase() + field.slice(1);
-                  message.error(`${capitalized}: ${msg}`);
-                });
-              });
-              return;
-            } catch (parseError) {
-              console.warn("No se pudo parsear el JSON:", parseError);
-            }
-          }
-        }
-
-        message.error(err.message || "Error al crear usuario");
-      }
+    } catch (err: any) {
+      const errors = parseBackendError(err);
+      errors.forEach((error) => message.error(error));
     }
-    setModalOpen(false);
   };
 
   useEffect(() => {
@@ -213,14 +214,15 @@ const UsersTable: React.FC<Props> = ({
   const columns: ColumnsType<UserType> = [
     {
       title: (
-        <div
+        <Button
+          type="text"
           onClick={handleAdd}
           title="Crear nuevo formulario"
-          className="flex flex-col items-center justify-center cursor-pointer p-2 hover:bg-gray-100 rounded-md"
+          className="flex flex-col items-center justify-center p-2 h-auto"
         >
           <UserAddOutlined className="text-2xl" />
           <span className="text-xs mt-1">Nuevo usuario</span>
-        </div>
+        </Button>
       ),
       key: "actions",
       width: 100,
@@ -260,7 +262,7 @@ const UsersTable: React.FC<Props> = ({
       title: "Contraseña",
       dataIndex: "contraseña",
       key: "contraseña",
-      render: () => "•••••••", // siempre oculto
+      render: () => "•••••••",
       width: 160,
     },
     {
@@ -273,20 +275,6 @@ const UsersTable: React.FC<Props> = ({
       sorter: (a, b) => Number(a.activo) - Number(b.activo),
       width: 120,
     },
-    // {
-    //   title: "Rol",
-    //   key: "perfil",
-    //   filters: perfilFilters,
-    //   onFilter: (val, rec) => rec.nombre_usuario === val,
-    //   sorter: (a, b) => a.nombre_usuario.localeCompare(b.nombre_usuario),
-    //   ellipsis: true,
-    //   width: 220,
-    //   render: (_, record) => (
-    //     <span title={record.roles.map((role) => role.nombre).join(", ")}>
-    //       {record.roles.map((role) => role.nombre).join(", ")}
-    //     </span>
-    //   ),
-    // },
     {
       title: "Email",
       dataIndex: "correo",
@@ -295,7 +283,6 @@ const UsersTable: React.FC<Props> = ({
       ellipsis: true,
     },
   ];
-
 
   return (
     <>
@@ -312,7 +299,6 @@ const UsersTable: React.FC<Props> = ({
           selected ?
             {
               ...selected,
-              //roles: selected.roles.map((role) => role.id),
             }
           : undefined
         }

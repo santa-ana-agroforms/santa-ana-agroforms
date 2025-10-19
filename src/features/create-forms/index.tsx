@@ -25,8 +25,29 @@ export type ElementItem = {
   type: string;
   name: string;
   group?: string;
-  variant?: VariantType; // el tipo exacto que se abrió en el modal
+  variant?: VariantType;
   values?: Partial<FieldFormValues>;
+};
+
+const collectGroupsFromElements = (elements: ElementItem[]): Set<string> => {
+  const groups = new Set<string>();
+  elements.forEach((el) => {
+    if (el.variant === "grupo" && el.name) {
+      groups.add(el.name);
+    }
+  });
+  return groups;
+};
+
+const collectAllGroupsFromPages = (
+  elementsByPage: Record<number, ElementItem[]>
+): string[] => {
+  const allGroups = new Set<string>();
+  Object.values(elementsByPage).forEach((arr) => {
+    const pageGroups = collectGroupsFromElements(arr);
+    pageGroups.forEach((g) => allGroups.add(g));
+  });
+  return Array.from(allGroups);
 };
 
 const CreateForms: React.FC<CreateFormsProps> = ({ formId, onBack }) => {
@@ -58,7 +79,7 @@ const CreateForms: React.FC<CreateFormsProps> = ({ formId, onBack }) => {
             opciones: campo.opciones ?? "",
             grupo: campo.grupo ?? "",
             reglaVisualizacion: campo.reglaVisualizacion ?? "",
-          } satisfies Partial<FieldFormValues>, // 👈 importantísimo
+          } satisfies Partial<FieldFormValues>,
         }));
       });
       setElementsByPage(inicial);
@@ -69,7 +90,6 @@ const CreateForms: React.FC<CreateFormsProps> = ({ formId, onBack }) => {
     Record<number, ElementItem[]>
   >({});
 
-  // 🔴 nuevo: estado del modal de edición
   const [editOpen, setEditOpen] = useState(false);
   const [editInitialValues, setEditInitialValues] = useState<
     Partial<FieldFormValues> | undefined
@@ -84,8 +104,6 @@ const CreateForms: React.FC<CreateFormsProps> = ({ formId, onBack }) => {
   >({});
 
   const [pages, setPages] = useState<PageValues[]>([]);
-
-  // EDITFIELDMODAL
   const [visible, setVisible] = useState(false);
   const [selectedKey, setSelectedKey] = useState<VariantType>();
 
@@ -98,16 +116,8 @@ const CreateForms: React.FC<CreateFormsProps> = ({ formId, onBack }) => {
 
   const handleCancel = () => {
     setVisible(false);
-    if (handleEditSave) {
-      handleEditSave;
-    }
   };
 
-  /**
-   * Recibe el JSON compilado desde EditFieldModal.
-   * - Si estamos EDITANDO (editOpen && editIndex !== null), REEMPLAZA en el mismo índice.
-   * - Si estamos CREANDO, AGREGA al final de la lista de la página actual.
-   */
   const handleCompiled = (json: FieldJson) => {
     const pageKey = selectedPage.sequence;
 
@@ -120,19 +130,16 @@ const CreateForms: React.FC<CreateFormsProps> = ({ formId, onBack }) => {
         editIndex >= 0 &&
         editIndex < Math.max(list.length, currentElements.length)
       ) {
-        // Si aún no hay un compilado en ese índice, rellena con undefineds hasta llegar
         while (list.length < currentElements.length)
           list.push(undefined as unknown as FieldJson);
         list[editIndex] = json;
       } else {
-        // CREACIÓN: se apendea al final. (coincidirá con el elemento que se creará en handleSave)
         list.push(json);
       }
       return { ...prev, [pageKey]: list };
     });
   };
 
-  // 👉 aplanado de todos los compilados (todas las páginas) para enviar al backend
   const allCompiled: FieldJson[] = useMemo(
     () => Object.values(compiledByPage).flat().filter(Boolean) as FieldJson[],
     [compiledByPage]
@@ -152,7 +159,7 @@ const CreateForms: React.FC<CreateFormsProps> = ({ formId, onBack }) => {
         name:
           keyType === "grupo" || keyType === "combo" ?
             (values?.nombre ?? key)
-          : key, // nombre del grupo o del campo
+          : key,
         group: groupName,
         variant: (keyType ?? key) as VariantType,
         values,
@@ -168,7 +175,6 @@ const CreateForms: React.FC<CreateFormsProps> = ({ formId, onBack }) => {
     }
   };
 
-  // 🟢 abrir modal en modo edición (desde PhoneMockup)
   const handleEditElementRequest = (index: number) => {
     const el = currentElements[index];
     if (!el) return;
@@ -182,7 +188,6 @@ const CreateForms: React.FC<CreateFormsProps> = ({ formId, onBack }) => {
     setEditOpen(true);
   };
 
-  // 🟢 guardar cambios del modal de edición y actualizar el elemento
   const handleEditSave = (vals: FieldFormValues) => {
     const pageKey = selectedPage.sequence;
     setElementsByPage((prev) => {
@@ -193,13 +198,12 @@ const CreateForms: React.FC<CreateFormsProps> = ({ formId, onBack }) => {
           ...prevEl,
           name: vals.nombre ?? prevEl.name,
           group: vals.grupo ?? prevEl.group,
-          values: { ...prevEl.values, ...vals }, // merge
+          values: { ...prevEl.values, ...vals },
         };
       }
       return { ...prev, [pageKey]: list };
     });
 
-    // si cambió el nombre de un grupo, lo añadimos a la lista si no existe
     if (editVariant === "grupo" && vals.nombre) {
       setGroups((gs) => (gs.includes(vals.nombre) ? gs : [...gs, vals.nombre]));
     }
@@ -217,7 +221,6 @@ const CreateForms: React.FC<CreateFormsProps> = ({ formId, onBack }) => {
     title: "Generales",
   });
 
-
   useEffect(() => {
     if (formulario?.paginas) {
       const mappedPages: PageValues[] = formulario.paginas.map((p: any) => ({
@@ -230,23 +233,25 @@ const CreateForms: React.FC<CreateFormsProps> = ({ formId, onBack }) => {
 
       console.warn("mapped:", mappedPages);
 
-      if (mappedPages.length > 0 ) {
-        setSelectedPage(prev => {
-        const isSentinel = !prev || String(prev.id) === "0";
-        const stillExists = prev && mappedPages.some(p => String(p.id) === String(prev.id));
-        if (isSentinel || !stillExists) return mappedPages[0];
-        // opcional: sincroniza datos (title/description) con el backend si cambiaron
-        const updated = mappedPages.find(p => String(p.id) === String(prev.id))!;
-        return updated;
-      });
-  }
+      if (mappedPages.length > 0) {
+        setSelectedPage((prev) => {
+          const isSentinel = !prev || String(prev.id) === "0";
+          const stillExists =
+            prev && mappedPages.some((p) => String(p.id) === String(prev.id));
+          if (isSentinel || !stillExists) return mappedPages[0];
+          const updated = mappedPages.find(
+            (p) => String(p.id) === String(prev.id)
+          )!;
+          return updated;
+        });
+      }
     }
   }, [formulario]);
-
 
   const handleEditDelete = () => {
     const pageKey = selectedPage.sequence;
     let deletedName: string | undefined;
+
     setElementsByPage((prev) => {
       const list = [...(prev[pageKey] ?? [])];
       if (editIndex != null && editIndex >= 0 && editIndex < list.length) {
@@ -255,14 +260,8 @@ const CreateForms: React.FC<CreateFormsProps> = ({ formId, onBack }) => {
       }
       const next = { ...prev, [pageKey]: list };
 
-      // Recalcular grupos existentes a partir del nuevo estado
-      const allGroups = new Set<string>();
-      Object.values(next).forEach((arr) =>
-        arr.forEach((el) => {
-          if (el.variant === "grupo" && el.name) allGroups.add(el.name);
-        })
-      );
-      setGroups(Array.from(allGroups));
+      const allGroups = collectAllGroupsFromPages(next);
+      setGroups(allGroups);
 
       return next;
     });
@@ -283,71 +282,53 @@ const CreateForms: React.FC<CreateFormsProps> = ({ formId, onBack }) => {
     setEditVariant(undefined);
   };
 
-
   const currentElements = elementsByPage[selectedPage.sequence] ?? [];
 
   const handleMenuClick: MenuProps["onClick"] = ({ key }) => {
     setSelectedKey(key as VariantType);
-
-    // aquí podrías hacer setFieldData(...) con datos por defecto según el tipo
     setVisible(true);
   };
 
   return (
     <div className="flex h-full bg-gray-50">
-      {/* Sidebar con la lista de elementos */}
       <div className="w-64 bg-white border-r">
         <FormElementsList onMenuClick={handleMenuClick} />
       </div>
 
-      {/* Zona del “mockup” */}
       <div className="flex-1 flex justify-start items-start p-6">
         <div className="flex justify-start items-start self-start w-3/10">
-          <Button
-            icon={<ArrowLeftOutlined />}
-            danger
-            onClick={onBack}
-            // onClick={handlePrev}
-            // disabled={totalPages <= 1 || currentIndex === 0}
-          >
+          <Button icon={<ArrowLeftOutlined />} danger onClick={onBack}>
             Regresar
           </Button>
         </div>
 
-        {/* Modal de CREACIÓN (tu modal actual) */}
         <EditFieldModal
           visible={visible}
           variant={selectedKey}
           opcionesList={opciones}
           gruposList={groups}
-          onSave={(vals) => handleSave?.(vals)}
+          onSave={handleSave}
           onCancel={handleCancel}
           onBuild={handleCompiled}
         />
 
-        {/* Modal de EDICIÓN (controlado por CreateForms) */}
         <EditFieldModal
           visible={!!editOpen}
           initialValues={editInitialValues}
           variant={editVariant}
           opcionesList={opciones}
           gruposList={groups}
-          onSave={(vals) => handleEditSave?.(vals)}
-          onCancel={() => setEditOpen(false) ?? (() => {})}
+          onSave={handleEditSave}
+          onCancel={() => setEditOpen(false)}
           onDelete={handleEditDelete}
           onBuild={handleCompiled}
         />
 
-        {/* 
-          Asumimos que tu PhoneMockup admite ahora una prop 
-          `selectedElement: string | null`
-          para mostrar el input/form que corresponda. 
-        */}
         <PhoneMockup
           formId={formId}
           onBack={onBack}
-          formulario={formulario} // 👈 nuevo
-          isLoading={isLoading} // 👈 nuevo
+          formulario={formulario}
+          isLoading={isLoading}
           isError={isError}
           selectedElements={currentElements}
           selectedPage={selectedPage}

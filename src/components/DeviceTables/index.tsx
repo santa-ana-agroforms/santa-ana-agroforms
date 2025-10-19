@@ -6,7 +6,7 @@ import {
   FormOutlined,
   MobileOutlined,
 } from "@ant-design/icons";
-import { Table, type TableProps } from "antd";
+import { Button, Table, type TableProps } from "antd";
 import type { ColumnsType } from "antd/es/table";
 
 import EditUserModal, { EditUserValues } from "./components/EditUserModal";
@@ -17,15 +17,11 @@ export interface ItemType {
   descripcion: string;
   activa: boolean;
   centroCosto: string;
-  lastLogon: string; // en formato DD/MM/YYYY
+  lastLogon: string;
   version?: string;
 }
 
 interface Props {
-  /**
-   * Array ya filtrado/ordenado desde el padre
-   * (p. ej. tras tu Input.Search)
-   **/
   data: ItemType[];
   onEdit: (record: ItemType) => void;
   onDelete: (record: ItemType) => void;
@@ -42,7 +38,6 @@ const DevicesTable: React.FC<Props> = ({
   onCreate,
   onTableChange,
 }) => {
-  // derive filtros únicos de cada columna
   const descripcionFilters = Array.from(
     new Set(data.map((i) => i.descripcion))
   ).map((t) => ({ text: t, value: t }));
@@ -61,24 +56,19 @@ const DevicesTable: React.FC<Props> = ({
     setSelectedItem(null);
   };
 
-  // Cuando cierras el modal sin guardar
   const handleModalCancel = () => {
     setOpen(false);
   };
 
-  // Cuando el modal emite el submit (Guardar)
   const handleModalSave = (values: EditUserValues) => {
     if (selectedItem) {
-      // edición: fusionamos el resto de campos con los nuevos valores
       onEdit({ ...selectedItem, ...values });
     } else {
-      // creación: llamamos a onCreate
       onCreate(values);
     }
     setOpen(false);
   };
 
-  // helper para ordenar fechas DD/MM/YYYY
   const parseDate = (s: string) => {
     const [d, m, y] = s.split("/").map(Number);
     return new Date(y, m - 1, d).getTime();
@@ -87,15 +77,14 @@ const DevicesTable: React.FC<Props> = ({
   const columns: ColumnsType<ItemType> = [
     {
       title: (
-        <>
-          <div
-            title="Crear nuevo formulario"
-            className="flex flex-col items-center justify-center cursor-pointer p-2 hover:bg-gray-100 rounded-md"
-          >
-            <MobileOutlined className="text-2xl" />
-            <span className="text-xs mt-1">Nueva terminal</span>
-          </div>
-        </>
+        <Button
+          type="text"
+          title="Crear nuevo formulario"
+          className="flex flex-col items-center justify-center p-2 h-auto"
+        >
+          <MobileOutlined className="text-2xl" />
+          <span className="text-xs mt-1">Nueva terminal</span>
+        </Button>
       ),
       key: "actions",
       width: 80,
@@ -129,9 +118,13 @@ const DevicesTable: React.FC<Props> = ({
           | undefined
       ) =>
         typeof value === "string" ?
-          <a onClick={() => onIdClick(value)} style={{ color: "#1890ff" }}>
+          <Button
+            type="link"
+            onClick={() => onIdClick(value)}
+            style={{ padding: 0 }}
+          >
             {value}
-          </a>
+          </Button>
         : <span>{value}</span>,
       ellipsis: true,
     },

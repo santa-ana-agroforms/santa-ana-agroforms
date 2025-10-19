@@ -31,7 +31,11 @@ export const LoginCard: React.FC<Props> = ({ onFinish, isPending }) => {
   return (
     <div className="w-full max-w-md bg-white p-8 rounded-2xl shadow-2xl">
       <div className="w-full h-1/2 pb-5 bg-white flex justify-center">
-        <img src={logo} className="h-full object-contain" />
+        <img 
+          src={logo} 
+          className="h-full object-contain" 
+          alt="Santa Ana Logo"
+        />
       </div>
 
       <Form
@@ -51,7 +55,6 @@ export const LoginCard: React.FC<Props> = ({ onFinish, isPending }) => {
             size="large"
             placeholder="Usuario"
             prefix={<UserOutlined className="text-black" />}
-            // Los "!" sirven para forzar el important de Tailwind si lo tienes activado
             className="!bg-transparent !border !border-black !text-black placeholder-gray-000"
           />
         </Form.Item>
