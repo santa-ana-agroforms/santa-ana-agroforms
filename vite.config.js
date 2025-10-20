@@ -2,7 +2,6 @@ import { fileURLToPath, URL } from "url";
 import tailwindcss from "@tailwindcss/vite";
 import react from "@vitejs/plugin-react";
 import { defineConfig } from "vite";
-import istanbul from "vite-plugin-istanbul";
 
 const __filename = fileURLToPath(import.meta.url);
 
@@ -44,13 +43,8 @@ export default defineConfig({
   plugins: [
     react(),
     tailwindcss(),
-    cspHeaderPlugin(), istanbul({
-      cypress: true,
-      requireEnv: false,
-      include: ["src/**/*"],
-      extension: [".ts", ".tsx", ".js", ".jsx"],
-      exclude: ["node_modules", "cypress", "mocha_tests", "selenium_tests"]
-    })],
+    cspHeaderPlugin()
+  ],
   resolve: {
     alias: {
       "@": new URL("./src", import.meta.url).pathname,
