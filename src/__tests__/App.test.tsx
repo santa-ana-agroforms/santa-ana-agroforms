@@ -35,7 +35,7 @@ const AppRoutes = () => {
 };
 
 describe("App", () => {
-  test("renderiza sin errores", () => {
+  test("[C0001] renderiza sin errores", () => {
     render(
       <MemoryRouter initialEntries={["/"]}>
         <AppRoutes />
@@ -44,7 +44,7 @@ describe("App", () => {
     expect(true).toBe(true);
   });
 
-  test("muestra LoginPage en ruta raíz", async () => {
+  test("[C0002] muestra LoginPage en ruta raíz", async () => {
     render(
       <MemoryRouter initialEntries={["/"]}>
         <AppRoutes />
@@ -56,7 +56,7 @@ describe("App", () => {
     });
   });
 
-  test("muestra HomePage en ruta /home", async () => {
+  test("[C0003] muestra HomePage en ruta /home", async () => {
     render(
       <MemoryRouter initialEntries={["/home"]}>
         <AppRoutes />
@@ -68,7 +68,7 @@ describe("App", () => {
     });
   });
 
-  test("redirige a / para rutas no existentes", async () => {
+  test("[C0004] redirige a / para rutas no existentes", async () => {
     render(
       <MemoryRouter initialEntries={["/ruta-inexistente"]}>
         <AppRoutes />
@@ -80,7 +80,7 @@ describe("App", () => {
     });
   });
 
-  test("incluye AuthProvider en la jerarquía", async () => {
+  test("[C0005] incluye AuthProvider en la jerarquía", async () => {
     render(
       <MemoryRouter initialEntries={["/"]}>
         <AppRoutes />
@@ -92,7 +92,7 @@ describe("App", () => {
     });
   });
 
-  test("estructura de rutas está correcta", () => {
+  test("[C0006] estructura de rutas está correcta", () => {
     const { container } = render(
       <MemoryRouter initialEntries={["/"]}>
         <AppRoutes />

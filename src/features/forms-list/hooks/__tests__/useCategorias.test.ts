@@ -52,11 +52,11 @@ describe("useCategorias hooks", () => {
   });
 
   describe("useCategorias", () => {
-    test("hook existe y es una función", () => {
+    test("[C0120] hook existe y es una función", () => {
       expect(typeof useCategorias).toBe("function");
     });
 
-    test("puede ser mockeado para retornar datos", () => {
+    test("[C0121] puede ser mockeado para retornar datos", () => {
       const mockData = [
         { id: "cat-1", nombre: "Categoría 1", descripcion: "Desc 1" },
         { id: "cat-2", nombre: "Categoría 2", descripcion: "Desc 2" },
@@ -75,7 +75,7 @@ describe("useCategorias hooks", () => {
       expect(result.isLoading).toBe(false);
     });
 
-    test("puede simular estado de loading", () => {
+    test("[C0122] puede simular estado de loading", () => {
       (useCategorias as jest.Mock).mockReturnValueOnce({
         data: undefined,
         isLoading: true,
@@ -89,7 +89,7 @@ describe("useCategorias hooks", () => {
       expect(result.data).toBeUndefined();
     });
 
-    test("puede simular estado de error", () => {
+    test("[C0123] puede simular estado de error", () => {
       const mockError = new Error("Network error");
       
       (useCategorias as jest.Mock).mockReturnValueOnce({
@@ -107,11 +107,11 @@ describe("useCategorias hooks", () => {
   });
 
   describe("useCreateCategoria", () => {
-    test("hook existe y es una función", () => {
+    test("[C0124] hook existe y es una función", () => {
       expect(typeof useCreateCategoria).toBe("function");
     });
 
-    test("puede ser mockeado con estructura correcta", () => {
+    test("[C0125] puede ser mockeado con estructura correcta", () => {
       const mockMutate = jest.fn();
       
       (useCreateCategoria as jest.Mock).mockReturnValueOnce({
@@ -128,7 +128,7 @@ describe("useCategorias hooks", () => {
       expect(result.isPending).toBe(false);
     });
 
-    test("mutate puede ser llamado", () => {
+    test("[C0126] mutate puede ser llamado", () => {
       const mockMutate = jest.fn();
       
       (useCreateCategoria as jest.Mock).mockReturnValueOnce({
@@ -148,7 +148,7 @@ describe("useCategorias hooks", () => {
       });
     });
 
-    test("puede simular estado de éxito", () => {
+    test("[C0127] puede simular estado de éxito", () => {
       (useCreateCategoria as jest.Mock).mockReturnValueOnce({
         mutate: jest.fn(),
         isPending: false,
@@ -164,7 +164,7 @@ describe("useCategorias hooks", () => {
       expect(result.data).toBeDefined();
     });
 
-    test("puede simular estado de error", () => {
+    test("[C0128] puede simular estado de error", () => {
       const mockError = new Error("Error al crear");
       
       (useCreateCategoria as jest.Mock).mockReturnValueOnce({

@@ -8,7 +8,7 @@ type Row = { key: string; nombre: string };
 describe("CategoryTables", () => {
   const columns = [{ title: "Nombre", dataIndex: "nombre", key: "nombre" }];
 
-  test("Renderiza encabezados de categorías y muestra filas al expandir", async () => {
+  test("[C0018] Renderiza encabezados de categorías y muestra filas al expandir", async () => {
     const user = userEvent.setup();
 
     const data: Category<Row>[] = [
@@ -39,7 +39,7 @@ describe("CategoryTables", () => {
     expect(screen.getByText("Dos")).toBeInTheDocument();
   });
 
-  test("Soporta lista vacía sin crashear", () => {
+  test("[C0019] Soporta lista vacía sin crashear", () => {
     render(
       <CategoryTables<Row>
         data={[]}

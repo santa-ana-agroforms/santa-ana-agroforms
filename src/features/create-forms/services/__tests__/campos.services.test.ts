@@ -11,7 +11,7 @@ describe("campos.services", () => {
   });
 
   describe("postCampoActualSingle", () => {
-    test("envía un campo exitosamente", async () => {
+    test("[C0092] envía un campo exitosamente", async () => {
       const campo: CampoAPI = {
         tipo: "text",
         clase: "input",
@@ -38,7 +38,7 @@ describe("campos.services", () => {
       expect(result).toEqual(mockResponse);
     });
 
-    test("sanitiza valores undefined a null", async () => {
+    test("[C0093] sanitiza valores undefined a null", async () => {
       const campo: CampoAPI = {
         tipo: "text",
         clase: "input",
@@ -55,7 +55,7 @@ describe("campos.services", () => {
       expect(sentData.opcional).toBe(null);
     });
 
-    test("lanza error cuando pageId está vacío", async () => {
+    test("[C0094] lanza error cuando pageId está vacío", async () => {
       const campo: CampoAPI = {
         tipo: "text",
         clase: "input",
@@ -66,7 +66,7 @@ describe("campos.services", () => {
       );
     });
 
-    test("respeta la señal de abort", async () => {
+    test("[C0095] respeta la señal de abort", async () => {
       const controller = new AbortController();
       const campo: CampoAPI = { tipo: "text" } as any;
 
@@ -83,7 +83,7 @@ describe("campos.services", () => {
       );
     });
 
-    test("maneja error con status y detail del backend", async () => {
+    test("[C0096] maneja error con status y detail del backend", async () => {
       const campo: CampoAPI = { tipo: "text" } as any;
 
       (api.post as jest.Mock).mockRejectedValueOnce({
@@ -98,7 +98,7 @@ describe("campos.services", () => {
       ).rejects.toThrow(/400/);
     });
 
-    test("maneja error con mensaje de texto plano", async () => {
+    test("[C0097] maneja error con mensaje de texto plano", async () => {
       const campo: CampoAPI = { tipo: "text" } as any;
 
       (api.post as jest.Mock).mockRejectedValueOnce({
@@ -114,7 +114,7 @@ describe("campos.services", () => {
       ).rejects.toThrow();
     });
 
-    test("retorna null cuando no hay body en la respuesta", async () => {
+    test("[C0098] retorna null cuando no hay body en la respuesta", async () => {
       const campo: CampoAPI = { tipo: "text" } as any;
 
       (api.post as jest.Mock).mockResolvedValueOnce({});
@@ -126,7 +126,7 @@ describe("campos.services", () => {
   });
 
   describe("postCamposActualBatch", () => {
-    test("envía múltiples campos exitosamente", async () => {
+    test("[C0099] envía múltiples campos exitosamente", async () => {
       const campos: CampoAPI[] = [
         { tipo: "text", clase: "input", nombre_campo: "nombre" } as any,
         { tipo: "email", clase: "input", nombre_campo: "correo" } as any,
@@ -145,7 +145,7 @@ describe("campos.services", () => {
       expect(result.errors).toHaveLength(0);
     });
 
-    test("maneja errores parciales en batch", async () => {
+    test("[C0100] maneja errores parciales en batch", async () => {
       const campos: CampoAPI[] = [
         { tipo: "text", nombre_campo: "campo1" } as any,
         { tipo: "text", nombre_campo: "campo2" } as any,
@@ -165,7 +165,7 @@ describe("campos.services", () => {
       expect(result.errors[0].message).toContain("Error en campo 2");
     });
 
-    test("retorna todos los errores cuando todos fallan", async () => {
+    test("[C0101] retorna todos los errores cuando todos fallan", async () => {
       const campos: CampoAPI[] = [
         { tipo: "text" } as any,
         { tipo: "text" } as any,
@@ -181,7 +181,7 @@ describe("campos.services", () => {
       expect(result.errors).toHaveLength(2);
     });
 
-    test("maneja array vacío sin errores", async () => {
+    test("[C0102] maneja array vacío sin errores", async () => {
       const result = await postCamposActualBatch("page-123", []);
 
       expect(api.post).not.toHaveBeenCalled();
@@ -189,7 +189,7 @@ describe("campos.services", () => {
       expect(result.errors).toHaveLength(0);
     });
 
-    test("respeta la señal de abort en batch", async () => {
+    test("[C0103] respeta la señal de abort en batch", async () => {
       const controller = new AbortController();
       const campos: CampoAPI[] = [{ tipo: "text" } as any];
 
@@ -206,7 +206,7 @@ describe("campos.services", () => {
       );
     });
 
-    test("continúa procesando después de un error", async () => {
+    test("[C0104] continúa procesando después de un error", async () => {
       const campos: CampoAPI[] = [
         { tipo: "text", nombre_campo: "campo1" } as any,
         { tipo: "text", nombre_campo: "campo2" } as any,

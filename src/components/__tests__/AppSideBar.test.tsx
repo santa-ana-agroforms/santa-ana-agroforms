@@ -4,7 +4,7 @@ import userEvent from "@testing-library/user-event";
 import { AppSidebar } from "@/components/AppSideBar";
 
 describe("AppSideBar", () => {
-  test('Al hacer click en "Ayuda" cambia la selección y llama onSelect("5")', async () => {
+  test("[C0009] Al hacer click en Ayuda cambia la selección y llama onSelect('5')", async () => {
     const user = userEvent.setup();
     const onSelect = jest.fn();
     const navigate = jest.fn();
@@ -26,7 +26,7 @@ describe("AppSideBar", () => {
     expect(navigate).not.toHaveBeenCalled();
   });
 
-  test('al hacer click en "Cerrar sesión" llama navigate("/")', async () => {
+  test("[C0010] al hacer click en Cerrar sesión llama navigate('/')", async () => {
     const user = userEvent.setup();
     const onSelect = jest.fn();
     const navigate = jest.fn();

@@ -3,7 +3,7 @@ import { render, screen } from "@testing-library/react";
 import DashboardPage from "..";
 
 describe("DashboardPage", () => {
-  test("renderiza sin errores y muestra al menos un chart", () => {
+  test("[C0184] renderiza sin errores y muestra al menos un chart", () => {
     render(<DashboardPage />);
 
     const charts = [

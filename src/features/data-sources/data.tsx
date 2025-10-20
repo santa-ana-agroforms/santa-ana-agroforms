@@ -255,6 +255,7 @@ export const getColumns = (
 ): ColumnType<ItemType>[] => [
   {
     title: (
+      // ✅ Usar Button en lugar de div con onClick
       <Button
         type="text"
         onClick={onAdd}
@@ -340,6 +341,7 @@ export const getColumns = (
     dataIndex: "intervalo",
     key: "intervalo",
     sorter: (a, b) => {
+      // ✅ Usar Number.parseFloat en lugar de parseFloat global
       const na = Number.parseFloat(a.intervalo?.replace(",", ".") || "0");
       const nb = Number.parseFloat(b.intervalo?.replace(",", ".") || "0");
       return na - nb;

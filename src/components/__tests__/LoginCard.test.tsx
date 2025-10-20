@@ -4,7 +4,7 @@ import userEvent from "@testing-library/user-event";
 import { LoginCard } from "@/components/LoginCard";
 
 describe("LoginCard", () => {
-  test("Muestra mensajes de validación en caso de enviarse vacío.", async () => {
+  test("[C0013] Muestra mensajes de validación en caso de enviarse vacío.", async () => {
     const user = userEvent.setup();
     render(<LoginCard onFinish={jest.fn()} />);
     await user.click(screen.getByRole("button", { name: /Entrar/i }));
@@ -17,7 +17,7 @@ describe("LoginCard", () => {
     ).toBeInTheDocument();
   });
 
-  test("envía credenciales cuando se llena el formulario (sin fake timers)", async () => {
+  test("[C0014] envía credenciales cuando se llena el formulario (sin fake timers)", async () => {
     const realSetTimeout = global.setTimeout;
     const setTimeoutSpy = jest.spyOn(global, "setTimeout").mockImplementation(((
       cb: any,
@@ -52,7 +52,7 @@ describe("LoginCard", () => {
     setTimeoutSpy.mockRestore();
   });
 
-  test("Enlace de recuperación presente", () => {
+  test("[C0015] Enlace de recuperación presente", () => {
     render(<LoginCard onFinish={jest.fn()} />);
     expect(
       screen.getByRole("link", { name: /¿Olvidaste tu contraseña\?/i })

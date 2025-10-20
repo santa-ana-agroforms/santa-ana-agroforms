@@ -68,7 +68,7 @@ describe("useFormularios hooks", () => {
   });
 
   describe("useFormularios", () => {
-    test("obtiene lista de formularios", async () => {
+    test("[C0137] obtiene lista de formularios", async () => {
       const mockFormularios = [
         { id: 1, nombre: "Form 1", descripcion: "Desc 1", paginas: [] },
         { id: 2, nombre: "Form 2", descripcion: "Desc 2", paginas: [] },
@@ -89,7 +89,7 @@ describe("useFormularios hooks", () => {
       expect(formsServices.getFormularios).toHaveBeenCalledTimes(1);
     });
 
-    test("maneja estado de loading", async () => {
+    test("[C0138] maneja estado de loading", async () => {
       (formsServices.getFormularios as jest.Mock).mockImplementation(
         () => new Promise((resolve) => setTimeout(() => resolve([]), 100))
       );
@@ -108,7 +108,7 @@ describe("useFormularios hooks", () => {
   });
 
   describe("useFormulario", () => {
-    test("obtiene un formulario por ID", async () => {
+    test("[C0139] obtiene un formulario por ID", async () => {
       const mockFormulario = {
         id: 1,
         nombre: "Test Form",
@@ -134,7 +134,7 @@ describe("useFormularios hooks", () => {
       );
     });
 
-    test("no hace fetch cuando ID está vacío", () => {
+    test("[C0140] no hace fetch cuando ID está vacío", () => {
       renderHook(() => useFormulario(""), {
         wrapper: createWrapper(),
       });
@@ -144,7 +144,7 @@ describe("useFormularios hooks", () => {
   });
 
   describe("useCreateFormulario", () => {
-    test("crea formulario y actualiza cache", async () => {
+    test("[C0141] crea formulario y actualiza cache", async () => {
       const newForm = {
         id: 3,
         nombre: "Nuevo Form",
@@ -175,7 +175,7 @@ describe("useFormularios hooks", () => {
       });
     });
 
-    test("maneja errores al crear formulario", async () => {
+    test("[C0142] maneja errores al crear formulario", async () => {
       (formsServices.createFormulario as jest.Mock).mockRejectedValueOnce(
         new Error("Error al crear")
       );
@@ -196,7 +196,7 @@ describe("useFormularios hooks", () => {
   });
 
   describe("useDeleteFormulario", () => {
-    test("elimina formulario y actualiza cache", async () => {
+    test("[C0143] elimina formulario y actualiza cache", async () => {
       (formsServices.deleteFormulario as jest.Mock).mockResolvedValueOnce(
         undefined
       );
@@ -214,7 +214,7 @@ describe("useFormularios hooks", () => {
       expect(formsServices.deleteFormulario).toHaveBeenCalledWith("1");
     });
 
-    test("maneja error al eliminar", async () => {
+    test("[C0144] maneja error al eliminar", async () => {
       (formsServices.deleteFormulario as jest.Mock).mockRejectedValueOnce(
         new Error("No se puede eliminar")
       );
@@ -228,13 +228,11 @@ describe("useFormularios hooks", () => {
       await waitFor(() => {
         expect(result.current.isError).toBe(true);
       });
-
-      // console.error ya está mockeado globalmente en setupTests.ts
     });
   });
 
   describe("useDuplicateFormulario", () => {
-    test("duplica formulario exitosamente", async () => {
+    test("[C0145] duplica formulario exitosamente", async () => {
       const duplicated = {
         id: 4,
         nombre: "Form (Copia)",
@@ -259,7 +257,7 @@ describe("useFormularios hooks", () => {
       expect(formsServices.duplicateFormulario).toHaveBeenCalledWith("1");
     });
 
-    test("maneja error al duplicar", async () => {
+    test("[C0146] maneja error al duplicar", async () => {
       (formsServices.duplicateFormulario as jest.Mock).mockRejectedValueOnce(
         new Error("Error al duplicar")
       );
@@ -279,7 +277,7 @@ describe("useFormularios hooks", () => {
   });
 
   describe("useCrearAsignacion", () => {
-    test("crea asignación exitosamente", async () => {
+    test("[C0147] crea asignación exitosamente", async () => {
       (formsServices.crearAsignacion as jest.Mock).mockResolvedValueOnce({
         detail: "Asignación creada",
       });
@@ -305,7 +303,7 @@ describe("useFormularios hooks", () => {
   });
 
   describe("useCrearAsignacionMultiple", () => {
-    test("crea asignaciones múltiples exitosamente", async () => {
+    test("[C0148] crea asignaciones múltiples exitosamente", async () => {
       (
         formsServices.crearAsignacionMultipleUsuarios as jest.Mock
       ).mockResolvedValueOnce({

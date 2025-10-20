@@ -4,7 +4,7 @@ import userEvent from "@testing-library/user-event";
 import DataModal from "@/features/data-sources/components/DataModal";
 
 describe("DataModal", () => {
-  test("Muestra dialog y botones", async () => {
+  test("[C0116] Muestra dialog y botones", async () => {
     const user = userEvent.setup();
     const onCancel = jest.fn();
     render(<DataModal visible onCancel={onCancel} onSubmit={jest.fn()} />);

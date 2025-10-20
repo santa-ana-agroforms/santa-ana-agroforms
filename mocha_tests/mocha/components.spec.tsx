@@ -15,12 +15,12 @@ import { LoginCard } from "../../src/components/LoginCard.tsx";
 import UserTable from "../../src/components/UserTable";
 
 describe("Components render", () => {
-  it("AppHeader renderiza sin crashear", () => {
+  it("[C0198] AppHeader renderiza sin crashear", () => {
     render(<AppHeader collapsed={false} onToggle={() => {}} title="Demo" />);
     expect(screen.getByRole("banner")).to.exist;
   });
 
-  it("AppSideBar renderiza menú", () => {
+  it("[C0199] AppSideBar renderiza menú", () => {
     renderWithProviders( // ⬅️ Cambiar a renderWithProviders
       <AppSidebar
         navigate={() => {}}
@@ -33,7 +33,7 @@ describe("Components render", () => {
     expect(html).to.contain("menu");
   });
 
-  it("BaseModal acepta children", () => {
+  it("[C0200] BaseModal acepta children", () => {
     render(
       <BaseModal open={true} title="Demo">
         <div data-testid="child" />
@@ -43,25 +43,25 @@ describe("Components render", () => {
     expect(screen.getByTestId("child")).to.exist;
   });
 
-  it("LoginCard renderiza formulario", () => {
+  it("[C0201] LoginCard renderiza formulario", () => {
     renderWithProviders(<LoginCard onFinish={() => { } } isPending={false} />);
     const html = document.body.innerHTML.toLowerCase();
     expect(html).to.contain("usuario");
   });
 
-  it("UserTable exporta componente", () => {
+  it("[C0202] UserTable exporta componente", () => {
     expect(UserTable).to.be.a("function");
   });
 
-  it("FlatTables exporta componente", () => {
+  it("[C0203] FlatTables exporta componente", () => {
     expect(FlatTables).to.be.a("function");
   });
 
-  it("DeviceTables exporta componente", () => {
+  it("[C0204] DeviceTables exporta componente", () => {
     expect(DeviceTables).to.be.a("function");
   });
 
-  it("CategoryTables exporta componente", () => {
+  it("[C0205] CategoryTables exporta componente", () => {
     expect(CategoryTables).to.be.a("function");
   });
 });

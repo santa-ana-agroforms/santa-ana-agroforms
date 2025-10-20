@@ -3,7 +3,7 @@ import { render, screen } from "@testing-library/react";
 import ApprovalRoutesPage from "@/pages/ApprovalRoutesPage";
 
 describe("ApprovalRoutesPage", () => {
-  test("renderiza la tabla de rutas con columnas básicas", () => {
+  test("[C0179] renderiza la tabla de rutas con columnas básicas", () => {
     render(<ApprovalRoutesPage />);
 
     // Campo de búsqueda visible

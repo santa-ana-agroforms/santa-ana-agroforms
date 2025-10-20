@@ -28,7 +28,7 @@ describe("UsersListFeature", () => {
     jest.clearAllMocks();
   });
 
-  test("muestra tabla de usuarios", async () => {
+  test("[C0176] muestra tabla de usuarios", async () => {
     render(<UsersListFeature />);
 
     await waitFor(() => {
@@ -37,7 +37,7 @@ describe("UsersListFeature", () => {
   });
 
   describe("(buscador)", () => {
-    test("permite escribir en el filtro", async () => {
+    test("[C0177] permite escribir en el filtro", async () => {
       render(<UsersListFeature />);
 
       // Esperar a que cargue

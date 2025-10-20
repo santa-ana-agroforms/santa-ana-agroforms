@@ -61,7 +61,7 @@ describe("useFormsListsData", () => {
     jest.clearAllMocks();
   });
 
-  test("combina categorías y formularios correctamente", async () => {
+  test("[C0129] combina categorías y formularios correctamente", async () => {
     const mockCategorias = [
       { id: "cat-1", nombre: "Categoría 1", descripcion: "Desc 1" },
       { id: "cat-2", nombre: "Categoría 2", descripcion: "Desc 2" },
@@ -124,7 +124,7 @@ describe("useFormsListsData", () => {
     expect(cat2!.items).toHaveLength(1);
   });
 
-  test("ignora formularios sin categoría", async () => {
+  test("[C0130] ignora formularios sin categoría", async () => {
     const mockCategorias = [
       { id: "cat-1", nombre: "Categoría 1", descripcion: "Desc 1" },
     ];
@@ -172,7 +172,7 @@ describe("useFormsListsData", () => {
     expect(cat1.items[0].id).toBe("form-1");
   });
 
-  test("formatea fechas correctamente", async () => {
+  test("[C0131] formatea fechas correctamente", async () => {
     const mockCategorias = [
       { id: "cat-1", nombre: "Categoría 1", descripcion: "Desc 1" },
     ];
@@ -210,7 +210,7 @@ describe("useFormsListsData", () => {
     expect(item.hasta).toMatch(/\d{2}\/\d{2}\/\d{4}/);
   });
 
-  test("maneja estado de loading", async () => {
+  test("[C0132] maneja estado de loading", async () => {
     (categoriesService.getCategorias as jest.Mock).mockImplementation(
       () => new Promise((resolve) => setTimeout(() => resolve([]), 100))
     );
@@ -229,7 +229,7 @@ describe("useFormsListsData", () => {
     });
   });
 
-  test("retorna array vacío cuando no hay datos", async () => {
+  test("[C0133] retorna array vacío cuando no hay datos", async () => {
     (categoriesService.getCategorias as jest.Mock).mockResolvedValueOnce([]);
     (formsServices.getFormularios as jest.Mock).mockResolvedValueOnce([]);
 
@@ -242,7 +242,7 @@ describe("useFormsListsData", () => {
     });
   });
 
-  test("mapea correctamente las propiedades del formulario", async () => {
+  test("[C0134] mapea correctamente las propiedades del formulario", async () => {
     const mockCategorias = [
       { id: "cat-1", nombre: "Test", descripcion: "Test" },
     ];
@@ -284,7 +284,7 @@ describe("useFormsListsData", () => {
     expect(item.autoEnvio).toBe(true);
   });
 
-  test("no refetch en focus por defecto", async () => {
+  test("[C0135] no refetch en focus por defecto", async () => {
     const mockCategorias = [
       { id: "cat-1", nombre: "Test", descripcion: "Test" },
     ];
@@ -313,7 +313,7 @@ describe("useFormsListsData", () => {
     expect(categoriesService.getCategorias).toHaveBeenCalledTimes(1);
   });
 
-  test("categorías vacías se mantienen en el resultado", async () => {
+  test("[C0136] categorías vacías se mantienen en el resultado", async () => {
     const mockCategorias = [
       { id: "cat-1", nombre: "Con formularios", descripcion: "" },
       { id: "cat-2", nombre: "Sin formularios", descripcion: "" },

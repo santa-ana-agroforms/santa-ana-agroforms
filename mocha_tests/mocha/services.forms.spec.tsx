@@ -4,11 +4,11 @@ import * as sinon from "sinon";
 import { api } from "../../src/features/user-autentication/services/auth.service";
 
 describe("services/forms-services api", () => {
-  it("api tiene baseURL por defecto", () => {
+  it("[C0232] api tiene baseURL por defecto", () => {
     expect((api.defaults as any).baseURL).to.be.a("string");
   });
 
-  it("interceptor CSRF agrega header cuando método es mutación", async () => {
+  it(" [C0233] interceptor CSRF agrega header cuando método es mutación", async () => {
     const interceptors = api.interceptors.request as any;
     expect(interceptors.handlers).to.exist;
     expect(interceptors.handlers.length).to.be.greaterThan(0);
@@ -36,14 +36,14 @@ describe("services/forms-services api", () => {
     expect(getResult.method).to.equal("get");
   });
 
-  it("GET a /formularios (mockeado) devuelve 200", async () => {
+  it("[C0234] GET a /formularios (mockeado) devuelve 200", async () => {
     const base = (api.defaults as any).baseURL.replace(/\/$/, "");
     nock(base).get("/api/formularios/").reply(200, []);
     const res = await api.get("/api/formularios/");
     expect(res.status).to.equal(200);
   });
 
-  it("POST a /formularios duplica (mock 201)", async () => {
+  it("[C0235] POST a /formularios duplica (mock 201)", async () => {
     const base = (api.defaults as any).baseURL.replace(/\/$/, "");
     nock(base).post("/api/formularios/duplicar/1/").reply(201, { ok: true });
     const res = await api.post("/api/formularios/duplicar/1/");
@@ -51,7 +51,7 @@ describe("services/forms-services api", () => {
     expect(res.data.ok).to.equal(true);
   });
 
-  it("maneja error 500", async () => {
+  it("[C0236] maneja error 500", async () => {
     const base = (api.defaults as any).baseURL.replace(/\/$/, "");
     nock(base).get("/api/error/").reply(500, "fail");
     try {
@@ -62,7 +62,7 @@ describe("services/forms-services api", () => {
     }
   });
 
-  it("headers se pueden configurar", async () => {
+  it("[C0237] headers se pueden configurar", async () => {
     const interceptors = api.interceptors.request as any;
     const handler = interceptors.handlers[0];
 
@@ -76,7 +76,7 @@ describe("services/forms-services api", () => {
     expect(result.headers).to.exist;
   });
 
-  it("no muta headers en métodos GET", async () => {
+  it("[C0238] no muta headers en métodos GET", async () => {
     const interceptors = api.interceptors.request as any;
     const handler = interceptors.handlers[0];
 
@@ -90,7 +90,7 @@ describe("services/forms-services api", () => {
     expect(config.headers["X-Test"]).to.equal("original");
   });
 
-  it("baseURL permite override por env", () => {
+  it("[C0239] baseURL permite override por env", () => {
     expect(typeof (api.defaults as any).baseURL).to.equal("string");
   });
 });

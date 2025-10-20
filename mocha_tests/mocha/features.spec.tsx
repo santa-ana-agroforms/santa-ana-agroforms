@@ -12,7 +12,7 @@ describe("Features export", () => {
   ];
 
   featurePaths.forEach((path, i) => {
-    it(`Feature[${i}] (${path}) puede ser importado`, () => {
+    it(`[C02${i+12}] Feature[${i}] (${path}) puede ser importado`, () => {
       let module;
       try {
         module = require(path);
@@ -24,7 +24,7 @@ describe("Features export", () => {
     });
   });
 
-  it("Al menos un feature se puede verificar", () => {
+  it("[C0217] Al menos un feature se puede verificar", () => {
     expect(featurePaths.length).to.be.greaterThan(0);
   });
 });

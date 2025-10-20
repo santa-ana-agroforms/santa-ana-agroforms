@@ -44,7 +44,7 @@ describe("forms-services", () => {
   });
 
   describe("getFormularios", () => {
-    test("obtiene lista de formularios exitosamente", async () => {
+    test("[C0153] obtiene lista de formularios exitosamente", async () => {
       const mockFormularios: Formulario[] = [
         {
           id: 1,
@@ -69,7 +69,7 @@ describe("forms-services", () => {
       expect(result).toHaveLength(2);
     });
 
-    test("maneja error al obtener formularios", async () => {
+    test("[C0154] maneja error al obtener formularios", async () => {
       (api.get as jest.Mock).mockRejectedValueOnce(new Error("Network error"));
 
       await expect(getFormularios()).rejects.toThrow("Network error");
@@ -77,7 +77,7 @@ describe("forms-services", () => {
   });
 
   describe("createFormulario", () => {
-    test("crea formulario exitosamente", async () => {
+    test("[C0155] crea formulario exitosamente", async () => {
       const newForm: CreateFormularioDto = {
         nombre: "Nuevo Formulario",
         descripcion: "Descripción del nuevo formulario",
@@ -103,7 +103,7 @@ describe("forms-services", () => {
       expect(result.nombre).toBe("Nuevo Formulario");
     });
 
-    test("respeta la señal de abort", async () => {
+    test("[C0156] respeta la señal de abort", async () => {
       const controller = new AbortController();
       const newForm: CreateFormularioDto = {
         nombre: "Test",
@@ -125,7 +125,7 @@ describe("forms-services", () => {
   });
 
   describe("getFormularioById", () => {
-    test("obtiene formulario por ID exitosamente", async () => {
+    test("[C0157] obtiene formulario por ID exitosamente", async () => {
       const mockFormulario: Formulario = {
         id: 1,
         nombre: "Formulario Test",
@@ -146,7 +146,7 @@ describe("forms-services", () => {
   });
 
   describe("deleteFormulario", () => {
-    test("elimina formulario exitosamente", async () => {
+    test("[C0158] elimina formulario exitosamente", async () => {
       (api.delete as jest.Mock).mockResolvedValueOnce({ data: {} });
 
       await deleteFormulario("1");
@@ -159,7 +159,7 @@ describe("forms-services", () => {
   });
 
   describe("duplicateFormulario", () => {
-    test("duplica formulario exitosamente", async () => {
+    test("[C0159] duplica formulario exitosamente", async () => {
       const mockDuplicated: Formulario = {
         id: 4,
         nombre: "Formulario Test (Copia)",
@@ -182,7 +182,7 @@ describe("forms-services", () => {
   });
 
   describe("crearAsignacion", () => {
-    test("crea asignación exitosamente", async () => {
+    test("[C0160] crea asignación exitosamente", async () => {
       const payload = {
         usuario: "user123",
         formularios: ["form1", "form2"],
@@ -202,7 +202,7 @@ describe("forms-services", () => {
       expect(result).toEqual(mockResponse);
     });
 
-    test("maneja error al crear asignación", async () => {
+    test("[C0161] maneja error al crear asignación", async () => {
       const payload = {
         usuario: "user123",
         formularios: ["form1"],
@@ -219,7 +219,7 @@ describe("forms-services", () => {
   });
 
   describe("crearAsignacionMultipleUsuarios", () => {
-    test("crea asignaciones para múltiples usuarios exitosamente", async () => {
+    test("[C0162] crea asignaciones para múltiples usuarios exitosamente", async () => {
       const usuarios = ["user1", "user2", "user3"];
       const formularios = ["form1", "form2"];
 
@@ -238,7 +238,7 @@ describe("forms-services", () => {
       expect(result.errors).toHaveLength(0);
     });
 
-    test("maneja errores parciales en asignaciones múltiples", async () => {
+    test("[C0163] maneja errores parciales en asignaciones múltiples", async () => {
       const usuarios = ["user1", "user2", "user3"];
       const formularios = ["form1"];
 
@@ -258,7 +258,7 @@ describe("forms-services", () => {
       expect(result.errors[0].message).toContain("Usuario no encontrado");
     });
 
-    test("retorna todos los errores cuando todas las asignaciones fallan", async () => {
+    test("[C0164] retorna todos los errores cuando todas las asignaciones fallan", async () => {
       const usuarios = ["user1", "user2"];
       const formularios = ["form1"];
 

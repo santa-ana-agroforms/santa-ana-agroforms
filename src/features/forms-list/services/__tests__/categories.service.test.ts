@@ -7,7 +7,7 @@ describe("categories.service", () => {
   });
 
   describe("getCategorias", () => {
-    test("obtiene lista de categorías exitosamente", async () => {
+    test("[C0149] obtiene lista de categorías exitosamente", async () => {
       const mockCategorias: Categoria[] = [
         {
           id: "cat-1",
@@ -35,7 +35,7 @@ describe("categories.service", () => {
       expect(result).toHaveLength(3);
     });
 
-    test("retorna array vacío cuando no hay categorías", async () => {
+    test("[C0150] retorna array vacío cuando no hay categorías", async () => {
       (api.get as jest.Mock).mockResolvedValueOnce({ data: [] });
 
       const result = await getCategorias();
@@ -44,7 +44,7 @@ describe("categories.service", () => {
       expect(result).toHaveLength(0);
     });
 
-    test("maneja error de red", async () => {
+    test("[C0151] maneja error de red", async () => {
       (api.get as jest.Mock).mockRejectedValueOnce(
         new Error("Network error")
       );
@@ -52,7 +52,7 @@ describe("categories.service", () => {
       await expect(getCategorias()).rejects.toThrow("Network error");
     });
 
-    test("cada categoría tiene la estructura correcta", async () => {
+    test("[C0152] cada categoría tiene la estructura correcta", async () => {
       const mockCategorias: Categoria[] = [
         {
           id: "cat-1",

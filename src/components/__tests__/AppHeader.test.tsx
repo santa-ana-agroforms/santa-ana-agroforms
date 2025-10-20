@@ -4,7 +4,7 @@ import userEvent from "@testing-library/user-event";
 import { AppHeader } from "@/components/AppHeader";
 
 describe("AppHeader", () => {
-  test("Muestra el título recibido y el icono", () => {
+  test("[C0007] Muestra el título recibido y el icono", () => {
     const onToggle = jest.fn();
 
     const { rerender } = render(
@@ -22,7 +22,7 @@ describe("AppHeader", () => {
     ).toBeInTheDocument();
   });
 
-  test("Llamada a onToggle", async () => {
+  test("[C0008] Llamada a onToggle", async () => {
     const user = userEvent.setup();
     const onToggle = jest.fn();
     render(<AppHeader collapsed={false} onToggle={onToggle} title="" />);

@@ -9,27 +9,27 @@ describe('Selenium Smoke', function () {
   before(async () => { driver = await build('Smoke'); });
   after(async () => { if (driver) await driver.quit(); });
 
-  it('carga home (login)', async () => {
+  it('[C0294] carga home (login)', async () => {
     await driver.get(BASE + '/');
     await driver.sleep(2000);
   });
 
-  it('tiene botón Entrar (por tipo submit)', async () => {
+  it('[C0295] tiene botón Entrar (por tipo submit)', async () => {
     await driver.wait(until.elementLocated(By.css('button[type="submit"]')), 15000);
   });
 
-  it('tiene logo', async () => {
+  it('[C0296] tiene logo', async () => {
     const logos = await driver.findElements(By.css('img'));
     if (logos.length === 0) throw new Error('No hay imágenes/logo');
   });
 
-  it('puede hacer login y carga /home', async () => {
+  it('[C0297] puede hacer login y carga /home', async () => {
     await doLogin(driver);
     const url = await driver.getCurrentUrl();
     if (!url.includes('/home')) throw new Error('No redirigió a /home');
   });
 
-  it('sidebar visible en /home', async () => {
+  it('[C0298] sidebar visible en /home', async () => {
     await driver.findElement(By.css('.ant-menu'));
   });
 });

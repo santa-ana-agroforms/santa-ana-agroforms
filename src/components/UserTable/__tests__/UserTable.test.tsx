@@ -4,7 +4,7 @@ import { EditUserValues } from "@/components/DeviceTables/components/EditUserMod
 import UserTable, { UserType } from "@/components/UserTable";
 
 describe("UserTable", () => {
-  test("Renderizar una tabla", () => {
+  test("[C0071] Renderizar una tabla", () => {
     render(
       <UserTable
         data={[]}

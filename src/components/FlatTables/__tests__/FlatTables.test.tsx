@@ -7,7 +7,7 @@ type Row = { key: string; nombre: string };
 describe("FlatTables", () => {
   const columns = [{ title: "Nombre", dataIndex: "nombre", key: "nombre" }];
 
-  test("Aplanar categorías y ocultar categorías vacías", () => {
+  test("[C0070] Aplanar categorías y ocultar categorías vacías", () => {
     const data: Category<Row>[] = [
       { key: "a", name: "Cat A", items: [{ key: "1", nombre: "Uno" }] },
       { key: "b", name: "Cat B", items: [] },

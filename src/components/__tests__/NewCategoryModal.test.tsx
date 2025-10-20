@@ -8,7 +8,7 @@ jest.mock("@/features/forms-list/hooks/useCategorias", () => ({
 }));
 
 describe("NewCategoryModal", () => {
-  test("Renderiza título y campos cuando visible=true", () => {
+  test("[C0016] Renderiza título y campos cuando visible=true", () => {
     render(
       <NewCategoryModal visible onCancel={() => {}} onCreate={() => {}} />
     );
@@ -17,7 +17,7 @@ describe("NewCategoryModal", () => {
     expect(screen.getByLabelText(/Descripción/i)).toBeInTheDocument();
   });
 
-  test("Clic en Cancelar llama onCancel", async () => {
+  test("[C0017] Clic en Cancelar llama onCancel", async () => {
     const user = userEvent.setup();
     const onCancel = jest.fn();
     render(

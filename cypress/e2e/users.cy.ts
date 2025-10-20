@@ -13,21 +13,21 @@ describe('UserListPage', () => {
     cy.contains('.ant-menu-item', 'Usuarios').click({ force: true });
   });
 
-  it('carga la vista', () => cy.get('body').should('exist'));
+  it('[C0289] carga la vista', () => cy.get('body').should('exist'));
 
-  it('tabla/lista visible (si existe)', () => {
+  it('[C0290] tabla/lista visible (si existe)', () => {
     cy.get('body').then(() => expect(true).to.be.true);
   });
 
-  it('buscador (si existe)', () => {
+  it('[C0291] buscador (si existe)', () => {
     cy.get('body').then(() => expect(true).to.be.true);
   });
 
-  it('abrir modal crear (si hay botón)', () => {
+  it('[C0292] abrir modal crear (si hay botón)', () => {
     cy.get('body').then(() => expect(true).to.be.true);
   });
 
-  it('paginación (si existe)', () => {
+  it('[C0293] paginación (si existe)', () => {
     cy.get('body').then(() => expect(true).to.be.true);
   });
 });

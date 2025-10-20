@@ -16,25 +16,25 @@ describe("CategoryTables data", () => {
   });
 
   describe("categories", () => {
-    test("contiene categorías Local y Externa", () => {
+    test("[C0020] contiene categorías Local y Externa", () => {
       expect(categories).toHaveLength(2);
       expect(categories[0].name).toBe("Local");
       expect(categories[1].name).toBe("Externa");
     });
 
-    test("categoría Local tiene items", () => {
+    test("[C0021] categoría Local tiene items", () => {
       const localCategory = categories.find((c) => c.key === "local");
       expect(localCategory).toBeDefined();
       expect(localCategory!.items.length).toBeGreaterThan(0);
     });
 
-    test("categoría Externa tiene items", () => {
+    test("[C0022] categoría Externa tiene items", () => {
       const externaCategory = categories.find((c) => c.key === "externa");
       expect(externaCategory).toBeDefined();
       expect(externaCategory!.items.length).toBeGreaterThan(0);
     });
 
-    test("items tienen la estructura correcta", () => {
+    test("[C0023] items tienen la estructura correcta", () => {
       const item = categories[0].items[0];
       expect(item).toHaveProperty("key");
       expect(item).toHaveProperty("codigo");
@@ -45,7 +45,7 @@ describe("CategoryTables data", () => {
   });
 
   describe("getColumns", () => {
-    test("retorna array de columnas", () => {
+    test("[C0024] retorna array de columnas", () => {
       const columns = getColumns(
         sortedInfo,
         filteredInfo,
@@ -59,7 +59,7 @@ describe("CategoryTables data", () => {
       expect(columns.length).toBeGreaterThan(0);
     });
 
-    test("primera columna tiene botón de acciones", () => {
+    test("[C0025] primera columna tiene botón de acciones", () => {
       const columns = getColumns(
         sortedInfo,
         filteredInfo,
@@ -73,7 +73,7 @@ describe("CategoryTables data", () => {
       expect(actionsColumn.dataIndex).toBe("actions");
     });
 
-    test("columna Código tiene filtros", () => {
+    test("[C0026] columna Código tiene filtros", () => {
       const columns = getColumns(
         sortedInfo,
         filteredInfo,
@@ -88,7 +88,7 @@ describe("CategoryTables data", () => {
       expect(Array.isArray(codigoColumn!.filters)).toBe(true);
     });
 
-    test("columna Descripción tiene sorter", () => {
+    test("[C0027] columna Descripción tiene sorter", () => {
       const columns = getColumns(
         sortedInfo,
         filteredInfo,
@@ -102,7 +102,7 @@ describe("CategoryTables data", () => {
       expect(descripcionColumn!.sorter).toBeDefined();
     });
 
-    test("columna Tipo fuente tiene filtros y sorter", () => {
+    test("[C0028] columna Tipo fuente tiene filtros y sorter", () => {
       const columns = getColumns(
         sortedInfo,
         filteredInfo,
@@ -117,7 +117,7 @@ describe("CategoryTables data", () => {
       expect(tipoFuenteColumn!.sorter).toBeDefined();
     });
 
-    test("columna Intervalo tiene sorter personalizado", () => {
+    test("[C0029] columna Intervalo tiene sorter personalizado", () => {
       const columns = getColumns(
         sortedInfo,
         filteredInfo,
@@ -142,7 +142,7 @@ describe("CategoryTables data", () => {
       expect(result).toBeGreaterThan(0);
     });
 
-    test("columna Ult. Actualización tiene sorter por fecha", () => {
+    test("[C0030] columna Ult. Actualización tiene sorter por fecha", () => {
       const columns = getColumns(
         sortedInfo,
         filteredInfo,
@@ -169,7 +169,7 @@ describe("CategoryTables data", () => {
       expect(result).toBeGreaterThan(0);
     });
 
-    test("columna Datos tiene render personalizado", () => {
+    test("[C0031] columna Datos tiene render personalizado", () => {
       const columns = getColumns(
         sortedInfo,
         filteredInfo,
@@ -184,7 +184,7 @@ describe("CategoryTables data", () => {
       expect(datosColumn!.render).toBeDefined();
     });
 
-    test("render de columna actions incluye iconos de editar y eliminar", () => {
+    test("[C0032] render de columna actions incluye iconos de editar y eliminar", () => {
       const columns = getColumns(
         sortedInfo,
         filteredInfo,
@@ -197,7 +197,7 @@ describe("CategoryTables data", () => {
       expect(actionsColumn.render).toBeDefined();
     });
 
-    test("todas las columnas tienen keys únicos", () => {
+    test("[C0033] todas las columnas tienen keys únicos", () => {
       const columns = getColumns(
         sortedInfo,
         filteredInfo,
@@ -211,7 +211,7 @@ describe("CategoryTables data", () => {
       expect(uniqueKeys.size).toBe(keys.length);
     });
 
-    test("columnas tienen los títulos correctos", () => {
+    test("[C0034] columnas tienen los títulos correctos", () => {
       const columns = getColumns(
         sortedInfo,
         filteredInfo,
@@ -242,7 +242,7 @@ describe("CategoryTables data", () => {
       });
     });
 
-    test("columna Ult. Mensaje tiene filtros", () => {
+    test("[C0035] columna Ult. Mensaje tiene filtros", () => {
       const columns = getColumns(
         sortedInfo,
         filteredInfo,
@@ -257,7 +257,7 @@ describe("CategoryTables data", () => {
       expect(ultMensajeColumn!.onFilter).toBeDefined();
     });
 
-    test("filtros incluyen solo valores únicos", () => {
+    test("[C0036] filtros incluyen solo valores únicos", () => {
       const columns = getColumns(
         sortedInfo,
         filteredInfo,
@@ -275,7 +275,7 @@ describe("CategoryTables data", () => {
       expect(uniqueValues.size).toBe(values.length);
     });
 
-    test("columnas con ellipsis están configuradas correctamente", () => {
+    test("[C0037] columnas con ellipsis están configuradas correctamente", () => {
       const columns = getColumns(
         sortedInfo,
         filteredInfo,
@@ -297,7 +297,7 @@ describe("CategoryTables data", () => {
       expect(datosColumn!.ellipsis).toBe(true);
     });
 
-    test("columnas tienen anchos específicos donde se requiere", () => {
+    test("[C0038] columnas tienen anchos específicos donde se requiere", () => {
       const columns = getColumns(
         sortedInfo,
         filteredInfo,
@@ -317,7 +317,7 @@ describe("CategoryTables data", () => {
       expect(conexionColumn!.width).toBe(100);
     });
 
-    test("respeta sortedInfo para columnas ordenables", () => {
+    test("[C0039] respeta sortedInfo para columnas ordenables", () => {
       const customSortedInfo = { columnKey: "codigo", order: "ascend" };
 
       const columns = getColumns(
@@ -332,7 +332,7 @@ describe("CategoryTables data", () => {
       expect(codigoColumn!.sortOrder).toBe("ascend");
     });
 
-    test("respeta filteredInfo para columnas filtrables", () => {
+    test("[C0040] respeta filteredInfo para columnas filtrables", () => {
       const customFilteredInfo = { codigo: ["Cabezal"] };
 
       const columns = getColumns(
@@ -347,7 +347,7 @@ describe("CategoryTables data", () => {
       expect(codigoColumn!.filteredValue).toEqual(["Cabezal"]);
     });
 
-    test("onFilter funciona correctamente en columna código", () => {
+    test("[C0041] onFilter funciona correctamente en columna código", () => {
       const columns = getColumns(
         sortedInfo,
         filteredInfo,
@@ -367,7 +367,7 @@ describe("CategoryTables data", () => {
       expect(onFilterFn("Otro", item)).toBe(false);
     });
 
-    test("sorter de descripción ordena alfabéticamente", () => {
+    test("[C0042] sorter de descripción ordena alfabéticamente", () => {
       const columns = getColumns(
         sortedInfo,
         filteredInfo,
@@ -389,7 +389,7 @@ describe("CategoryTables data", () => {
       expect(sorterFn(item2, item1)).toBeLessThan(0);
     });
 
-    test("maneja valores undefined en sorter de intervalo", () => {
+    test("[C0043] maneja valores undefined en sorter de intervalo", () => {
       const columns = getColumns(
         sortedInfo,
         filteredInfo,
@@ -411,7 +411,7 @@ describe("CategoryTables data", () => {
       expect(typeof result).toBe("number");
     });
 
-    test("filtro de ultMensaje funciona correctamente", () => {
+    test("[C0044] filtro de ultMensaje funciona correctamente", () => {
       const columns = getColumns(
         sortedInfo,
         filteredInfo,

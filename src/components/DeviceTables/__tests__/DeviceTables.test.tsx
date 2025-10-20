@@ -16,7 +16,7 @@ describe("DevicesTable", () => {
     },
   ];
 
-  test("El ID desplegado es un link y llama onIdClick", async () => {
+  test("[C0068] El ID desplegado es un link y llama onIdClick", async () => {
     const user = userEvent.setup();
     const onIdClick = jest.fn();
     render(

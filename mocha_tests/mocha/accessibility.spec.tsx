@@ -8,14 +8,14 @@ import { AppHeader } from "../../src/components/AppHeader";
 describe("Accesibilidad mínima", () => {
   const mockOnToggle = () => {};
 
-  it("AppHeader tiene role banner", () => {
+  it("[C0194] AppHeader tiene role banner", () => {
     render(
       <AppHeader collapsed={false} onToggle={mockOnToggle} title="Test" />
     );
     expect(screen.getByRole("banner")).to.exist;
   });
 
-  it("links accesibles", () => {
+  it("[C0195] links accesibles", () => {
     render(
       <AppHeader collapsed={false} onToggle={mockOnToggle} title="Test" />
     );
@@ -25,14 +25,14 @@ describe("Accesibilidad mínima", () => {
     expect(html.length).to.be.greaterThan(0);
   });
 
-  it("botones visibles", () => {
+  it("[C0196] botones visibles", () => {
     render(
       <AppHeader collapsed={false} onToggle={mockOnToggle} title="Test" />
     );
     expect(document.querySelectorAll("button").length).to.be.gte(0);
   });
 
-  it("título se renderiza", () => {
+  it("[C0197] título se renderiza", () => {
     render(
       <AppHeader collapsed={false} onToggle={mockOnToggle} title="Mi Título" />
     );

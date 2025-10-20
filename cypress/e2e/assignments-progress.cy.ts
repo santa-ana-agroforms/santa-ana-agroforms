@@ -26,9 +26,9 @@ describe('Asignaciones en proceso', () => {
     });
   });
 
-  it('carga la vista', () => cy.get('body').should('exist'));
-  it('cards/indicadores si existen', () => cy.get('body').then(() => expect(true).to.be.true));
-  it('filtros si existen', () => cy.get('body').then(() => expect(true).to.be.true));
-  it('acciones si existen', () => cy.get('body').then(() => expect(true).to.be.true));
-  it('notif/alert si existen', () => cy.get('body').then(() => expect(true).to.be.true));
+  it('[C0244] carga la vista', () => cy.get('body').should('exist'));
+  it('[C0245] cards/indicadores si existen', () => cy.get('body').then(() => expect(true).to.be.true));
+  it('[C0246] filtros si existen', () => cy.get('body').then(() => expect(true).to.be.true));
+  it('[C0247] acciones si existen', () => cy.get('body').then(() => expect(true).to.be.true));
+  it('[C0248] notif/alert si existen', () => cy.get('body').then(() => expect(true).to.be.true));
 });

@@ -9,14 +9,14 @@ describe('Selenium Extras', function () {
   before(async () => { driver = await build('Extras'); await doLogin(driver); });
   after(async () => { if (driver) await driver.quit(); });
 
-  it('Fuentes de Datos muestra botones de acción', async () => {
+  it('[C0314] Fuentes de Datos muestra botones de acción', async () => {
     await clickMenuByText(driver, 'Formularios');
     await clickMenuByText(driver, 'Fuentes de Datos');
     const btns = await driver.findElements(By.xpath("//button[normalize-space()='Nueva' or contains(.,'Agregar') or contains(.,'Add')]"));
     if (!btns.length) console.warn('Sin botón Nueva/Agregar');
   });
 
-  it('Fuentes de Datos → modal con selects', async () => {
+  it('[C0315] Fuentes de Datos → modal con selects', async () => {
     const add = await driver.findElements(By.xpath("//button[normalize-space()='Nueva' or contains(.,'Agregar') or contains(.,'Add')]"));
     if (add.length) {
       await add[0].click();
@@ -26,14 +26,14 @@ describe('Selenium Extras', function () {
     }
   });
 
-  it('Listado de Formularios → buscador', async () => {
+  it('[C0316] Listado de Formularios → buscador', async () => {
     await clickMenuByText(driver, 'Formularios');
     await clickMenuByText(driver, 'Listado');
     const search = await driver.findElements(By.css('input[type="search"], input[placeholder*="buscar" i]'));
     if (search.length) await search[0].sendKeys('demo');
   });
 
-  it('Asignación de Formularios → combos/tabla/botón', async () => {
+  it('[C0317] Asignación de Formularios → combos/tabla/botón', async () => {
     await clickMenuByText(driver, 'Formularios');
     await driver.sleep(500);
     
@@ -61,7 +61,7 @@ describe('Selenium Extras', function () {
     await driver.findElements(By.css('select, [role="combobox"], table, .ant-table, button'));
   });
 
-  it('Asignaciones en proceso → filtros (opcionales)', async () => {
+  it('[C0318] Asignaciones en proceso → filtros (opcionales)', async () => {
     await clickMenuByText(driver, 'Formularios');
     await driver.sleep(500);
     
@@ -89,7 +89,7 @@ describe('Selenium Extras', function () {
     await driver.findElements(By.css('select, [role="combobox"], input[type="search"]'));
   });
 
-  it('Rutas de Aprobación carga', async () => {
+  it('[C0319] Rutas de Aprobación carga', async () => {
     await clickMenuByText(driver, 'Formularios');
     await driver.sleep(500);
     
@@ -117,25 +117,25 @@ describe('Selenium Extras', function () {
     await driver.findElement(By.css('body'));
   });
 
-  it('Procesos de Exportación muestra tabla', async () => {
+  it('[C0320] Procesos de Exportación muestra tabla', async () => {
     await clickMenuByText(driver, 'Formularios');
     await clickMenuByText(driver, 'Procesos de Exportación');
     await driver.findElements(By.css('table, .ant-table, [role="table"]'));
   });
 
-  it('Crear desde Excel muestra UI básica', async () => {
+  it('[C0321] Crear desde Excel muestra UI básica', async () => {
     await clickMenuByText(driver, 'Formularios');
     await clickMenuByText(driver, 'Crear desde Excel');
     await driver.findElement(By.css('body'));
   });
 
-  it('Terminales muestra lista/acciones', async () => {
+  it('[C0322] Terminales muestra lista/acciones', async () => {
     await clickMenuByText(driver, 'Sesión');
     await clickFirstMenu(driver, ['Terminales', 'Dispositivos', 'Devices']);
     await driver.findElements(By.css('table, .ant-table, ul, ol, button, [role="button"]'));
   });
 
-  it('Usuarios muestra tabla/buscador', async () => {
+  it('[C0323] Usuarios muestra tabla/buscador', async () => {
     await clickMenuByText(driver, 'Sesión');
     await clickFirstMenu(driver, ['Usuarios', 'Users']);
     await driver.findElements(By.css('table, .ant-table, [role="table"], input[type="search"]'));

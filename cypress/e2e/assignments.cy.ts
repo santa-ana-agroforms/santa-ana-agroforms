@@ -26,9 +26,9 @@ describe('Asignación de Formularios', () => {
     });
   });
 
-  it('carga la vista', () => cy.get('body').should('exist'));
-  it('lista/tabla si existe', () => cy.get('body').then(() => expect(true).to.be.true));
-  it('selector de usuario/terminal si existe', () => cy.get('body').then(() => expect(true).to.be.true));
-  it('botón asignar si existe', () => cy.get('body').then(() => expect(true).to.be.true));
-  it('mensaje/alerta si existe', () => cy.get('body').then(() => expect(true).to.be.true));
+  it('[C0249] carga la vista', () => cy.get('body').should('exist'));
+  it('[C0250] lista/tabla si existe', () => cy.get('body').then(() => expect(true).to.be.true));
+  it('[C0251] selector de usuario/terminal si existe', () => cy.get('body').then(() => expect(true).to.be.true));
+  it('[C0252] botón asignar si existe', () => cy.get('body').then(() => expect(true).to.be.true));
+  it('[C0253] mensaje/alerta si existe', () => cy.get('body').then(() => expect(true).to.be.true));
 });

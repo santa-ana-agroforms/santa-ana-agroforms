@@ -8,7 +8,7 @@ describe("auth.service", () => {
   });
 
   describe("loginUser", () => {
-    test("realiza login exitoso y retorna AuthResponse", async () => {
+    test("[C0165] realiza login exitoso y retorna AuthResponse", async () => {
       const mockResponse: AuthResponse = {
         ok: true,
         access_token: "access123",
@@ -37,7 +37,7 @@ describe("auth.service", () => {
       expect(result.user.nombre_usuario).toBe("testuser");
     });
 
-    test("lanza error cuando las credenciales son incorrectas", async () => {
+    test("[C0166] lanza error cuando las credenciales son incorrectas", async () => {
       const error = new Error("Invalid credentials");
       
       (loginUser as jest.Mock).mockRejectedValueOnce(error);
@@ -52,7 +52,7 @@ describe("auth.service", () => {
   });
 
   describe("refreshToken", () => {
-    test("refresca el token exitosamente", async () => {
+    test("[C0167] refresca el token exitosamente", async () => {
       const mockResponse: AuthResponse = {
         ok: true,
         access_token: "new_access_token",
@@ -75,7 +75,7 @@ describe("auth.service", () => {
       expect(result.access_token).toBe("new_access_token");
     });
 
-    test("lanza error cuando el refresh token es inválido", async () => {
+    test("[C0168] lanza error cuando el refresh token es inválido", async () => {
       const error = new Error("Invalid refresh token");
       
       (refreshToken as jest.Mock).mockRejectedValueOnce(error);
@@ -85,7 +85,7 @@ describe("auth.service", () => {
   });
 
   describe("logoutUser", () => {
-    test("realiza logout exitosamente", async () => {
+    test("[C0169] realiza logout exitosamente", async () => {
       const mockResponse = { message: "Logout successful" };
       (logoutUser as jest.Mock).mockResolvedValueOnce(mockResponse);
 
@@ -94,7 +94,7 @@ describe("auth.service", () => {
       expect(result).toEqual(mockResponse);
     });
 
-    test("maneja error en logout", async () => {
+    test("[C0170] maneja error en logout", async () => {
       const error = new Error("Logout failed");
       (logoutUser as jest.Mock).mockRejectedValueOnce(error);
 
@@ -103,7 +103,7 @@ describe("auth.service", () => {
   });
 
   describe("API instance", () => {
-    test("api está definido y tiene métodos", () => {
+    test("[C0171] api está definido y tiene métodos", () => {
       expect(api).toBeDefined();
       expect(api.post).toBeDefined();
       expect(api.get).toBeDefined();
@@ -111,11 +111,11 @@ describe("auth.service", () => {
       expect(api.delete).toBeDefined();
     });
 
-    test("api.post es una función mock", () => {
+    test("[C0172] api.post es una función mock", () => {
       expect(jest.isMockFunction(api.post)).toBe(true);
     });
 
-    test("puede mockear api.post para llamadas directas", () => {
+    test("[C0173] puede mockear api.post para llamadas directas", () => {
       const mockData = { test: "data" };
       (api.post as jest.Mock).mockResolvedValueOnce({ data: mockData });
 
@@ -124,14 +124,14 @@ describe("auth.service", () => {
   });
 
   describe("localStorage token management", () => {
-    test("puede guardar y recuperar access_token", () => {
+    test("[C0174] puede guardar y recuperar access_token", () => {
       localStorage.setItem("access_token", "test_token_123");
       const token = localStorage.getItem("access_token");
       
       expect(token).toBe("test_token_123");
     });
 
-    test("puede limpiar tokens", () => {
+    test("[C0175] puede limpiar tokens", () => {
       localStorage.setItem("access_token", "test_token");
       localStorage.setItem("refresh_token", "refresh_token");
       

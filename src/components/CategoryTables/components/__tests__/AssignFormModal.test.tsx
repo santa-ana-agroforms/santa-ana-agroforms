@@ -9,7 +9,7 @@ describe("AssignFormModal", () => {
     { label: "Usuario 3", value: "user3", disabled: true },
   ];
 
-  test("renderiza el modal cuando open=true", () => {
+  test("[C0048] renderiza el modal cuando open=true", () => {
     render(
       <AssignFormModal
         open={true}
@@ -23,7 +23,7 @@ describe("AssignFormModal", () => {
     expect(screen.getByText("Asignar formulario")).toBeInTheDocument();
   });
 
-  test("no renderiza cuando open=false", () => {
+  test("[C0049] no renderiza cuando open=false", () => {
     render(
       <AssignFormModal
         open={false}
@@ -36,7 +36,7 @@ describe("AssignFormModal", () => {
     expect(screen.queryByRole("dialog")).not.toBeInTheDocument();
   });
 
-  test("muestra el placeholder correcto", () => {
+  test("[C0050] muestra el placeholder correcto", () => {
     render(
       <AssignFormModal
         open={true}
@@ -50,7 +50,7 @@ describe("AssignFormModal", () => {
     expect(screen.getByText("Selecciona usuarios...")).toBeInTheDocument();
   });
 
-  test("muestra texto de ayuda cuando se proporciona", () => {
+  test("[C0051] muestra texto de ayuda cuando se proporciona", () => {
     render(
       <AssignFormModal
         open={true}
@@ -66,7 +66,7 @@ describe("AssignFormModal", () => {
     ).toBeInTheDocument();
   });
 
-  test("llama onCancel cuando se hace click en Cancelar", async () => {
+  test("[C0052] llama onCancel cuando se hace click en Cancelar", async () => {
     const user = userEvent.setup();
     const onCancel = jest.fn();
 
@@ -84,7 +84,7 @@ describe("AssignFormModal", () => {
     expect(onCancel).toHaveBeenCalledTimes(1);
   });
 
-  test("botón Asignar está deshabilitado cuando no hay selección", () => {
+  test("[C0053] botón Asignar está deshabilitado cuando no hay selección", () => {
     render(
       <AssignFormModal
         open={true}
@@ -98,7 +98,7 @@ describe("AssignFormModal", () => {
     expect(assignButton).toBeDisabled();
   });
 
-  test("llama onAssign con los usuarios seleccionados", async () => {
+  test("[C0054] llama onAssign con los usuarios seleccionados", async () => {
     const user = userEvent.setup();
     const onAssign = jest.fn();
 
@@ -121,7 +121,7 @@ describe("AssignFormModal", () => {
     });
   });
 
-  test("muestra estado de loading cuando loadingOptions=true", () => {
+  test("[C0055] muestra estado de loading cuando loadingOptions=true", () => {
     render(
       <AssignFormModal
         open={true}
@@ -136,7 +136,7 @@ describe("AssignFormModal", () => {
     expect(screen.getByRole("combobox")).toBeInTheDocument();
   });
 
-  test("deshabilita botones cuando submitting=true", () => {
+  test("[C0056] deshabilita botones cuando submitting=true", () => {
     render(
       <AssignFormModal
         open={true}
@@ -154,7 +154,7 @@ describe("AssignFormModal", () => {
     ).toBeInTheDocument();
   });
 
-  test("muestra texto 'Asignando...' cuando submitting=true", () => {
+  test("[C0057] muestra texto 'Asignando...' cuando submitting=true", () => {
     render(
       <AssignFormModal
         open={true}
@@ -169,7 +169,7 @@ describe("AssignFormModal", () => {
     expect(screen.getByText(/Asignando/i)).toBeInTheDocument();
   });
 
-  test("modo single cuando multiple=false", () => {
+  test("[C0058] modo single cuando multiple=false", () => {
     render(
       <AssignFormModal
         open={true}
@@ -183,7 +183,7 @@ describe("AssignFormModal", () => {
     expect(screen.getByText("Usuario")).toBeInTheDocument();
   });
 
-  test("modo multiple por defecto", () => {
+  test("[C0059] modo multiple por defecto", () => {
     render(
       <AssignFormModal
         open={true}
@@ -196,7 +196,7 @@ describe("AssignFormModal", () => {
     expect(screen.getByText("Usuarios")).toBeInTheDocument();
   });
 
-  test("resetea selección al cerrar cuando resetOnClose=true", async () => {
+  test("[C0060] resetea selección al cerrar cuando resetOnClose=true", async () => {
     const user = userEvent.setup();
     const onCancel = jest.fn();
 
@@ -216,7 +216,7 @@ describe("AssignFormModal", () => {
     expect(onCancel).toHaveBeenCalled();
   });
 
-  test("mantiene selección cuando resetOnClose=false", async () => {
+  test("[C0061] mantiene selección cuando resetOnClose=false", async () => {
     const user = userEvent.setup();
     const onCancel = jest.fn();
 
@@ -236,7 +236,7 @@ describe("AssignFormModal", () => {
     expect(onCancel).toHaveBeenCalled();
   });
 
-  test("permite búsqueda cuando se proporciona onSearchUsers", () => {
+  test("[C0062] permite búsqueda cuando se proporciona onSearchUsers", () => {
     const onSearchUsers = jest.fn();
 
     render(
@@ -253,7 +253,7 @@ describe("AssignFormModal", () => {
     expect(screen.getByRole("combobox")).toBeInTheDocument();
   });
 
-  test("muestra icono de UserAddOutlined en el título", () => {
+  test("[C0063] muestra icono de UserAddOutlined en el título", () => {
     render(
       <AssignFormModal
         open={true}
@@ -267,7 +267,7 @@ describe("AssignFormModal", () => {
     expect(screen.getByText("Asignar formulario")).toBeInTheDocument();
   });
 
-  test("el botón Asignar está habilitado con selección válida", () => {
+  test("[C0064] el botón Asignar está habilitado con selección válida", () => {
     render(
       <AssignFormModal
         open={true}
@@ -282,7 +282,7 @@ describe("AssignFormModal", () => {
     expect(assignButton).not.toBeDisabled();
   });
 
-  test("maneja opciones vacías sin errores", () => {
+  test("[C0065] maneja opciones vacías sin errores", () => {
     render(
       <AssignFormModal
         open={true}

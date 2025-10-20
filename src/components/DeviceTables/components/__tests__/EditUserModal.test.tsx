@@ -5,7 +5,7 @@ import EditUserModal, {
 } from "@/components/DeviceTables/components/EditUserModal";
 
 describe("EditUserModal", () => {
-  test("Muestra initialValues cuando visible=true", () => {
+  test("[C0069] Muestra initialValues cuando visible=true", () => {
     const initial: EditUserValues = {
       nombre_usuario: "USR-123",
       nombre: "Mario",

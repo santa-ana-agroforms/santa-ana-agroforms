@@ -17,7 +17,7 @@ jest.mock("@/features/forms-list/hooks/useFormularios", () => ({
 }));
 
 describe("DeleteFormModal", () => {
-  test("Muestra diálogo y botones; dispara onCancel", async () => {
+  test("[C0045] Muestra diálogo y botones; dispara onCancel", async () => {
     const user = userEvent.setup();
     const onCancel = jest.fn();
 

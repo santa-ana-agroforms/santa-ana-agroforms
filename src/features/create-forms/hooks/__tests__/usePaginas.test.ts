@@ -35,7 +35,7 @@ describe("usePaginas", () => {
     jest.clearAllMocks();
   });
 
-  test("obtiene páginas sin filtro", async () => {
+  test("[C0077] obtiene páginas sin filtro", async () => {
     const mockPaginas = [
       {
         id: "page-1",
@@ -70,7 +70,7 @@ describe("usePaginas", () => {
     );
   });
 
-  test("obtiene páginas filtradas por formId", async () => {
+  test("[C0078] obtiene páginas filtradas por formId", async () => {
     const mockPaginas = [
       {
         id: "page-1",
@@ -96,7 +96,7 @@ describe("usePaginas", () => {
     );
   });
 
-  test("maneja estado de loading", async () => {
+  test("[C0079] maneja estado de loading", async () => {
     (pagesServices.getPaginas as jest.Mock).mockImplementation(
       () => new Promise((resolve) => setTimeout(() => resolve([]), 100))
     );
@@ -112,7 +112,7 @@ describe("usePaginas", () => {
     });
   });
 
-  test("maneja errores al obtener páginas", async () => {
+  test("[C0080] maneja errores al obtener páginas", async () => {
     (pagesServices.getPaginas as jest.Mock).mockRejectedValueOnce(
       new Error("Network error")
     );
@@ -126,7 +126,7 @@ describe("usePaginas", () => {
     });
   });
 
-  test("usa queryKey correcto con formId", async () => {
+  test("[C0081] usa queryKey correcto con formId", async () => {
     (pagesServices.getPaginas as jest.Mock).mockResolvedValueOnce([]);
 
     renderHook(() => usePaginas("form-123"), {
@@ -138,7 +138,7 @@ describe("usePaginas", () => {
     });
   });
 
-  test("usa queryKey con 'all' cuando no hay formId", async () => {
+  test("[C0082] usa queryKey con 'all' cuando no hay formId", async () => {
     (pagesServices.getPaginas as jest.Mock).mockResolvedValueOnce([]);
 
     renderHook(() => usePaginas(), {
@@ -156,7 +156,7 @@ describe("useCreatePagina", () => {
     jest.clearAllMocks();
   });
 
-  test("crea página exitosamente", async () => {
+  test("[C0083] crea página exitosamente", async () => {
     const mockResponse = {
       detail: "Página creada",
       version: "v2",
@@ -194,7 +194,7 @@ describe("useCreatePagina", () => {
     });
   });
 
-  test("maneja error al crear página", async () => {
+  test("[C0084] maneja error al crear página", async () => {
     (pagesServices.createPagina as jest.Mock).mockRejectedValueOnce(
       new Error("Error al crear página")
     );
@@ -213,7 +213,7 @@ describe("useCreatePagina", () => {
     });
   });
 
-  test("invalida queries después de crear página", async () => {
+  test("[C0085] invalida queries después de crear página", async () => {
     const mockResponse = {
       detail: "OK",
       version: "v1",
@@ -245,7 +245,7 @@ describe("useCreatePagina", () => {
     });
   });
 
-  test("maneja optimistic update en onMutate", async () => {
+  test("[C0086] maneja optimistic update en onMutate", async () => {
     const mockResponse = {
       detail: "OK",
       version: "v1",
@@ -282,7 +282,7 @@ describe("usePostCamposActualBatch", () => {
     jest.clearAllMocks();
   });
 
-  test("envía campos en batch exitosamente", async () => {
+  test("[C0087] envía campos en batch exitosamente", async () => {
     const mockResult = {
       ok: [{ id: "1" }, { id: "2" }, { id: "3" }],
       errors: [],
@@ -317,7 +317,7 @@ describe("usePostCamposActualBatch", () => {
     );
   });
 
-  test("maneja errores parciales en batch", async () => {
+  test("[C0088] maneja errores parciales en batch", async () => {
     const mockResult = {
       ok: [{ id: "1" }, { id: "3" }],
       errors: [{ index: 1, message: "Error en campo 2" }],
@@ -347,7 +347,7 @@ describe("usePostCamposActualBatch", () => {
     expect(result.current.data).toEqual(mockResult);
   });
 
-  test("maneja error completo en batch", async () => {
+  test("[C0089] maneja error completo en batch", async () => {
     (camposServices.postCamposActualBatch as jest.Mock).mockRejectedValueOnce(
       new Error("Error de red")
     );
@@ -366,7 +366,7 @@ describe("usePostCamposActualBatch", () => {
     });
   });
 
-  test("maneja batch vacío", async () => {
+  test("[C0090] maneja batch vacío", async () => {
     const mockResult = {
       ok: [],
       errors: [],
@@ -390,7 +390,7 @@ describe("usePostCamposActualBatch", () => {
     });
   });
 
-  test("usa mutationKey correcto", async () => {
+  test("[C0091] usa mutationKey correcto", async () => {
     const mockResult = { ok: [], errors: [] };
 
     (camposServices.postCamposActualBatch as jest.Mock).mockResolvedValueOnce(

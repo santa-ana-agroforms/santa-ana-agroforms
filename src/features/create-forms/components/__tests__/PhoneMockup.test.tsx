@@ -7,7 +7,7 @@ import PhoneMockup from "@/features/create-forms/components/PhoneMockup";
 import type { PageValues } from "../PageEditModal";
 
 describe("PhoneMockup", () => {
-  test("renderiza encabezado con título de la página", () => {
+  test("[C0076] renderiza encabezado con título de la página", () => {
     const mockPages: PageValues[] = [
       { id: "p1" as any, title: "Página 1", description: "", sequence: 1 },
     ];

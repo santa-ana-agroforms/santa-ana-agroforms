@@ -13,7 +13,7 @@ describe("pages.services", () => {
   });
 
   describe("getPaginas", () => {
-    test("obtiene todas las páginas sin filtro", async () => {
+    test("[C0105] obtiene todas las páginas sin filtro", async () => {
       const mockPaginas = [
         {
           id_pagina: "page-1",
@@ -46,7 +46,7 @@ describe("pages.services", () => {
       expect(result[0].nombre).toBe("Página 1");
     });
 
-    test("obtiene páginas filtradas por formulario", async () => {
+    test("[C0106] obtiene páginas filtradas por formulario", async () => {
       const mockPaginas = [
         {
           id_pagina: "page-1",
@@ -66,7 +66,7 @@ describe("pages.services", () => {
       expect(result[0].formularioId).toBe("form-123");
     });
 
-    test("respeta la señal de abort", async () => {
+    test("[C0107] respeta la señal de abort", async () => {
       const controller = new AbortController();
       (api.get as jest.Mock).mockResolvedValueOnce({ data: [] });
 
@@ -78,7 +78,7 @@ describe("pages.services", () => {
       );
     });
 
-    test("normaliza correctamente la respuesta del backend", async () => {
+    test("[C0108] normaliza correctamente la respuesta del backend", async () => {
       const backendResponse = [
         {
           id_pagina: "page-1",
@@ -104,7 +104,7 @@ describe("pages.services", () => {
       });
     });
 
-    test("filtra páginas según formId cuando el backend no lo hace", async () => {
+    test("[C0109] filtra páginas según formId cuando el backend no lo hace", async () => {
       const mockPaginas = [
         {
           id_pagina: "page-1",
@@ -134,7 +134,7 @@ describe("pages.services", () => {
   });
 
   describe("createPagina", () => {
-    test("crea página con bump=true por defecto", async () => {
+    test("[C0110] crea página con bump=true por defecto", async () => {
       const dto: CreatePaginaDto = {
         title: "Nueva Página",
         description: "Descripción de la nueva página",
@@ -170,7 +170,7 @@ describe("pages.services", () => {
       expect(result.pagina.nombre).toBe("Nueva Página");
     });
 
-    test("crea página con bump=false cuando se especifica", async () => {
+    test("[C0111] crea página con bump=false cuando se especifica", async () => {
       const dto: CreatePaginaDto = {
         bump: false,
         title: "Página sin bump",
@@ -203,7 +203,7 @@ describe("pages.services", () => {
       expect(result.version_bumpeada).toBe(false);
     });
 
-    test("maneja respuesta plana del backend y la normaliza", async () => {
+    test("[C0112] maneja respuesta plana del backend y la normaliza", async () => {
       const dto: CreatePaginaDto = {
         title: "Test",
         description: "Test desc",
@@ -233,7 +233,7 @@ describe("pages.services", () => {
       expect(result.pagina.nombre).toBe("Test");
     });
 
-    test("lanza error cuando la respuesta es inesperada", async () => {
+    test("[C0113] lanza error cuando la respuesta es inesperada", async () => {
       const dto: CreatePaginaDto = {
         title: "Test",
         description: "Test",
@@ -248,7 +248,7 @@ describe("pages.services", () => {
       );
     });
 
-    test("respeta la señal de abort", async () => {
+    test("[C0114] respeta la señal de abort", async () => {
       const controller = new AbortController();
       const dto: CreatePaginaDto = {
         title: "Test",
