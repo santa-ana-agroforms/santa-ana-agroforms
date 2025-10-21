@@ -2,6 +2,9 @@ FROM node:24.0.0-slim AS builder
 
 WORKDIR /app
 
+# Aumentar límite de memoria para Node.js
+ENV NODE_OPTIONS="--max-old-space-size=4096"
+
 # Habilitar corepack y yarn
 RUN corepack enable \
  && corepack prepare yarn@1.22.22 --activate \
@@ -16,7 +19,7 @@ RUN yarn install --network-timeout 600000
 # Copiar código fuente
 COPY . .
 
-# Build de producción
+# Build de producción con más memoria
 RUN yarn build
 
 # Verificar que el build fue exitoso
@@ -59,7 +62,6 @@ HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3 \
   CMD wget --quiet --tries=1 --spider http://localhost/health || exit 1
 
 # Usuario no-root
-# Nginx en Alpine ya usa usuario nginx por defecto
 USER nginx
 
 # Comando de inicio
