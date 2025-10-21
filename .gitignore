@@ -24,5 +24,6 @@ dist-ssr
 *.sw?
 openssl/
 .env
+.env.docker
 .nyc_output/
 coverage/
