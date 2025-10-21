@@ -13,21 +13,21 @@ describe('DevicesListPage', () => {
     cy.contains('.ant-menu-item', 'Terminales').click({ force: true });
   });
 
-  it('carga la página', () => cy.get('body').should('exist'));
+  it('[C0269] carga la página', () => cy.get('body').should('exist'));
 
-  it('lista/tabla presente (si existe)', () => {
+  it('[C0270] lista/tabla presente (si existe)', () => {
     cy.get('body').then(() => expect(true).to.be.true);
   });
 
-  it('filtro por estado (si existe)', () => {
+  it('[C0271] filtro por estado (si existe)', () => {
     cy.get('body').then(() => expect(true).to.be.true);
   });
 
-  it('edición (si hay acción)', () => {
+  it('[C0272] edición (si hay acción)', () => {
     cy.get('body').then(() => expect(true).to.be.true);
   });
 
-  it('acciones masivas (si hay checkboxes)', () => {
+  it('[C0273] acciones masivas (si hay checkboxes)', () => {
     cy.get('body').then(() => expect(true).to.be.true);
   });
 });

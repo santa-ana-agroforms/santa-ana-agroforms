@@ -8,7 +8,7 @@ import {
   SignatureOutlined,
   SolutionOutlined,
 } from "@ant-design/icons";
-import { Dropdown, MenuProps, Tooltip } from "antd";
+import { Button, Dropdown, MenuProps, Tooltip } from "antd";
 import type { ColumnType } from "antd/es/table";
 
 export interface ItemType {
@@ -28,7 +28,6 @@ export interface CategoryType {
   items: ItemType[];
 }
 
-/** Construye el menú contextual por fila */
 const buildRowMenu = (
   record: ItemType,
   onDuplicate: (record: ItemType) => void,
@@ -44,7 +43,6 @@ const buildRowMenu = (
     {
       key: "moon",
       icon: <MoonOutlined />,
-      // Si aún no tienes acción para este, puedes dejarlo disabled o ponerle un handler después
       label: "Suspender",
     },
     { type: "divider" },
@@ -56,22 +54,19 @@ const buildRowMenu = (
     },
   ],
   onClick: ({ key, domEvent }) => {
-    domEvent.stopPropagation(); // evita afectar selección de fila, etc.
+    domEvent.stopPropagation();
     if (key === "duplicate") onDuplicate(record);
     if (key === "delete") onDelete(record);
     if (key === "moon") onSuspend(record);
-    // if (key === "moon") { ...acción futura... }
   },
 });
 
-/** Utilidad para crear filtros únicos a partir de las filas */
 const buildFilters = <K extends keyof ItemType>(rows: ItemType[], key: K) =>
   Array.from(new Set(rows.map((r) => String(r[key])))).map((v) => ({
     text: v,
     value: v,
   }));
 
-// --- Función para generar las columnas, recibiendo el estado de sort y filter ---
 export const getColumns = (
   rows: ItemType[],
   sortedInfo: any,
@@ -86,16 +81,16 @@ export const getColumns = (
 ): ColumnType<ItemType>[] => [
   {
     title: (
-      <>
-        <div
-          onClick={onAdd}
-          title="Crear nuevo formulario"
-          className="flex flex-col items-center justify-center cursor-pointer p-2 hover:bg-gray-100 rounded-md"
-        >
-          <SignatureOutlined className="text-2xl" />
-          <span className="text-xs mt-1">Nuevo formulario</span>
-        </div>
-      </>
+      // ✅ Usar Button en lugar de div con onClick
+      <Button
+        type="text"
+        onClick={onAdd}
+        title="Crear nuevo formulario"
+        className="flex flex-col items-center justify-center p-2 h-auto"
+      >
+        <SignatureOutlined className="text-2xl" />
+        <span className="text-xs mt-1">Nuevo formulario</span>
+      </Button>
     ),
     dataIndex: "new_form",
     key: "new_form",
@@ -105,10 +100,13 @@ export const getColumns = (
       <>
         <div className="flex flex-row gap-2">
           <Tooltip title="Asignar formulario">
-            <SolutionOutlined style={{ cursor: "pointer" }} onClick={(e) => {
-              e.stopPropagation();
-              onAssign(record);
-            }} />
+            <SolutionOutlined
+              style={{ cursor: "pointer" }}
+              onClick={(e) => {
+                e.stopPropagation();
+                onAssign(record);
+              }}
+            />
           </Tooltip>
           <Tooltip title="Editar formulario">
             <FormOutlined
@@ -120,7 +118,7 @@ export const getColumns = (
           <Tooltip title="Más opciones">
             <Dropdown
               menu={buildRowMenu(record, onDuplicate, onDelete, onSuspend)}
-              trigger={["click"]} // opcional: ["click", "contextMenu"]
+              trigger={["click"]}
               placement="bottomLeft"
               getPopupContainer={(node) => node.parentElement || document.body}
             >
@@ -130,18 +128,6 @@ export const getColumns = (
               />
             </Dropdown>
           </Tooltip>
-
-          {/* <CopyOutlined
-            onClick={() => onDuplicate(record)}
-            style={{ cursor: "pointer" }}
-          />
-
-          <MoonOutlined style={{ cursor: "pointer" }} />
-
-          <DeleteOutlined
-            onClick={() => onDelete(record)}
-            style={{ cursor: "pointer", fontSize: 16 }}
-          /> */}
         </div>
       </>
     ),
@@ -156,12 +142,14 @@ export const getColumns = (
     sorter: (a, b) => a.titulo.localeCompare(b.titulo),
     sortOrder: sortedInfo.columnKey === "titulo" ? sortedInfo.order : null,
     render: (value: number, record) => (
-      <a
+      // ✅ Usar Button.Link en lugar de <a> con onClick
+      <Button
+        type="link"
         onClick={() => onIdClick(record.id)}
-        style={{ cursor: "pointer", color: "#1890ff" }}
+        style={{ padding: 0 }}
       >
         {value}
-      </a>
+      </Button>
     ),
     ellipsis: true,
   },

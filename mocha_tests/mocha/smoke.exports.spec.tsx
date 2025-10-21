@@ -4,23 +4,23 @@ import { api } from "../../src/features/user-autentication/services/auth.service
 import * as Types from "../../src/features/forms-list/services/types.ts";
 
 describe("Smoke de exports", () => {
-  it("services exporta api", () => {
+  it("[C0240] services exporta api", () => {
     expect(api).to.exist;
   });
 
-  it("types módulo existe", () => {
+  it("[C0241] types módulo existe", () => {
     expect(Types).to.exist;
     expect(Types).to.be.an("object");
   });
 
-  it("services tiene métodos axios", () => {
+  it("[C0242] services tiene métodos axios", () => {
     expect(api.get).to.be.a("function");
     expect(api.post).to.be.a("function");
     expect(api.put).to.be.a("function");
     expect(api.delete).to.be.a("function");
   });
 
-  it("api tiene configuración base", () => {
+  it("[C0243] api tiene configuración base", () => {
     expect(api.defaults).to.exist;
     expect(api.defaults.baseURL).to.be.a("string");
   });

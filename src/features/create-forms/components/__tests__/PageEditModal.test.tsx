@@ -7,7 +7,7 @@ jest.mock("@/features/create-forms/hooks/useCreatePage", () => ({
 }));
 
 describe("PageEditModal", () => {
-  test("Renderizar diálogo al editar página (shape PaginaAPI)", () => {
+  test("[C0075] Renderizar diálogo al editar página (shape PaginaAPI)", () => {
     const initialValues = {
       id: "p1",
       nombre: "Página 1",

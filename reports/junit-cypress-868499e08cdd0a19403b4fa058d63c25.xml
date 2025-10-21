@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuites name="Cypress E2E" time="5.780" tests="5" failures="0">
+  <testsuite name="Root Suite" timestamp="2025-10-20T23:31:26" tests="0" file="cypress\e2e\assignments-progress.cy.ts" time="0.000" failures="0">
+  </testsuite>
+  <testsuite name="Asignaciones en proceso" timestamp="2025-10-20T23:31:26" tests="5" time="5.744" failures="0">
+    <testcase name="Asignaciones en proceso [C0244] carga la vista" time="1.598" classname="[C0244] carga la vista">
+    </testcase>
+    <testcase name="Asignaciones en proceso [C0245] cards/indicadores si existen" time="0.957" classname="[C0245] cards/indicadores si existen">
+    </testcase>
+    <testcase name="Asignaciones en proceso [C0246] filtros si existen" time="0.921" classname="[C0246] filtros si existen">
+    </testcase>
+    <testcase name="Asignaciones en proceso [C0247] acciones si existen" time="0.795" classname="[C0247] acciones si existen">
+    </testcase>
+    <testcase name="Asignaciones en proceso [C0248] notif/alert si existen" time="0.782" classname="[C0248] notif/alert si existen">
+    </testcase>
+  </testsuite>
+</testsuites>

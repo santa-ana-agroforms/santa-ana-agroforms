@@ -11,21 +11,21 @@ describe('Selenium Pages elementos clave', function () {
   });
   after(async () => { if (driver) await driver.quit(); });
 
-  it('Login tiene inputs', async () => {
+  it('[C0309] Login tiene inputs', async () => {
     await driver.get(BASE + '/');
     await driver.findElement(By.xpath("//input[@placeholder='Usuario']"));
     await driver.findElement(By.xpath("//input[@placeholder='Contraseña']"));
   });
 
-  it('puede hacer login', async () => {
+  it('[C0310] puede hacer login', async () => {
     await doLogin(driver);
   });
 
-  it('Home tiene sidebar', async () => {
+  it('[C0311] Home tiene sidebar', async () => {
     await driver.findElement(By.css('.ant-menu'));
   });
 
-  it('Dashboard tiene gráficas (canvas/svg si existen)', async () => {
+  it('[C0312] Dashboard tiene gráficas (canvas/svg si existen)', async () => {
     await clickMenuByText(driver, 'Dashboard');
     const charts = await driver.findElements(By.css('canvas, svg'));
     if (charts.length === 0) {
@@ -33,7 +33,7 @@ describe('Selenium Pages elementos clave', function () {
     }
   });
 
-  it('Formularios tiene tabla', async () => {
+  it('[C0313] Formularios tiene tabla', async () => {
     await clickMenuByText(driver, 'Formularios');
     await clickMenuByText(driver, 'Listado');
     await driver.sleep(3000);

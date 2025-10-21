@@ -31,7 +31,7 @@ jest.mock("@/features/create-forms/hooks/useCampoActual", () => ({
 }));
 
 describe("Forms-Settings", () => {
-  test("muestra opciones de configuración visibles en el DOM", () => {
+  test("[C0074] muestra opciones de configuración visibles en el DOM", () => {
     render(<FormsSettings compiledList={[]} pages={[]} />);
 
     // Usa heading exacto

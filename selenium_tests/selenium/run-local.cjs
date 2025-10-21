@@ -1,5 +1,6 @@
 const Mocha = require('mocha');
 const path = require('path');
+const fs = require('fs');
 
 // Establecer flag antes de cargar cualquier cosa
 process.env.FORCE_LOCAL = 'true';
@@ -8,7 +9,21 @@ process.env.FORCE_LOCAL = 'true';
 delete process.env.LT_USERNAME;
 delete process.env.LT_ACCESS_KEY;
 
-const mocha = new Mocha({ timeout: 60000 });
+const projectRoot = path.resolve(__dirname, '..', '..');
+const reportsDir  = path.join(projectRoot, 'reports');
+fs.mkdirSync(reportsDir, { recursive: true });
+const junitFile = path.join(reportsDir, 'junit-selenium.xml');
+
+const mocha = new Mocha({
+  timeout: 60000,
+  reporter: 'mocha-junit-reporter',
+  reporterOptions: {
+    mochaFile: junitFile,
+    testsuitesTitle: 'Selenium',
+    useFullSuiteTitle: true
+  }
+});
+
 [
   'smoke.spec.cjs',
   'error_cases.spec.cjs',
@@ -17,4 +32,4 @@ const mocha = new Mocha({ timeout: 60000 });
   'extras.spec.cjs',
 ].forEach(f => mocha.addFile(path.join(__dirname, 'specs', f)));
 
-mocha.run(failures => process.exitCode = failures ? 1 : 0);
+mocha.run(failures => { process.exitCode = failures ? 1 : 0; });

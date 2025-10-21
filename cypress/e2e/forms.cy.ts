@@ -7,23 +7,23 @@ describe('FormListPage', () => {
     cy.get('.ant-menu-item').contains(/Listado/i).click({ force: true });
   });
 
-  it('carga la vista de listado', () => {
+  it('[C0274] carga la vista de listado', () => {
     cy.get('body').should('exist');
   });
 
-  it('muestra tabla o listado', () => {
+  it('[C0275] muestra tabla o listado', () => {
     cy.get('body').then(() => expect(true).to.be.true);
   });
 
-  it('buscador si existe', () => {
+  it('[C0276] buscador si existe', () => {
     cy.get('body').then(() => expect(true).to.be.true);
   });
 
-  it('acciones por fila si existen', () => {
+  it('[C0277] acciones por fila si existen', () => {
     cy.get('body').then(() => expect(true).to.be.true);
   });
 
-  it('botón nuevo/crear si existe', () => {
+  it('[C0278] botón nuevo/crear si existe', () => {
     cy.get('body').then(() => expect(true).to.be.true);
   });
 });

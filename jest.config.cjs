@@ -1,6 +1,22 @@
 /** @type {import('jest').Config} */
 module.exports = {
+  reporters: [
+    "default",
+    ["jest-junit", { outputDirectory: "reports", outputName: "junit-jest.xml" }],
+  ],
   testEnvironment: "jsdom",
+  collectCoverage: true,
+  coverageProvider: "v8",
+  collectCoverageFrom: [
+    "src/**/*.{ts,tsx}",
+    "!src/main.tsx",
+    "!src/**/index.ts",
+    "!src/**/index.tsx",
+    "!src/**/__tests__/**",
+    "!src/**/*.d.ts",
+    "!src/**/stories/**",
+  ],
+  coverageReporters: ["text", "lcov", "json-summary"],
   transform: {
     "^.+\\.(t|j)sx?$": [
       "@swc/jest",

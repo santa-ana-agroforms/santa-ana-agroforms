@@ -5,7 +5,7 @@ import FormAssignmentFeature, {
 } from "@/features/form-assignment";
 
 describe("FormAssignmentFeature", () => {
-  test("renderiza campos principales del formulario", () => {
+  test("[C0119] renderiza campos principales del formulario", () => {
     render(
       <FormAssignmentFeature
         formularios={[]}

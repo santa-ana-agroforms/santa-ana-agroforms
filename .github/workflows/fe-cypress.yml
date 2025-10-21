@@ -24,6 +24,7 @@ jobs:
       - name: Run Cypress Dev
         env:
           CI: true
+          NODE_OPTIONS: --max-old-space-size=4096
         run: yarn test:cypress:ci
 
       - name: Upload screenshots on failure

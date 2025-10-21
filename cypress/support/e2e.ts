@@ -1,3 +1,5 @@
+import '@cypress/code-coverage/support';
+
 Cypress.Commands.add('maybe', (selector: string) => {
   cy.document().then((doc) => {
     const $found = Cypress.$(doc.body).find(selector);

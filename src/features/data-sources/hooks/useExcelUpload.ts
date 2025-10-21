@@ -6,6 +6,41 @@ import * as XLSX from "xlsx";
 
 import { CategoryType, DataManualType } from "../components/data";
 
+const parseExcelRow = (
+  row: any[],
+  headers: string[],
+  index: number
+): DataManualType => {
+  const obj: any = { key: Date.now().toString() + index };
+  headers.forEach((h: string, i: number) => {
+    obj[h.toLowerCase()] = row[i];
+  });
+  return obj as DataManualType;
+};
+
+const updateLocalCategory = (
+  categories: CategoryType[],
+  items: DataManualType[]
+): CategoryType[] => {
+  return categories.map((cat) =>
+    cat.key === "local" ? { ...cat, items } : cat
+  );
+};
+
+const validateExcelStructure = (rows: any[][]): boolean => {
+  if (rows[0][0] !== "SantaAnaForms") {
+    message.error("Archivo inválido: falta título SantaAnaForms en A1");
+    return false;
+  }
+
+  if (rows[1][0] === "") {
+    message.error("Archivo inválido: faltan encabezados en la fila 2");
+    return false;
+  }
+
+  return true;
+};
+
 export const useExcelUpload = (
   setDataManual: React.Dispatch<React.SetStateAction<CategoryType[]>>
 ) => {
@@ -14,7 +49,7 @@ export const useExcelUpload = (
   const uploadProps = {
     multiple: false,
     fileList,
-    beforeUpload: () => false, // deshabilita el upload automático
+    beforeUpload: () => false,
     onChange(info: { fileList: UploadFile[] }) {
       setFileList(info.fileList);
 
@@ -33,32 +68,18 @@ export const useExcelUpload = (
             defval: "",
           });
 
-          if (rows[0][0] !== "SantaAnaForms") {
-            message.error("Archivo inválido: falta título SantaAnaForms en A1");
+          if (!validateExcelStructure(rows)) {
             return;
           }
 
           const headers = rows[1];
-          // Validar que exista la fila de headers
-          if (rows[1][0] === "") {
-            message.error("Archivo inválido: faltan encabezados en la fila 2");
-            return;
-          }
           const dataRows = rows.slice(2);
 
-          const parsedItems = dataRows.map((row, index) => {
-            const obj: any = { key: Date.now().toString() + index };
-            headers.forEach((h: string, i: number) => {
-              obj[h.toLowerCase()] = row[i];
-            });
-            return obj as DataManualType;
-          });
-
-          setDataManual((prev) =>
-            prev.map((cat) =>
-              cat.key === "local" ? { ...cat, items: parsedItems } : cat
-            )
+          const parsedItems = dataRows.map((row, index) =>
+            parseExcelRow(row, headers, index)
           );
+
+          setDataManual((prev) => updateLocalCategory(prev, parsedItems));
         };
         reader.readAsArrayBuffer(file);
       }

@@ -9,7 +9,7 @@ describe('Selenium Error Cases', function () {
   before(async () => { driver = await build('ErrorCases'); });
   after(async () => { if (driver) await driver.quit(); });
 
-  it('Login con credenciales vacías muestra error', async () => {
+  it('[C0299] Login con credenciales vacías muestra error', async () => {
     await driver.get(BASE + '/');
     await driver.sleep(3000);
     
@@ -28,7 +28,7 @@ describe('Selenium Error Cases', function () {
     }
   });
 
-  it('Login con solo usuario sin contraseña muestra error', async () => {
+  it('[C0300] Login con solo usuario sin contraseña muestra error', async () => {
     await driver.get(BASE + '/');
     await driver.sleep(3000);
     
@@ -49,7 +49,7 @@ describe('Selenium Error Cases', function () {
     }
   });
 
-  it('Navegación a ruta inexistente redirige correctamente', async () => {
+  it('[C0301] Navegación a ruta inexistente redirige correctamente', async () => {
     await driver.get(BASE + '/ruta-que-no-existe-12345');
     await driver.sleep(2000);
     
@@ -61,7 +61,7 @@ describe('Selenium Error Cases', function () {
     }
   });
 
-  it('Acceso a /home sin login redirige a login', async () => {
+  it('[C0302] Acceso a /home sin login redirige a login', async () => {
     // Abrir en modo incógnito simulado
     await driver.manage().deleteAllCookies();
     await driver.executeScript('localStorage.clear()');

@@ -23,7 +23,7 @@ jest.mock("@/features/forms-list", () => ({
 }));
 
 describe("FormListPage", () => {
-  test("Muestra botones de Categoría y Nuevo + input de búsqueda", () => {
+  test("[C0189] Muestra botones de Categoría y Nuevo + input de búsqueda", () => {
     render(<FormListPage onSelectForm={() => {}} />);
     expect(
       screen.getByRole("button", { name: /Categoría/i })
@@ -36,7 +36,7 @@ describe("FormListPage", () => {
     ).toBeInTheDocument();
   });
 
-  test('Al hacer click en "Nuevo" se abre el modal de "Nueva Categoría"', async () => {
+  test("[C0190] Al hacer click en Nuevo se abre el modal de Nueva Categoría", async () => {
     const user = userEvent.setup();
     render(<FormListPage onSelectForm={() => {}} />);
 

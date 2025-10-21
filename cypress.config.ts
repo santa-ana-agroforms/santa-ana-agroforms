@@ -1,4 +1,5 @@
 import { defineConfig } from 'cypress';
+import codeCoverage from '@cypress/code-coverage/task';
 
 export default defineConfig({
   e2e: {
@@ -12,6 +13,14 @@ export default defineConfig({
     retries: { runMode: 2, openMode: 0 },
     supportFile: 'cypress/support/e2e.ts',
     specPattern: 'cypress/e2e/**/*.cy.{js,ts}',
-    setupNodeEvents(on, config) { return config; },
+    reporter: 'mocha-junit-reporter',
+    reporterOptions: {
+      mochaFile: 'reports/junit-cypress-[hash].xml',
+      testsuitesTitle: 'Cypress E2E'
+    },
+    setupNodeEvents(on, config) { 
+      codeCoverage(on, config);
+      return config;
+    },
   },
 });

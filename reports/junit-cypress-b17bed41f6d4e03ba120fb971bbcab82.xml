@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuites name="Cypress E2E" time="13.711" tests="5" failures="0">
+  <testsuite name="Root Suite" timestamp="2025-10-20T23:32:46" tests="0" file="cypress\e2e\users.cy.ts" time="0.000" failures="0">
+  </testsuite>
+  <testsuite name="UserListPage" timestamp="2025-10-20T23:32:46" tests="5" time="13.613" failures="0">
+    <testcase name="UserListPage [C0289] carga la vista" time="4.695" classname="[C0289] carga la vista">
+    </testcase>
+    <testcase name="UserListPage [C0290] tabla/lista visible (si existe)" time="1.793" classname="[C0290] tabla/lista visible (si existe)">
+    </testcase>
+    <testcase name="UserListPage [C0291] buscador (si existe)" time="2.090" classname="[C0291] buscador (si existe)">
+    </testcase>
+    <testcase name="UserListPage [C0292] abrir modal crear (si hay botón)" time="1.798" classname="[C0292] abrir modal crear (si hay botón)">
+    </testcase>
+    <testcase name="UserListPage [C0293] paginación (si existe)" time="1.749" classname="[C0293] paginación (si existe)">
+    </testcase>
+  </testsuite>
+</testsuites>

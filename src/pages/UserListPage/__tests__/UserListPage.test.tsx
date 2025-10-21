@@ -18,7 +18,7 @@ const mockUsuarios = [
 ];
 
 describe("UserListPage", () => {
-  test("renderiza tabla de usuarios", async () => {
+  test("[C0193] renderiza tabla de usuarios", async () => {
     // Mock del api.get para usuarios
     (api.get as jest.Mock).mockResolvedValueOnce({ data: mockUsuarios });
 

@@ -37,7 +37,7 @@ jest.mock("react-pdf", () => ({
 }));
 
 describe("HomePage", () => {
-  test("renderiza sin errores", () => {
+  test("[C0191] renderiza sin errores", () => {
     render(<HomePage />);
     
     // Verifica elementos que SÍ están en el render actual
@@ -47,7 +47,7 @@ describe("HomePage", () => {
 });
 
 describe("HomePage Card", () => {
-  test("Mostrar un acceso rápido o card", () => {
+  test("[C0192] Mostrar un acceso rápido o card", () => {
     render(<HomePage />);
     
     // Verifica que la página se renderiza correctamente

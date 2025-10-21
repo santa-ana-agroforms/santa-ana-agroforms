@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 
 import { DiffOutlined, DownOutlined } from "@ant-design/icons";
-import { Button, Input, InputNumber, message, Tooltip } from "antd";
+import { Button, Input, InputNumber, message, Select, Tooltip } from "antd";
 
 import { usePostCamposActualBatch } from "../hooks/useCampoActual";
 import { FieldJson } from "../types";
@@ -33,20 +33,19 @@ const PageSettings: React.FC<PageSettingsProps> = ({
     [pages, selectedSeq]
   );
 
-  // Solo un estado para el ID seleccionado
-  const [selectedId, setSelectedId] = useState<string | number | undefined>(undefined);
+  const [selectedId, setSelectedId] = useState<string | number | undefined>(
+    undefined
+  );
 
   const { mutateAsync: postCamposBulk, isPending: sendingBulk } =
     usePostCamposActualBatch();
 
-  // inicializar
   useEffect(() => {
     if (pages.length > 0 && !selectedSeq) {
       setSelectedSeq(pages[0].sequence);
     }
   }, [pages, selectedSeq]);
 
-  // sincronizar con currentPage
   useEffect(() => {
     if (currentPage) {
       setSelectedSeq(currentPage.sequence);
@@ -55,7 +54,7 @@ const PageSettings: React.FC<PageSettingsProps> = ({
 
   useEffect(() => {
     if (pages.length > 0) {
-      const first = pages[0]; // siempre el primer elemento
+      const first = pages[0];
       setSelectedId(first.id);
     }
   }, [pages]);
@@ -63,7 +62,7 @@ const PageSettings: React.FC<PageSettingsProps> = ({
   const handlePageSelect = (seq: number) => {
     const selected = pages.find((p) => p.sequence === seq);
     if (selected) {
-      onPageChange?.(selected); // ⬅️ avisa al padre
+      onPageChange?.(selected);
       setSelectedId(selected.id);
     }
     setDropdownOpen(false);
@@ -76,10 +75,7 @@ const PageSettings: React.FC<PageSettingsProps> = ({
     console.log("Eliminar clicked");
   };
 
-
   const handleContinue = async () => {
-    // console.warn("➡️ JSONs compilados (front):", compiledList);
-
     if (compiledList.length === 0) {
       message.warning("¡Necesitas seleccionar al menos un campo! ⚠️");
       return;
@@ -91,13 +87,11 @@ const PageSettings: React.FC<PageSettingsProps> = ({
       return;
     }
 
-
     try {
       const { ok, errors } = await postCamposBulk({
         pageId: pageId as string,
         campos: compiledList,
       });
-
 
       if (errors.length) {
         message.error(
@@ -114,7 +108,6 @@ const PageSettings: React.FC<PageSettingsProps> = ({
 
   return (
     <div className="bg-white rounded-lg shadow max-w-sm mt-7">
-      {/* Header */}
       <div className="flex flex-col border-b">
         <div className="flex items-center px-4 py-3">
           <Button
@@ -126,38 +119,19 @@ const PageSettings: React.FC<PageSettingsProps> = ({
           <h3 className="ml-2 text-lg font-medium">Página</h3>
         </div>
 
-        {/* Custom Dropdown Selector */}
         <div className="w-full px-4 pb-4">
-          <div className="relative">
-            <div
-              className="w-full px-3 py-2 border border-gray-300 rounded-md bg-white cursor-pointer flex justify-between items-center"
-              onClick={() => setDropdownOpen(!dropdownOpen)}
-            >
-              <span className="text-gray-900">
-                {selectedPage?.title || "Selecciona una página"}
-              </span>
-              <DownOutlined
-                className={`text-gray-400 transition-transform ${dropdownOpen ? "rotate-180" : ""}`}
-              />
-            </div>
-
-            {dropdownOpen && (
-              <div className="absolute z-10 w-full mt-1 bg-white border border-gray-200 rounded-md shadow-lg max-h-60 overflow-auto">
-                {pages.map((p) => (
-                  <div
-                    className={`px-3 py-2 cursor-pointer hover:bg-gray-100 ${
-                      selectedSeq === p.sequence ?
-                        "bg-blue-50 text-blue-600"
-                      : "text-gray-900"
-                    }`}
-                    onClick={() => handlePageSelect(p.sequence)}
-                  >
-                    {p.title}
-                  </div>
-                ))}
-              </div>
-            )}
-          </div>
+          <Select
+            value={selectedSeq}
+            onChange={handlePageSelect}
+            style={{ width: "100%" }}
+            placeholder="Selecciona una página"
+          >
+            {pages.map((p) => (
+              <Select.Option key={p.sequence} value={p.sequence}>
+                {p.title}
+              </Select.Option>
+            ))}
+          </Select>
         </div>
       </div>
 
@@ -176,25 +150,43 @@ const PageSettings: React.FC<PageSettingsProps> = ({
         formId={formId !== undefined ? String(formId) : undefined}
       />
 
-      {/* Contenido */}
       <div className="px-4 py-5 space-y-4">
         <div>
-          <label className="block text-sm font-medium mb-1">Secuencia</label>
-          <InputNumber min={1} value={selectedPage?.sequence ?? ""} disabled />
+          <label htmlFor="secuencia-input" className="block text-sm font-medium mb-1">
+            Secuencia
+          </label>
+          <InputNumber
+            id="secuencia-input"
+            min={1}
+            value={selectedPage?.sequence ?? ""}
+            disabled
+            style={{ width: "100%" }}
+          />
         </div>
 
         <div>
-          <label className="block text-sm font-medium mb-1">Descripción</label>
-          <Input value={selectedPage?.description ?? ""} disabled />
+          <label htmlFor="descripcion-input" className="block text-sm font-medium mb-1">
+            Descripción
+          </label>
+          <Input
+            id="descripcion-input"
+            value={selectedPage?.description ?? ""}
+            disabled
+          />
         </div>
 
         <div>
-          <label className="block text-sm font-medium mb-1">Título</label>
-          <Input value={selectedPage?.title ?? ""} disabled />
+          <label htmlFor="titulo-input" className="block text-sm font-medium mb-1">
+            Título
+          </label>
+          <Input
+            id="titulo-input"
+            value={selectedPage?.title ?? ""}
+            disabled
+          />
         </div>
       </div>
 
-      {/* Footer */}
       <div className="flex justify-end gap-3 px-4 py-3 border-t space-x-2">
         <Button danger onClick={handleDelete}>
           ELIMINAR

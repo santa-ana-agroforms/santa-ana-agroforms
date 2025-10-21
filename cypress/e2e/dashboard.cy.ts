@@ -6,27 +6,27 @@ describe('DashboardPage', () => {
     clickMenu('Dashboard');
   });
 
-  it('renderiza contenedor', () => {
+  it('[C0259] renderiza contenedor', () => {
     cy.contains('Dashboard').should('exist');
   });
 
-  it('muestra las 3 cards de métricas', () => {
+  it('[C0260] muestra las 3 cards de métricas', () => {
     cy.contains('Usuarios Totales').should('exist');
     cy.contains('Usuarios Activos').should('exist');
     cy.contains('% Activos').should('exist');
   });
 
-  it('gráficas renderizan (canvas de @ant-design/charts)', () => {
+  it('[C0261] gráficas renderizan (canvas de @ant-design/charts)', () => {
     cy.get('canvas').should('have.length.at.least', 4);
   });
 
-  it('títulos de gráficas visibles', () => {
+  it('[C0262] títulos de gráficas visibles', () => {
     cy.contains('Cantidad de formularios recibidos por fecha').should('exist');
     cy.contains('Respuestas por tipo de formulario').should('exist');
     cy.contains('Cantidad de terminales por usuario').should('exist');
   });
 
-  it('sidebar sigue visible', () => {
+  it('[C0263] sidebar sigue visible', () => {
     cy.get('.ant-menu').should('exist');
   });
 });

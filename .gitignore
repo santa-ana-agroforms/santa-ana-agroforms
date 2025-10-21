@@ -24,3 +24,5 @@ dist-ssr
 *.sw?
 openssl/
 .env
+.nyc_output/
+coverage/

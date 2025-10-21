@@ -28,6 +28,22 @@ type GetSingle<T> = T extends (infer U)[] ? U : never;
 type Sorts = GetSingle<Parameters<OnChange>[2]>;
 type Filters = Parameters<OnChange>[1];
 
+interface CategoryType {
+  key: string;
+  name: string;
+  items: ItemType[];
+}
+
+const removeItemFromCategories = (
+  categories: CategoryType[],
+  itemKey: string
+): CategoryType[] => {
+  return categories.map((cat) => ({
+    ...cat,
+    items: cat.items.filter((it) => it.key !== itemKey),
+  }));
+};
+
 const DataSources: React.FC = () => {
   const [filteredInfo, setFilteredInfo] = useState<Filters>({});
   const [sortedInfo, setSortedInfo] = useState<Sorts>({});
@@ -42,6 +58,7 @@ const DataSources: React.FC = () => {
     setOpen(true);
     setSelectedItem(null);
   };
+
   const handleEdit = useCallback((record: ItemType) => {
     setOpen(true);
     setSelectedItem(record);
@@ -54,7 +71,6 @@ const DataSources: React.FC = () => {
 
   const handleCreate = (values: NewFormValues) => {
     console.log("Nuevos valores:", values);
-    // aquí haces el post o actualización de estado…
   };
 
   const handleDatos = (record: ItemType) => {
@@ -83,7 +99,6 @@ const DataSources: React.FC = () => {
 
   const handleSubmit = () => {
     console.log("Subiendo archivos para registro:", selected);
-    // → aquí llamas a tu API
     setModalVisible(false);
     setSelected(null);
   };
@@ -115,12 +130,7 @@ const DataSources: React.FC = () => {
         loading={false}
         onConfirm={() => {
           if (selectedItem) {
-            setData((prev) =>
-              prev.map((cat) => ({
-                ...cat,
-                items: cat.items.filter((it) => it.key !== selectedItem.key),
-              }))
-            );
+            setData((prev) => removeItemFromCategories(prev, selectedItem.key));
           }
           setModalDeleteVisible(false);
           setSelectedItem(null);
@@ -130,7 +140,6 @@ const DataSources: React.FC = () => {
           setSelectedItem(null);
         }}
       />
-      {/* Aquí podrías añadir tu modal de edición/creación usando `open`, `selectedItem`, `modalVisible`, etc. */}
     </div>
   );
 };

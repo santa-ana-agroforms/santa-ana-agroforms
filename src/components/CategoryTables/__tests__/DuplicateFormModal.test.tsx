@@ -17,7 +17,7 @@ jest.mock("@/features/forms-list/hooks/useFormularios", () => ({
 }));
 
 describe("DuplicateFormModal", () => {
-  test("muestra título y botones; dispara onCancel", async () => {
+  test("[C0046] muestra título y botones; dispara onCancel", async () => {
     const user = userEvent.setup();
     const onCancel = jest.fn();
 

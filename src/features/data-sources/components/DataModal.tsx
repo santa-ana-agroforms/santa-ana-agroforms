@@ -3,7 +3,6 @@ import React, { useCallback, useEffect, useState } from "react";
 
 import { InboxOutlined } from "@ant-design/icons";
 import { Button, Form, TableProps, Upload } from "antd";
-// Remove this import, it's not needed
 import type { UploadFile } from "antd/lib/upload/interface";
 
 import BaseModal from "@/components/BaseModal";
@@ -22,13 +21,47 @@ interface DataModalProps {
   onSubmit: (files: UploadFile[]) => void;
 }
 
+const updateItemInCategory = (
+  category: CategoryType,
+  initialValues: Partial<ItemType> | undefined,
+  newValues: DataManualType
+): CategoryType => {
+  if (category.key !== "local") return category;
+
+  if (initialValues) {
+    return {
+      ...category,
+      items: category.items.map((it) =>
+        it.key === initialValues.key ? { ...it, ...newValues } : it
+      ),
+    };
+  }
+
+  return {
+    ...category,
+    items: [
+      ...category.items,
+      {
+        ...newValues,
+        key: Date.now().toString(),
+      },
+    ],
+  };
+};
+
+const removeItemFromCategory = (
+  category: CategoryType,
+  itemKey: string
+): CategoryType => ({
+  ...category,
+  items: category.items.filter((it) => it.key !== itemKey),
+});
+
 const DataModal: React.FC<DataModalProps> = ({
   visible,
   onCancel,
   onSubmit,
 }) => {
-  //const [fileList, setFileList] = useState<UploadFile[]>([]);
-
   useEffect(() => {
     if (!visible) {
       setFileList([]);
@@ -39,13 +72,11 @@ const DataModal: React.FC<DataModalProps> = ({
     }
   }, [visible]);
 
-  /** Estados para el modal “añadir/editar manualmente” */
   const [manualVisible, setManualVisible] = useState(false);
   const [manualInitialValues, setManualInitialValues] = useState<
     Partial<ItemType> | undefined
   >(undefined);
 
-  /** Estados para el modal de detalle de datos (si lo necesitas) */
   const [detailVisible, setDetailVisible] = useState(false);
 
   const handleOk = () => {
@@ -74,7 +105,6 @@ const DataModal: React.FC<DataModalProps> = ({
   };
 
   const handleDelete = useCallback((_record: ItemType) => {
-    //setOpen(true);
     setSelectedItem(_record);
     setModalVisible(true);
   }, []);
@@ -105,12 +135,10 @@ const DataModal: React.FC<DataModalProps> = ({
 
   const handleSubmit = () => {
     console.log("Subiendo archivos para registro:", selectedItem);
-    // → aquí llamas a tu API
     setModalVisible(false);
     setSelectedItem(null);
   };
 
-  // Create a Form instance
   const [formInstance] = Form.useForm();
 
   const [dataManual, setDataManual] = useState<CategoryType[]>([
@@ -135,7 +163,7 @@ const DataModal: React.FC<DataModalProps> = ({
         title="Contenido de Datos"
         width={1350}
         footer={[
-          <Form.Item>
+          <Form.Item key="submit">
             <Button
               type="primary"
               htmlType="submit"
@@ -169,6 +197,7 @@ const DataModal: React.FC<DataModalProps> = ({
           />
         </div>
       </BaseModal>
+
       <DataManualModal
         visible={manualVisible}
         initialValues={manualInitialValues}
@@ -178,34 +207,9 @@ const DataModal: React.FC<DataModalProps> = ({
         }}
         onSubmit={(values) => {
           setDataManual((prev) =>
-            prev.map((cat) => {
-              if (cat.key === "local") {
-                if (manualInitialValues) {
-                  // Actualizar registro existente
-                  return {
-                    ...cat,
-                    items: cat.items.map((it) =>
-                      it.key === manualInitialValues.key ?
-                        { ...it, ...values }
-                      : it
-                    ),
-                  };
-                } else {
-                  // Añadir nuevo
-                  return {
-                    ...cat,
-                    items: [
-                      ...cat.items,
-                      {
-                        ...(values as DataManualType),
-                        key: Date.now().toString(),
-                      },
-                    ],
-                  };
-                }
-              }
-              return cat;
-            })
+            prev.map((cat) =>
+              updateItemInCategory(cat, manualInitialValues, values as DataManualType)
+            )
           );
 
           setManualVisible(false);
@@ -219,11 +223,9 @@ const DataModal: React.FC<DataModalProps> = ({
         loading={false}
         onConfirm={() => {
           if (selectedItem) {
+            // ✅ Usar función auxiliar
             setDataManual((prev) =>
-              prev.map((cat) => ({
-                ...cat,
-                items: cat.items.filter((it) => it.key !== selectedItem.key),
-              }))
+              prev.map((cat) => removeItemFromCategory(cat, selectedItem.key))
             );
           }
           setModalVisible(false);

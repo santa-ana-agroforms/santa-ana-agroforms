@@ -18,7 +18,7 @@ jest.mock("@/features/forms-list/hooks/useFormularios", () => ({
 }));
 
 describe("NewFormModal", () => {
-  test("Muestra campos principales y botones cuando visible=true", () => {
+  test("[C0066] Muestra campos principales y botones cuando visible=true", () => {
     render(<NewFormModal visible onCancel={() => {}} onCreate={() => {}} />);
 
     expect(screen.getByText("Adición de Formulario")).toBeInTheDocument();
@@ -40,7 +40,7 @@ describe("NewFormModal", () => {
     ).toBeInTheDocument();
   });
 
-  test("Botón Cancelar ejecuta onCancel", async () => {
+  test("[C0067] Botón Cancelar ejecuta onCancel", async () => {
     const user = userEvent.setup();
     const onCancel = jest.fn();
 

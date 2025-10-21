@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuites name="Cypress E2E" time="11.560" tests="5" failures="0">
+  <testsuite name="Root Suite" timestamp="2025-10-20T23:31:45" tests="0" file="cypress\e2e\dashboard.cy.ts" time="0.000" failures="0">
+  </testsuite>
+  <testsuite name="DashboardPage" timestamp="2025-10-20T23:31:45" tests="5" time="11.522" failures="0">
+    <testcase name="DashboardPage [C0259] renderiza contenedor" time="3.012" classname="[C0259] renderiza contenedor">
+    </testcase>
+    <testcase name="DashboardPage [C0260] muestra las 3 cards de métricas" time="2.187" classname="[C0260] muestra las 3 cards de métricas">
+    </testcase>
+    <testcase name="DashboardPage [C0261] gráficas renderizan (canvas de @ant-design/charts)" time="2.023" classname="[C0261] gráficas renderizan (canvas de @ant-design/charts)">
+    </testcase>
+    <testcase name="DashboardPage [C0262] títulos de gráficas visibles" time="1.948" classname="[C0262] títulos de gráficas visibles">
+    </testcase>
+    <testcase name="DashboardPage [C0263] sidebar sigue visible" time="1.905" classname="[C0263] sidebar sigue visible">
+    </testcase>
+  </testsuite>
+</testsuites>

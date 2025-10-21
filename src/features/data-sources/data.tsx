@@ -4,7 +4,7 @@ import {
   FileAddOutlined,
   FormOutlined,
 } from "@ant-design/icons";
-import { Typography } from "antd";
+import { Button, Typography } from "antd";
 import type { ColumnType } from "antd/es/table";
 
 export interface ItemType {
@@ -26,7 +26,6 @@ export interface CategoryType {
   items: ItemType[];
 }
 
-// --- Tus datos estáticos de categoría + filas ---
 export const categories: CategoryType[] = [
   {
     key: "local",
@@ -246,7 +245,6 @@ export const categories: CategoryType[] = [
   },
 ];
 
-// --- Función para generar las columnas, recibiendo estado de sort/filter y callbacks ---
 export const getColumns = (
   sortedInfo: any,
   filteredInfo: any,
@@ -257,16 +255,16 @@ export const getColumns = (
 ): ColumnType<ItemType>[] => [
   {
     title: (
-      <>
-        <div
-          onClick={onAdd}
-          title="Crear nuevo formulario"
-          className="flex flex-col items-center justify-center cursor-pointer p-2 hover:bg-gray-100 rounded-md"
-        >
-          <FileAddOutlined className="text-2xl" />
-          <span className="text-xs mt-1">Nueva fuente de dato</span>
-        </div>
-      </>
+      // ✅ Usar Button en lugar de div con onClick
+      <Button
+        type="text"
+        onClick={onAdd}
+        title="Crear nuevo formulario"
+        className="flex flex-col items-center justify-center p-2 h-auto"
+      >
+        <FileAddOutlined className="text-2xl" />
+        <span className="text-xs mt-1">Nueva fuente de dato</span>
+      </Button>
     ),
     dataIndex: "actions",
     key: "actions",
@@ -343,8 +341,9 @@ export const getColumns = (
     dataIndex: "intervalo",
     key: "intervalo",
     sorter: (a, b) => {
-      const na = parseFloat(a.intervalo?.replace(",", ".") || "0");
-      const nb = parseFloat(b.intervalo?.replace(",", ".") || "0");
+      // ✅ Usar Number.parseFloat en lugar de parseFloat global
+      const na = Number.parseFloat(a.intervalo?.replace(",", ".") || "0");
+      const nb = Number.parseFloat(b.intervalo?.replace(",", ".") || "0");
       return na - nb;
     },
     sortOrder: sortedInfo.columnKey === "intervalo" ? sortedInfo.order : null,

@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuites name="Cypress E2E" time="2.704" tests="5" failures="0">
+  <testsuite name="Root Suite" timestamp="2025-10-20T23:31:40" tests="0" file="cypress\e2e\auth.cy.ts" time="0.000" failures="0">
+  </testsuite>
+  <testsuite name="Auth" timestamp="2025-10-20T23:31:40" tests="5" time="2.671" failures="0">
+    <testcase name="Auth [C0254] muestra formulario, logo y link" time="0.876" classname="[C0254] muestra formulario, logo y link">
+    </testcase>
+    <testcase name="Auth [C0255] permite escribir credenciales" time="0.862" classname="[C0255] permite escribir credenciales">
+    </testcase>
+    <testcase name="Auth [C0256] botón submit está presente" time="0.144" classname="[C0256] botón submit está presente">
+    </testcase>
+    <testcase name="Auth [C0257] link &quot;¿Olvidaste tu contraseña?&quot; existe" time="0.115" classname="[C0257] link &quot;¿Olvidaste tu contraseña?&quot; existe">
+    </testcase>
+    <testcase name="Auth [C0258] volver a / muestra el login de nuevo" time="0.274" classname="[C0258] volver a / muestra el login de nuevo">
+    </testcase>
+  </testsuite>
+</testsuites>

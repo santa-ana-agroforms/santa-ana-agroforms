@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuites name="Cypress E2E" time="8.985" tests="5" failures="0">
+  <testsuite name="Root Suite" timestamp="2025-10-20T23:32:32" tests="0" file="cypress\e2e\smoke.cy.ts" time="0.000" failures="0">
+  </testsuite>
+  <testsuite name="Smoke" timestamp="2025-10-20T23:32:32" tests="5" time="8.875" failures="0">
+    <testcase name="Smoke [C0284] sirve la app en / con 200" time="2.697" classname="[C0284] sirve la app en / con 200">
+    </testcase>
+    <testcase name="Smoke [C0285] tiene inputs de login" time="0.546" classname="[C0285] tiene inputs de login">
+    </testcase>
+    <testcase name="Smoke [C0286] formulario es interactivo" time="1.572" classname="[C0286] formulario es interactivo">
+    </testcase>
+    <testcase name="Smoke [C0287] carga /home directamente" time="0.249" classname="[C0287] carga /home directamente">
+    </testcase>
+    <testcase name="Smoke [C0288] sidebar visible en /home" time="0.672" classname="[C0288] sidebar visible en /home">
+    </testcase>
+  </testsuite>
+</testsuites>

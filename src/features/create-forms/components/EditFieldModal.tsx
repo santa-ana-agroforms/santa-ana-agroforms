@@ -20,7 +20,6 @@ import { FieldJson } from "../types";
 const { Option } = Select;
 const { TextArea } = Input;
 
-// Forma de los valores del formulario
 export interface FieldFormValues {
   secuencia: number;
   nombre: string;
@@ -56,22 +55,29 @@ export type VariantType =
   | "datoFormulario"
   | "geoLocalizacion";
 
-// Props del modal de edición
 export interface EditFieldModalProps extends Omit<ModalProps, "title"> {
   visible: boolean | undefined;
   onCancel: () => void;
-  /** Se dispara al guardar con todos los valores */
   onSave: (values: FieldFormValues) => void;
-  /** Valores iniciales para edición */
   initialValues?: Partial<FieldFormValues>;
-  /** Tipo de variante para mostrar en el Modal */
   variant?: VariantType;
-  /** Listas para poblar los selects */
   opcionesList: string[];
   gruposList: string[];
   onDelete?: () => void;
   onBuild?: (json: FieldJson) => void;
 }
+
+const mapDatoToTipoClase = (
+  opcion?: string,
+  variant?: string
+): { clase: string } => {
+  if (opcion === "Número") return { clase: "number" };
+  if (opcion === "Comentarios") return { clase: "string" };
+  if (opcion === "Nombre") return { clase: "string" };
+  if (variant === "switch") return { clase: "boolean" };
+  if (variant === "fecha") return { clase: "date" };
+  return { clase: "string" };
+};
 
 const EditFieldModal: FC<EditFieldModalProps> = ({
   visible,
@@ -87,7 +93,6 @@ const EditFieldModal: FC<EditFieldModalProps> = ({
 }) => {
   const [form] = Form.useForm<FieldFormValues>();
 
-  // Cuando se abre el modal, cargamos valores o reseteamos
   useEffect(() => {
     if (visible) {
       if (initialValues) {
@@ -98,12 +103,10 @@ const EditFieldModal: FC<EditFieldModalProps> = ({
     }
   }, [visible, initialValues, form]);
 
-  // 4) En handleFinish: construir y devolver el JSON + normalizar values.opciones
   const handleFinish = (values: FieldFormValues) => {
     if (variant === "dato") {
       const { clase } = mapDatoToTipoClase(values.opciones);
 
-      // JSON compilado
       const compiled = {
         clase,
         nombre_campo: values.nombre,
@@ -113,15 +116,11 @@ const EditFieldModal: FC<EditFieldModalProps> = ({
         config: {},
       };
 
-      // Devuélvelo al padre inmediato
       onBuild?.(compiled);
-
-      // (opcional recomendado) normaliza lo que sube por onSave
       values = { ...values };
     } else {
       const { clase } = mapDatoToTipoClase(undefined, variant);
 
-      // JSON compilado
       const compiled = {
         clase,
         nombre_campo: values.nombre,
@@ -131,10 +130,7 @@ const EditFieldModal: FC<EditFieldModalProps> = ({
         config: {},
       };
 
-      // Devuélvelo al padre inmediato
       onBuild?.(compiled);
-
-      // (opcional recomendado) normaliza lo que sube por onSave
       values = { ...values };
     }
 
@@ -157,24 +153,12 @@ const EditFieldModal: FC<EditFieldModalProps> = ({
       okText: "Sí, eliminar",
       okType: "danger",
       cancelText: "Cancelar",
-      onOk: async () => {
-        await onDelete();
+      onOk: () => {
+        onDelete();
         form.resetFields();
         onCancel();
       },
     });
-  };
-
-  const mapDatoToTipoClase = (
-    opcion?: string,
-    variant?: string
-  ): { clase: string } => {
-    if (opcion === "Número") return { clase: "number" };
-    if (opcion === "Comentarios") return { clase: "string" };
-    if (opcion === "Nombre") return { clase: "string" };
-    if (variant === "switch") return { clase: "boolean" };
-    if (variant === "fecha") return { clase: "date" };
-    return { clase: "string" };
   };
 
   const valor_inicial = ["Normal", "Botones"];

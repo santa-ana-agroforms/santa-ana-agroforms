@@ -7,21 +7,21 @@ describe('DataSourcesPage', () => {
     cy.contains('.ant-menu-item', 'Fuentes de Datos').click({ force: true });
   });
 
-  it('carga la página', () => cy.get('body').should('exist'));
+  it('[C0264] carga la página', () => cy.get('body').should('exist'));
 
-  it('renderiza el componente DataSources', () => {
+  it('[C0265] renderiza el componente DataSources', () => {
     cy.get('body').children().should('have.length.at.least', 1);
   });
 
-  it('botón agregar (si existe)', () => {
+  it('[C0266] botón agregar (si existe)', () => {
     cy.get('body').then(() => expect(true).to.be.true);
   });
 
-  it('tabla o lista (si existe)', () => {
+  it('[C0267] tabla o lista (si existe)', () => {
     cy.get('body').then(() => expect(true).to.be.true);
   });
 
-  it('sin errores en consola', () => {
+  it('[C0268] sin errores en consola', () => {
     cy.window().then((w) => expect(w).to.exist);
   });
 });

@@ -17,7 +17,7 @@ jest.mock("@/features/forms-list/hooks/useFormularios", () => ({
 }));
 
 describe("SuspendFormModal", () => {
-  test("muestra título y confirma/cancela; dispara onCancel", async () => {
+  test("[C0047] muestra título y confirma/cancela; dispara onCancel", async () => {
     const user = userEvent.setup();
     const onCancel = jest.fn();
 

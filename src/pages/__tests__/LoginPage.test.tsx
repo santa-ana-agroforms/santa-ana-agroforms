@@ -14,7 +14,7 @@ describe("LoginPage", () => {
     mockNavigate.mockClear();
   });
 
-  test("renderiza el formulario de login", () => {
+  test("[C0178] renderiza el formulario de login", () => {
     render(<LoginPage />);
     
     expect(screen.getByPlaceholderText(/Usuario/i)).toBeInTheDocument();

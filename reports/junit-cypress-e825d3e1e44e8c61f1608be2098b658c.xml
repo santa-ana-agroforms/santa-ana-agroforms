@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuites name="Cypress E2E" time="8.146" tests="5" failures="0">
+  <testsuite name="Root Suite" timestamp="2025-10-20T23:32:20" tests="0" file="cypress\e2e\nav.cy.ts" time="0.000" failures="0">
+  </testsuite>
+  <testsuite name="Navegación via sidebar" timestamp="2025-10-20T23:32:20" tests="5" time="8.111" failures="0">
+    <testcase name="Navegación via sidebar [C0279] abre dashboard" time="1.109" classname="[C0279] abre dashboard">
+    </testcase>
+    <testcase name="Navegación via sidebar [C0280] abre formularios en listado" time="0.892" classname="[C0280] abre formularios en listado">
+    </testcase>
+    <testcase name="Navegación via sidebar [C0281] abre sesión en terminales" time="0.982" classname="[C0281] abre sesión en terminales">
+    </testcase>
+    <testcase name="Navegación via sidebar [C0282] abre sesión en usuarios" time="1.663" classname="[C0282] abre sesión en usuarios">
+    </testcase>
+    <testcase name="Navegación via sidebar [C0283] abre formularios en fuentes de datos" time="1.837" classname="[C0283] abre formularios en fuentes de datos">
+    </testcase>
+  </testsuite>
+</testsuites>

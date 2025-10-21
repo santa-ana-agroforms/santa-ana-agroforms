@@ -3,7 +3,7 @@ import { render, screen } from "@testing-library/react";
 import AssignmentsProgressPage from "@/pages/AssignmentsProgressPage";
 
 describe("AssignmentsProgressPage", () => {
-  test("muestra tabs y columnas del listado de progreso", () => {
+  test("[C0180] muestra tabs y columnas del listado de progreso", () => {
     render(<AssignmentsProgressPage />);
 
     // Tabs visibles

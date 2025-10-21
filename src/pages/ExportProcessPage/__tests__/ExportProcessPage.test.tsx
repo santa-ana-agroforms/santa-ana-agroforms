@@ -3,7 +3,7 @@ import { render, screen } from "@testing-library/react";
 import ExportProcessPages from "@/pages/ExportProcessPage";
 
 describe("ExportProcessPage", () => {
-  test("muestra columnas principales", () => {
+  test("[C0187] muestra columnas principales", () => {
     render(<ExportProcessPages />);
     expect(screen.getByText("Formulario")).toBeInTheDocument();
     expect(screen.getByText("Intervalo")).toBeInTheDocument();
