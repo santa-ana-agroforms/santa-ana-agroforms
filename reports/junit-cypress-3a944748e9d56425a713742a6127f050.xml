@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuites name="Cypress E2E" time="5.201" tests="5" failures="0">
+  <testsuite name="Root Suite" timestamp="2025-10-20T23:31:33" tests="0" file="cypress\e2e\assignments.cy.ts" time="0.000" failures="0">
+  </testsuite>
+  <testsuite name="Asignación de Formularios" timestamp="2025-10-20T23:31:33" tests="5" time="5.175" failures="0">
+    <testcase name="Asignación de Formularios [C0249] carga la vista" time="1.453" classname="[C0249] carga la vista">
+    </testcase>
+    <testcase name="Asignación de Formularios [C0250] lista/tabla si existe" time="0.791" classname="[C0250] lista/tabla si existe">
+    </testcase>
+    <testcase name="Asignación de Formularios [C0251] selector de usuario/terminal si existe" time="0.947" classname="[C0251] selector de usuario/terminal si existe">
+    </testcase>
+    <testcase name="Asignación de Formularios [C0252] botón asignar si existe" time="0.786" classname="[C0252] botón asignar si existe">
+    </testcase>
+    <testcase name="Asignación de Formularios [C0253] mensaje/alerta si existe" time="0.804" classname="[C0253] mensaje/alerta si existe">
+    </testcase>
+  </testsuite>
+</testsuites>

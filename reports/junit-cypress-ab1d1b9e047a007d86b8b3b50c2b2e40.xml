@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuites name="Cypress E2E" time="5.687" tests="5" failures="0">
+  <testsuite name="Root Suite" timestamp="2025-10-20T23:31:58" tests="0" file="cypress\e2e\data-sources.cy.ts" time="0.000" failures="0">
+  </testsuite>
+  <testsuite name="DataSourcesPage" timestamp="2025-10-20T23:31:58" tests="5" time="5.657" failures="0">
+    <testcase name="DataSourcesPage [C0264] carga la página" time="1.577" classname="[C0264] carga la página">
+    </testcase>
+    <testcase name="DataSourcesPage [C0265] renderiza el componente DataSources" time="0.926" classname="[C0265] renderiza el componente DataSources">
+    </testcase>
+    <testcase name="DataSourcesPage [C0266] botón agregar (si existe)" time="1.034" classname="[C0266] botón agregar (si existe)">
+    </testcase>
+    <testcase name="DataSourcesPage [C0267] tabla o lista (si existe)" time="0.903" classname="[C0267] tabla o lista (si existe)">
+    </testcase>
+    <testcase name="DataSourcesPage [C0268] sin errores en consola" time="0.846" classname="[C0268] sin errores en consola">
+    </testcase>
+  </testsuite>
+</testsuites>

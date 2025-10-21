@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuites name="Cypress E2E" time="5.549" tests="5" failures="0">
+  <testsuite name="Root Suite" timestamp="2025-10-20T23:32:13" tests="0" file="cypress\e2e\forms.cy.ts" time="0.000" failures="0">
+  </testsuite>
+  <testsuite name="FormListPage" timestamp="2025-10-20T23:32:13" tests="5" time="5.518" failures="0">
+    <testcase name="FormListPage [C0274] carga la vista de listado" time="1.651" classname="[C0274] carga la vista de listado">
+    </testcase>
+    <testcase name="FormListPage [C0275] muestra tabla o listado" time="0.863" classname="[C0275] muestra tabla o listado">
+    </testcase>
+    <testcase name="FormListPage [C0276] buscador si existe" time="0.990" classname="[C0276] buscador si existe">
+    </testcase>
+    <testcase name="FormListPage [C0277] acciones por fila si existen" time="0.823" classname="[C0277] acciones por fila si existen">
+    </testcase>
+    <testcase name="FormListPage [C0278] botón nuevo/crear si existe" time="0.828" classname="[C0278] botón nuevo/crear si existe">
+    </testcase>
+  </testsuite>
+</testsuites>

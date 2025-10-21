@@ -1,0 +1,489 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuites name="jest tests" tests="193" failures="0" errors="0" time="88.332">
+  <testsuite name="AssignFormModal" errors="0" failures="0" skipped="0" timestamp="2025-10-20T23:25:50" time="3.843" tests="18">
+    <testcase classname="AssignFormModal [C0048] renderiza el modal cuando open=true" name="AssignFormModal [C0048] renderiza el modal cuando open=true" time="0.274">
+    </testcase>
+    <testcase classname="AssignFormModal [C0049] no renderiza cuando open=false" name="AssignFormModal [C0049] no renderiza cuando open=false" time="0.019">
+    </testcase>
+    <testcase classname="AssignFormModal [C0050] muestra el placeholder correcto" name="AssignFormModal [C0050] muestra el placeholder correcto" time="0.059">
+    </testcase>
+    <testcase classname="AssignFormModal [C0051] muestra texto de ayuda cuando se proporciona" name="AssignFormModal [C0051] muestra texto de ayuda cuando se proporciona" time="0.071">
+    </testcase>
+    <testcase classname="AssignFormModal [C0052] llama onCancel cuando se hace click en Cancelar" name="AssignFormModal [C0052] llama onCancel cuando se hace click en Cancelar" time="0.171">
+    </testcase>
+    <testcase classname="AssignFormModal [C0053] botón Asignar está deshabilitado cuando no hay selección" name="AssignFormModal [C0053] botón Asignar está deshabilitado cuando no hay selección" time="0.103">
+    </testcase>
+    <testcase classname="AssignFormModal [C0054] llama onAssign con los usuarios seleccionados" name="AssignFormModal [C0054] llama onAssign con los usuarios seleccionados" time="0.142">
+    </testcase>
+    <testcase classname="AssignFormModal [C0055] muestra estado de loading cuando loadingOptions=true" name="AssignFormModal [C0055] muestra estado de loading cuando loadingOptions=true" time="0.092">
+    </testcase>
+    <testcase classname="AssignFormModal [C0056] deshabilita botones cuando submitting=true" name="AssignFormModal [C0056] deshabilita botones cuando submitting=true" time="0.102">
+    </testcase>
+    <testcase classname="AssignFormModal [C0057] muestra texto &apos;Asignando...&apos; cuando submitting=true" name="AssignFormModal [C0057] muestra texto &apos;Asignando...&apos; cuando submitting=true" time="0.049">
+    </testcase>
+    <testcase classname="AssignFormModal [C0058] modo single cuando multiple=false" name="AssignFormModal [C0058] modo single cuando multiple=false" time="0.048">
+    </testcase>
+    <testcase classname="AssignFormModal [C0059] modo multiple por defecto" name="AssignFormModal [C0059] modo multiple por defecto" time="0.041">
+    </testcase>
+    <testcase classname="AssignFormModal [C0060] resetea selección al cerrar cuando resetOnClose=true" name="AssignFormModal [C0060] resetea selección al cerrar cuando resetOnClose=true" time="0.159">
+    </testcase>
+    <testcase classname="AssignFormModal [C0061] mantiene selección cuando resetOnClose=false" name="AssignFormModal [C0061] mantiene selección cuando resetOnClose=false" time="0.126">
+    </testcase>
+    <testcase classname="AssignFormModal [C0062] permite búsqueda cuando se proporciona onSearchUsers" name="AssignFormModal [C0062] permite búsqueda cuando se proporciona onSearchUsers" time="0.076">
+    </testcase>
+    <testcase classname="AssignFormModal [C0063] muestra icono de UserAddOutlined en el título" name="AssignFormModal [C0063] muestra icono de UserAddOutlined en el título" time="0.043">
+    </testcase>
+    <testcase classname="AssignFormModal [C0064] el botón Asignar está habilitado con selección válida" name="AssignFormModal [C0064] el botón Asignar está habilitado con selección válida" time="0.113">
+    </testcase>
+    <testcase classname="AssignFormModal [C0065] maneja opciones vacías sin errores" name="AssignFormModal [C0065] maneja opciones vacías sin errores" time="0.066">
+    </testcase>
+  </testsuite>
+  <testsuite name="HomePage" errors="0" failures="0" skipped="0" timestamp="2025-10-20T23:25:54" time="1.616" tests="2">
+    <testcase classname="HomePage [C0191] renderiza sin errores" name="HomePage [C0191] renderiza sin errores" time="0.156">
+    </testcase>
+    <testcase classname="HomePage Card [C0192] Mostrar un acceso rápido o card" name="HomePage Card [C0192] Mostrar un acceso rápido o card" time="0.05">
+    </testcase>
+  </testsuite>
+  <testsuite name="NewFormModal" errors="0" failures="0" skipped="0" timestamp="2025-10-20T23:25:56" time="1.859" tests="2">
+    <testcase classname="NewFormModal [C0066] Muestra campos principales y botones cuando visible=true" name="NewFormModal [C0066] Muestra campos principales y botones cuando visible=true" time="0.621">
+    </testcase>
+    <testcase classname="NewFormModal [C0067] Botón Cancelar ejecuta onCancel" name="NewFormModal [C0067] Botón Cancelar ejecuta onCancel" time="0.404">
+    </testcase>
+  </testsuite>
+  <testsuite name="FormListPage" errors="0" failures="0" skipped="0" timestamp="2025-10-20T23:25:58" time="1.717" tests="2">
+    <testcase classname="FormListPage [C0189] Muestra botones de Categoría y Nuevo + input de búsqueda" name="FormListPage [C0189] Muestra botones de Categoría y Nuevo + input de búsqueda" time="0.2">
+    </testcase>
+    <testcase classname="FormListPage [C0190] Al hacer click en Nuevo se abre el modal de Nueva Categoría" name="FormListPage [C0190] Al hacer click en Nuevo se abre el modal de Nueva Categoría" time="0.399">
+    </testcase>
+  </testsuite>
+  <testsuite name="DataModal" errors="0" failures="0" skipped="0" timestamp="2025-10-20T23:26:00" time="1.982" tests="1">
+    <testcase classname="DataModal [C0116] Muestra dialog y botones" name="DataModal [C0116] Muestra dialog y botones" time="0.796">
+    </testcase>
+  </testsuite>
+  <testsuite name="DataSourcesPage" errors="0" failures="0" skipped="0" timestamp="2025-10-20T23:26:02" time="1.785" tests="1">
+    <testcase classname="DataSourcesPage [C0185] muestra controles base (botón agregar/filtrar o tabla)" name="DataSourcesPage [C0185] muestra controles base (botón agregar/filtrar o tabla)" time="0.512">
+    </testcase>
+  </testsuite>
+  <testsuite name="UsersListFeature" errors="0" failures="0" skipped="0" timestamp="2025-10-20T23:26:04" time="2.089" tests="2">
+    <testcase classname="UsersListFeature [C0176] muestra tabla de usuarios" name="UsersListFeature [C0176] muestra tabla de usuarios" time="0.441">
+    </testcase>
+    <testcase classname="UsersListFeature (buscador) [C0177] permite escribir en el filtro" name="UsersListFeature (buscador) [C0177] permite escribir en el filtro" time="0.418">
+    </testcase>
+  </testsuite>
+  <testsuite name="DataManualModa" errors="0" failures="0" skipped="0" timestamp="2025-10-20T23:26:06" time="1.765" tests="1">
+    <testcase classname="DataManualModa [C0115] Muestra formulario manual" name="DataManualModa [C0115] Muestra formulario manual" time="0.561">
+    </testcase>
+  </testsuite>
+  <testsuite name="LoginCard" errors="0" failures="0" skipped="0" timestamp="2025-10-20T23:26:08" time="2.211" tests="3">
+    <testcase classname="LoginCard [C0013] Muestra mensajes de validación en caso de enviarse vacío." name="LoginCard [C0013] Muestra mensajes de validación en caso de enviarse vacío." time="0.424">
+    </testcase>
+    <testcase classname="LoginCard [C0014] envía credenciales cuando se llena el formulario (sin fake timers)" name="LoginCard [C0014] envía credenciales cuando se llena el formulario (sin fake timers)" time="0.568">
+    </testcase>
+    <testcase classname="LoginCard [C0015] Enlace de recuperación presente" name="LoginCard [C0015] Enlace de recuperación presente" time="0.093">
+    </testcase>
+  </testsuite>
+  <testsuite name="DevicesList" errors="0" failures="0" skipped="0" timestamp="2025-10-20T23:26:10" time="1.978" tests="1">
+    <testcase classname="DevicesList [C0118] muestra input de búsqueda" name="DevicesList [C0118] muestra input de búsqueda" time="0.448">
+    </testcase>
+  </testsuite>
+  <testsuite name="usePaginas" errors="0" failures="0" skipped="0" timestamp="2025-10-20T23:26:12" time="1.705" tests="15">
+    <testcase classname="usePaginas [C0077] obtiene páginas sin filtro" name="usePaginas [C0077] obtiene páginas sin filtro" time="0.078">
+    </testcase>
+    <testcase classname="usePaginas [C0078] obtiene páginas filtradas por formId" name="usePaginas [C0078] obtiene páginas filtradas por formId" time="0.076">
+    </testcase>
+    <testcase classname="usePaginas [C0079] maneja estado de loading" name="usePaginas [C0079] maneja estado de loading" time="0.136">
+    </testcase>
+    <testcase classname="usePaginas [C0080] maneja errores al obtener páginas" name="usePaginas [C0080] maneja errores al obtener páginas" time="0.089">
+    </testcase>
+    <testcase classname="usePaginas [C0081] usa queryKey correcto con formId" name="usePaginas [C0081] usa queryKey correcto con formId" time="0.014">
+    </testcase>
+    <testcase classname="usePaginas [C0082] usa queryKey con &apos;all&apos; cuando no hay formId" name="usePaginas [C0082] usa queryKey con &apos;all&apos; cuando no hay formId" time="0.015">
+    </testcase>
+    <testcase classname="useCreatePagina [C0083] crea página exitosamente" name="useCreatePagina [C0083] crea página exitosamente" time="0.064">
+    </testcase>
+    <testcase classname="useCreatePagina [C0084] maneja error al crear página" name="useCreatePagina [C0084] maneja error al crear página" time="0.087">
+    </testcase>
+    <testcase classname="useCreatePagina [C0085] invalida queries después de crear página" name="useCreatePagina [C0085] invalida queries después de crear página" time="0.073">
+    </testcase>
+    <testcase classname="useCreatePagina [C0086] maneja optimistic update en onMutate" name="useCreatePagina [C0086] maneja optimistic update en onMutate" time="0.076">
+    </testcase>
+    <testcase classname="usePostCamposActualBatch [C0087] envía campos en batch exitosamente" name="usePostCamposActualBatch [C0087] envía campos en batch exitosamente" time="0.078">
+    </testcase>
+    <testcase classname="usePostCamposActualBatch [C0088] maneja errores parciales en batch" name="usePostCamposActualBatch [C0088] maneja errores parciales en batch" time="0.073">
+    </testcase>
+    <testcase classname="usePostCamposActualBatch [C0089] maneja error completo en batch" name="usePostCamposActualBatch [C0089] maneja error completo en batch" time="0.074">
+    </testcase>
+    <testcase classname="usePostCamposActualBatch [C0090] maneja batch vacío" name="usePostCamposActualBatch [C0090] maneja batch vacío" time="0.076">
+    </testcase>
+    <testcase classname="usePostCamposActualBatch [C0091] usa mutationKey correcto" name="usePostCamposActualBatch [C0091] usa mutationKey correcto" time="0.076">
+    </testcase>
+  </testsuite>
+  <testsuite name="NewCategoryModal" errors="0" failures="0" skipped="0" timestamp="2025-10-20T23:26:14" time="1.714" tests="2">
+    <testcase classname="NewCategoryModal [C0016] Renderiza título y campos cuando visible=true" name="NewCategoryModal [C0016] Renderiza título y campos cuando visible=true" time="0.232">
+    </testcase>
+    <testcase classname="NewCategoryModal [C0017] Clic en Cancelar llama onCancel" name="NewCategoryModal [C0017] Clic en Cancelar llama onCancel" time="0.259">
+    </testcase>
+  </testsuite>
+  <testsuite name="UserListPage" errors="0" failures="0" skipped="0" timestamp="2025-10-20T23:26:16" time="1.624" tests="1">
+    <testcase classname="UserListPage [C0193] renderiza tabla de usuarios" name="UserListPage [C0193] renderiza tabla de usuarios" time="0.357">
+    </testcase>
+  </testsuite>
+  <testsuite name="AssignmentsProgressPage" errors="0" failures="0" skipped="0" timestamp="2025-10-20T23:26:17" time="1.507" tests="1">
+    <testcase classname="AssignmentsProgressPage [C0180] muestra tabs y columnas del listado de progreso" name="AssignmentsProgressPage [C0180] muestra tabs y columnas del listado de progreso" time="0.385">
+    </testcase>
+  </testsuite>
+  <testsuite name="EditUserModal" errors="0" failures="0" skipped="0" timestamp="2025-10-20T23:26:19" time="4.749" tests="1">
+    <testcase classname="EditUserModal [C0069] Muestra initialValues cuando visible=true" name="EditUserModal [C0069] Muestra initialValues cuando visible=true" time="0.843">
+    </testcase>
+  </testsuite>
+  <testsuite name="SuspendFormModal" errors="0" failures="0" skipped="0" timestamp="2025-10-20T23:26:24" time="3.345" tests="1">
+    <testcase classname="SuspendFormModal [C0047] muestra título y confirma/cancela; dispara onCancel" name="SuspendFormModal [C0047] muestra título y confirma/cancela; dispara onCancel" time="0.244">
+    </testcase>
+  </testsuite>
+  <testsuite name="useFormularios hooks" errors="0" failures="0" skipped="0" timestamp="2025-10-20T23:26:27" time="1.469" tests="12">
+    <testcase classname="useFormularios hooks useFormularios [C0137] obtiene lista de formularios" name="useFormularios hooks useFormularios [C0137] obtiene lista de formularios" time="0.072">
+    </testcase>
+    <testcase classname="useFormularios hooks useFormularios [C0138] maneja estado de loading" name="useFormularios hooks useFormularios [C0138] maneja estado de loading" time="0.141">
+    </testcase>
+    <testcase classname="useFormularios hooks useFormulario [C0139] obtiene un formulario por ID" name="useFormularios hooks useFormulario [C0139] obtiene un formulario por ID" time="0.086">
+    </testcase>
+    <testcase classname="useFormularios hooks useFormulario [C0140] no hace fetch cuando ID está vacío" name="useFormularios hooks useFormulario [C0140] no hace fetch cuando ID está vacío" time="0.002">
+    </testcase>
+    <testcase classname="useFormularios hooks useCreateFormulario [C0141] crea formulario y actualiza cache" name="useFormularios hooks useCreateFormulario [C0141] crea formulario y actualiza cache" time="0.072">
+    </testcase>
+    <testcase classname="useFormularios hooks useCreateFormulario [C0142] maneja errores al crear formulario" name="useFormularios hooks useCreateFormulario [C0142] maneja errores al crear formulario" time="0.075">
+    </testcase>
+    <testcase classname="useFormularios hooks useDeleteFormulario [C0143] elimina formulario y actualiza cache" name="useFormularios hooks useDeleteFormulario [C0143] elimina formulario y actualiza cache" time="0.074">
+    </testcase>
+    <testcase classname="useFormularios hooks useDeleteFormulario [C0144] maneja error al eliminar" name="useFormularios hooks useDeleteFormulario [C0144] maneja error al eliminar" time="0.076">
+    </testcase>
+    <testcase classname="useFormularios hooks useDuplicateFormulario [C0145] duplica formulario exitosamente" name="useFormularios hooks useDuplicateFormulario [C0145] duplica formulario exitosamente" time="0.06">
+    </testcase>
+    <testcase classname="useFormularios hooks useDuplicateFormulario [C0146] maneja error al duplicar" name="useFormularios hooks useDuplicateFormulario [C0146] maneja error al duplicar" time="0.076">
+    </testcase>
+    <testcase classname="useFormularios hooks useCrearAsignacion [C0147] crea asignación exitosamente" name="useFormularios hooks useCrearAsignacion [C0147] crea asignación exitosamente" time="0.076">
+    </testcase>
+    <testcase classname="useFormularios hooks useCrearAsignacionMultiple [C0148] crea asignaciones múltiples exitosamente" name="useFormularios hooks useCrearAsignacionMultiple [C0148] crea asignaciones múltiples exitosamente" time="0.076">
+    </testcase>
+  </testsuite>
+  <testsuite name="DeleteFormModal" errors="0" failures="0" skipped="0" timestamp="2025-10-20T23:26:29" time="1.277" tests="1">
+    <testcase classname="DeleteFormModal [C0045] Muestra diálogo y botones; dispara onCancel" name="DeleteFormModal [C0045] Muestra diálogo y botones; dispara onCancel" time="0.188">
+    </testcase>
+  </testsuite>
+  <testsuite name="Forms-Settings" errors="0" failures="0" skipped="0" timestamp="2025-10-20T23:26:30" time="1.434" tests="1">
+    <testcase classname="Forms-Settings [C0074] muestra opciones de configuración visibles en el DOM" name="Forms-Settings [C0074] muestra opciones de configuración visibles en el DOM" time="0.3">
+    </testcase>
+  </testsuite>
+  <testsuite name="BaseModal" errors="0" failures="0" skipped="0" timestamp="2025-10-20T23:26:32" time="1.154" tests="2">
+    <testcase classname="BaseModal [C0011] Muestra título y contenido cuando está visible" name="BaseModal [C0011] Muestra título y contenido cuando está visible" time="0.046">
+    </testcase>
+    <testcase classname="BaseModal [C0012] Cuando no muestra contenido" name="BaseModal [C0012] Cuando no muestra contenido" time="0.009">
+    </testcase>
+  </testsuite>
+  <testsuite name="AppSideBar" errors="0" failures="0" skipped="0" timestamp="2025-10-20T23:26:33" time="1.793" tests="2">
+    <testcase classname="AppSideBar [C0009] Al hacer click en Ayuda cambia la selección y llama onSelect(&apos;5&apos;)" name="AppSideBar [C0009] Al hacer click en Ayuda cambia la selección y llama onSelect(&apos;5&apos;)" time="0.305">
+    </testcase>
+    <testcase classname="AppSideBar [C0010] al hacer click en Cerrar sesión llama navigate(&apos;/&apos;)" name="AppSideBar [C0010] al hacer click en Cerrar sesión llama navigate(&apos;/&apos;)" time="0.194">
+    </testcase>
+  </testsuite>
+  <testsuite name="CreateFromExcelPage" errors="0" failures="0" skipped="0" timestamp="2025-10-20T23:26:35" time="1.57" tests="2">
+    <testcase classname="CreateFromExcelPage [C0182] El botón cargar está deshabilitado inicialmente" name="CreateFromExcelPage [C0182] El botón cargar está deshabilitado inicialmente" time="0.183">
+    </testcase>
+    <testcase classname="CreateFromExcelPage [C0183] Muestra título de sección para subir Excel" name="CreateFromExcelPage [C0183] Muestra título de sección para subir Excel" time="0.028">
+    </testcase>
+  </testsuite>
+  <testsuite name="ExportProcessPage" errors="0" failures="0" skipped="0" timestamp="2025-10-20T23:26:37" time="1.416" tests="1">
+    <testcase classname="ExportProcessPage [C0187] muestra columnas principales" name="ExportProcessPage [C0187] muestra columnas principales" time="0.147">
+    </testcase>
+  </testsuite>
+  <testsuite name="DevicesTable" errors="0" failures="0" skipped="0" timestamp="2025-10-20T23:26:38" time="1.649" tests="1">
+    <testcase classname="DevicesTable [C0068] El ID desplegado es un link y llama onIdClick" name="DevicesTable [C0068] El ID desplegado es un link y llama onIdClick" time="0.347">
+    </testcase>
+  </testsuite>
+  <testsuite name="DuplicateFormModal" errors="0" failures="0" skipped="0" timestamp="2025-10-20T23:26:40" time="1.851" tests="1">
+    <testcase classname="DuplicateFormModal [C0046] muestra título y botones; dispara onCancel" name="DuplicateFormModal [C0046] muestra título y botones; dispara onCancel" time="0.191">
+    </testcase>
+  </testsuite>
+  <testsuite name="FormAssignmentPage" errors="0" failures="0" skipped="0" timestamp="2025-10-20T23:26:42" time="1.479" tests="1">
+    <testcase classname="FormAssignmentPage [C0188] renderiza contenedor principal (labels y botón)" name="FormAssignmentPage [C0188] renderiza contenedor principal (labels y botón)" time="0.426">
+    </testcase>
+  </testsuite>
+  <testsuite name="FormElementList" errors="0" failures="0" skipped="0" timestamp="2025-10-20T23:26:43" time="1.465" tests="1">
+    <testcase classname="FormElementList [C0073] Se renderiza lista de elementos (Texto, Dato, Niveles)" name="FormElementList [C0073] Se renderiza lista de elementos (Texto, Dato, Niveles)" time="0.159">
+    </testcase>
+  </testsuite>
+  <testsuite name="ApprovalRoutesPage" errors="0" failures="0" skipped="0" timestamp="2025-10-20T23:26:45" time="1.627" tests="1">
+    <testcase classname="ApprovalRoutesPage [C0179] renderiza la tabla de rutas con columnas básicas" name="ApprovalRoutesPage [C0179] renderiza la tabla de rutas con columnas básicas" time="0.265">
+    </testcase>
+  </testsuite>
+  <testsuite name="EditFieldModal" errors="0" failures="0" skipped="0" timestamp="2025-10-20T23:26:47" time="1.849" tests="1">
+    <testcase classname="EditFieldModal [C0072] Muestra dialog con visible" name="EditFieldModal [C0072] Muestra dialog con visible" time="0.422">
+    </testcase>
+  </testsuite>
+  <testsuite name="PageEditModal" errors="0" failures="0" skipped="0" timestamp="2025-10-20T23:26:49" time="1.684" tests="1">
+    <testcase classname="PageEditModal [C0075] Renderizar diálogo al editar página (shape PaginaAPI)" name="PageEditModal [C0075] Renderizar diálogo al editar página (shape PaginaAPI)" time="0.258">
+    </testcase>
+  </testsuite>
+  <testsuite name="DevicesListPage" errors="0" failures="0" skipped="0" timestamp="2025-10-20T23:26:50" time="1.882" tests="1">
+    <testcase classname="DevicesListPage [C0186] existe una tabla de dispositivos o filtros" name="DevicesListPage [C0186] existe una tabla de dispositivos o filtros" time="0.326">
+    </testcase>
+  </testsuite>
+  <testsuite name="AppHeader" errors="0" failures="0" skipped="0" timestamp="2025-10-20T23:26:52" time="1.927" tests="2">
+    <testcase classname="AppHeader [C0007] Muestra el título recibido y el icono" name="AppHeader [C0007] Muestra el título recibido y el icono" time="0.097">
+    </testcase>
+    <testcase classname="AppHeader [C0008] Llamada a onToggle" name="AppHeader [C0008] Llamada a onToggle" time="0.099">
+    </testcase>
+  </testsuite>
+  <testsuite name="UserTable" errors="0" failures="0" skipped="0" timestamp="2025-10-20T23:26:54" time="1.81" tests="1">
+    <testcase classname="UserTable [C0071] Renderizar una tabla" name="UserTable [C0071] Renderizar una tabla" time="0.224">
+    </testcase>
+  </testsuite>
+  <testsuite name="useFormsListsData" errors="0" failures="0" skipped="0" timestamp="2025-10-20T23:26:56" time="1.627" tests="8">
+    <testcase classname="useFormsListsData [C0129] combina categorías y formularios correctamente" name="useFormsListsData [C0129] combina categorías y formularios correctamente" time="0.079">
+    </testcase>
+    <testcase classname="useFormsListsData [C0130] ignora formularios sin categoría" name="useFormsListsData [C0130] ignora formularios sin categoría" time="0.061">
+    </testcase>
+    <testcase classname="useFormsListsData [C0131] formatea fechas correctamente" name="useFormsListsData [C0131] formatea fechas correctamente" time="0.075">
+    </testcase>
+    <testcase classname="useFormsListsData [C0132] maneja estado de loading" name="useFormsListsData [C0132] maneja estado de loading" time="0.2">
+    </testcase>
+    <testcase classname="useFormsListsData [C0133] retorna array vacío cuando no hay datos" name="useFormsListsData [C0133] retorna array vacío cuando no hay datos" time="0.013">
+    </testcase>
+    <testcase classname="useFormsListsData [C0134] mapea correctamente las propiedades del formulario" name="useFormsListsData [C0134] mapea correctamente las propiedades del formulario" time="0.076">
+    </testcase>
+    <testcase classname="useFormsListsData [C0135] no refetch en focus por defecto" name="useFormsListsData [C0135] no refetch en focus por defecto" time="0.123">
+    </testcase>
+    <testcase classname="useFormsListsData [C0136] categorías vacías se mantienen en el resultado" name="useFormsListsData [C0136] categorías vacías se mantienen en el resultado" time="0.092">
+    </testcase>
+  </testsuite>
+  <testsuite name="DataSourceModal" errors="0" failures="0" skipped="0" timestamp="2025-10-20T23:26:58" time="1.888" tests="1">
+    <testcase classname="DataSourceModal [C0117] Renderiza al estar visible" name="DataSourceModal [C0117] Renderiza al estar visible" time="0.346">
+    </testcase>
+  </testsuite>
+  <testsuite name="PhoneMockup" errors="0" failures="0" skipped="0" timestamp="2025-10-20T23:27:00" time="1.847" tests="1">
+    <testcase classname="PhoneMockup [C0076] renderiza encabezado con título de la página" name="PhoneMockup [C0076] renderiza encabezado con título de la página" time="0.087">
+    </testcase>
+  </testsuite>
+  <testsuite name="CategoryTables" errors="0" failures="0" skipped="0" timestamp="2025-10-20T23:27:02" time="1.653" tests="2">
+    <testcase classname="CategoryTables [C0018] Renderiza encabezados de categorías y muestra filas al expandir" name="CategoryTables [C0018] Renderiza encabezados de categorías y muestra filas al expandir" time="0.29">
+    </testcase>
+    <testcase classname="CategoryTables [C0019] Soporta lista vacía sin crashear" name="CategoryTables [C0019] Soporta lista vacía sin crashear" time="0.059">
+    </testcase>
+  </testsuite>
+  <testsuite name="LoginPage" errors="0" failures="0" skipped="0" timestamp="2025-10-20T23:27:03" time="1.733" tests="1">
+    <testcase classname="LoginPage [C0178] renderiza el formulario de login" name="LoginPage [C0178] renderiza el formulario de login" time="0.249">
+    </testcase>
+  </testsuite>
+  <testsuite name="FormAssignmentFeature" errors="0" failures="0" skipped="0" timestamp="2025-10-20T23:27:05" time="1.787" tests="1">
+    <testcase classname="FormAssignmentFeature [C0119] renderiza campos principales del formulario" name="FormAssignmentFeature [C0119] renderiza campos principales del formulario" time="0.303">
+    </testcase>
+  </testsuite>
+  <testsuite name="FlatTables" errors="0" failures="0" skipped="0" timestamp="2025-10-20T23:27:07" time="1.204" tests="1">
+    <testcase classname="FlatTables [C0070] Aplanar categorías y ocultar categorías vacías" name="FlatTables [C0070] Aplanar categorías y ocultar categorías vacías" time="0.102">
+    </testcase>
+  </testsuite>
+  <testsuite name="Data Sources data" errors="0" failures="0" skipped="0" timestamp="2025-10-20T23:27:08" time="1.216" tests="25">
+    <testcase classname="Data Sources data categories [C0020] contiene categorías Local y Externa" name="Data Sources data categories [C0020] contiene categorías Local y Externa" time="0.002">
+    </testcase>
+    <testcase classname="Data Sources data categories [C0021] categorías están definidas con estructura correcta" name="Data Sources data categories [C0021] categorías están definidas con estructura correcta" time="0.001">
+    </testcase>
+    <testcase classname="Data Sources data categories [C0022] categoría Local tiene key &apos;local&apos;" name="Data Sources data categories [C0022] categoría Local tiene key &apos;local&apos;" time="0.001">
+    </testcase>
+    <testcase classname="Data Sources data categories [C0023] categoría Externa tiene key &apos;externa&apos;" name="Data Sources data categories [C0023] categoría Externa tiene key &apos;externa&apos;" time="0">
+    </testcase>
+    <testcase classname="Data Sources data getColumns [C0024] retorna array de columnas" name="Data Sources data getColumns [C0024] retorna array de columnas" time="0.001">
+    </testcase>
+    <testcase classname="Data Sources data getColumns [C0025] primera columna tiene botón de acciones" name="Data Sources data getColumns [C0025] primera columna tiene botón de acciones" time="0.001">
+    </testcase>
+    <testcase classname="Data Sources data getColumns [C0026] columna Código tiene filtros cuando hay items" name="Data Sources data getColumns [C0026] columna Código tiene filtros cuando hay items" time="0.001">
+    </testcase>
+    <testcase classname="Data Sources data getColumns [C0027] columna Descripción tiene sorter" name="Data Sources data getColumns [C0027] columna Descripción tiene sorter" time="0">
+    </testcase>
+    <testcase classname="Data Sources data getColumns [C0028] tiene columnas Campo1 a Campo10" name="Data Sources data getColumns [C0028] tiene columnas Campo1 a Campo10" time="0.001">
+    </testcase>
+    <testcase classname="Data Sources data getColumns [C0029] render de columna actions incluye iconos de editar y eliminar" name="Data Sources data getColumns [C0029] render de columna actions incluye iconos de editar y eliminar" time="0">
+    </testcase>
+    <testcase classname="Data Sources data getColumns [C0030] todas las columnas tienen keys únicos" name="Data Sources data getColumns [C0030] todas las columnas tienen keys únicos" time="0.001">
+    </testcase>
+    <testcase classname="Data Sources data getColumns [C0031] columnas tienen los títulos correctos" name="Data Sources data getColumns [C0031] columnas tienen los títulos correctos" time="0.002">
+    </testcase>
+    <testcase classname="Data Sources data getColumns [C0032] columnas con ellipsis están configuradas correctamente" name="Data Sources data getColumns [C0032] columnas con ellipsis están configuradas correctamente" time="0.001">
+    </testcase>
+    <testcase classname="Data Sources data getColumns [C0033] columnas tienen anchos específicos donde se requiere" name="Data Sources data getColumns [C0033] columnas tienen anchos específicos donde se requiere" time="0.001">
+    </testcase>
+    <testcase classname="Data Sources data getColumns [C0034] respeta sortedInfo para columnas ordenables" name="Data Sources data getColumns [C0034] respeta sortedInfo para columnas ordenables" time="0">
+    </testcase>
+    <testcase classname="Data Sources data getColumns [C0035] respeta filteredInfo para columnas filtrables" name="Data Sources data getColumns [C0035] respeta filteredInfo para columnas filtrables" time="0.001">
+    </testcase>
+    <testcase classname="Data Sources data getColumns [C0036] onFilter funciona correctamente en columna código" name="Data Sources data getColumns [C0036] onFilter funciona correctamente en columna código" time="0">
+    </testcase>
+    <testcase classname="Data Sources data getColumns [C0037] sorter de descripción ordena alfabéticamente" name="Data Sources data getColumns [C0037] sorter de descripción ordena alfabéticamente" time="0.009">
+    </testcase>
+    <testcase classname="Data Sources data getColumns [C0038] columnas Campo tienen filteredValue y sortOrder" name="Data Sources data getColumns [C0038] columnas Campo tienen filteredValue y sortOrder" time="0.001">
+    </testcase>
+    <testcase classname="Data Sources data getColumns [C0039] sorter de código funciona correctamente" name="Data Sources data getColumns [C0039] sorter de código funciona correctamente" time="0">
+    </testcase>
+    <testcase classname="Data Sources data getColumns [C0040] columna código tiene ellipsis y width" name="Data Sources data getColumns [C0040] columna código tiene ellipsis y width" time="0">
+    </testcase>
+    <testcase classname="Data Sources data getColumns [C0041] columna descripción tiene ellipsis y width" name="Data Sources data getColumns [C0041] columna descripción tiene ellipsis y width" time="0.001">
+    </testcase>
+    <testcase classname="Data Sources data getColumns [C0042] todas las columnas Campo tienen dataIndex correcto" name="Data Sources data getColumns [C0042] todas las columnas Campo tienen dataIndex correcto" time="0.002">
+    </testcase>
+    <testcase classname="Data Sources data getColumns [C0043] columna actions tiene align center" name="Data Sources data getColumns [C0043] columna actions tiene align center" time="0">
+    </testcase>
+    <testcase classname="Data Sources data getColumns [C0044] callbacks se pasan correctamente a getColumns" name="Data Sources data getColumns [C0044] callbacks se pasan correctamente a getColumns" time="0.001">
+    </testcase>
+  </testsuite>
+  <testsuite name="DashboardPage" errors="0" failures="0" skipped="0" timestamp="2025-10-20T23:27:10" time="1.129" tests="1">
+    <testcase classname="DashboardPage [C0184] renderiza sin errores y muestra al menos un chart" name="DashboardPage [C0184] renderiza sin errores y muestra al menos un chart" time="0.009">
+    </testcase>
+  </testsuite>
+  <testsuite name="auth.service" errors="0" failures="0" skipped="0" timestamp="2025-10-20T23:27:11" time="0.777" tests="11">
+    <testcase classname="auth.service loginUser [C0165] realiza login exitoso y retorna AuthResponse" name="auth.service loginUser [C0165] realiza login exitoso y retorna AuthResponse" time="0.001">
+    </testcase>
+    <testcase classname="auth.service loginUser [C0166] lanza error cuando las credenciales son incorrectas" name="auth.service loginUser [C0166] lanza error cuando las credenciales son incorrectas" time="0.005">
+    </testcase>
+    <testcase classname="auth.service refreshToken [C0167] refresca el token exitosamente" name="auth.service refreshToken [C0167] refresca el token exitosamente" time="0.001">
+    </testcase>
+    <testcase classname="auth.service refreshToken [C0168] lanza error cuando el refresh token es inválido" name="auth.service refreshToken [C0168] lanza error cuando el refresh token es inválido" time="0.001">
+    </testcase>
+    <testcase classname="auth.service logoutUser [C0169] realiza logout exitosamente" name="auth.service logoutUser [C0169] realiza logout exitosamente" time="0.001">
+    </testcase>
+    <testcase classname="auth.service logoutUser [C0170] maneja error en logout" name="auth.service logoutUser [C0170] maneja error en logout" time="0.001">
+    </testcase>
+    <testcase classname="auth.service API instance [C0171] api está definido y tiene métodos" name="auth.service API instance [C0171] api está definido y tiene métodos" time="0.001">
+    </testcase>
+    <testcase classname="auth.service API instance [C0172] api.post es una función mock" name="auth.service API instance [C0172] api.post es una función mock" time="0.001">
+    </testcase>
+    <testcase classname="auth.service API instance [C0173] puede mockear api.post para llamadas directas" name="auth.service API instance [C0173] puede mockear api.post para llamadas directas" time="0.001">
+    </testcase>
+    <testcase classname="auth.service localStorage token management [C0174] puede guardar y recuperar access_token" name="auth.service localStorage token management [C0174] puede guardar y recuperar access_token" time="0.001">
+    </testcase>
+    <testcase classname="auth.service localStorage token management [C0175] puede limpiar tokens" name="auth.service localStorage token management [C0175] puede limpiar tokens" time="0">
+    </testcase>
+  </testsuite>
+  <testsuite name="App" errors="0" failures="0" skipped="0" timestamp="2025-10-20T23:27:12" time="0.894" tests="6">
+    <testcase classname="App [C0001] renderiza sin errores" name="App [C0001] renderiza sin errores" time="0.006">
+    </testcase>
+    <testcase classname="App [C0002] muestra LoginPage en ruta raíz" name="App [C0002] muestra LoginPage en ruta raíz" time="0.029">
+    </testcase>
+    <testcase classname="App [C0003] muestra HomePage en ruta /home" name="App [C0003] muestra HomePage en ruta /home" time="0.005">
+    </testcase>
+    <testcase classname="App [C0004] redirige a / para rutas no existentes" name="App [C0004] redirige a / para rutas no existentes" time="0.014">
+    </testcase>
+    <testcase classname="App [C0005] incluye AuthProvider en la jerarquía" name="App [C0005] incluye AuthProvider en la jerarquía" time="0.015">
+    </testcase>
+    <testcase classname="App [C0006] estructura de rutas está correcta" name="App [C0006] estructura de rutas está correcta" time="0.006">
+    </testcase>
+  </testsuite>
+  <testsuite name="pages.services" errors="0" failures="0" skipped="0" timestamp="2025-10-20T23:27:13" time="0.796" tests="10">
+    <testcase classname="pages.services getPaginas [C0105] obtiene todas las páginas sin filtro" name="pages.services getPaginas [C0105] obtiene todas las páginas sin filtro" time="0.001">
+    </testcase>
+    <testcase classname="pages.services getPaginas [C0106] obtiene páginas filtradas por formulario" name="pages.services getPaginas [C0106] obtiene páginas filtradas por formulario" time="0.001">
+    </testcase>
+    <testcase classname="pages.services getPaginas [C0107] respeta la señal de abort" name="pages.services getPaginas [C0107] respeta la señal de abort" time="0">
+    </testcase>
+    <testcase classname="pages.services getPaginas [C0108] normaliza correctamente la respuesta del backend" name="pages.services getPaginas [C0108] normaliza correctamente la respuesta del backend" time="0">
+    </testcase>
+    <testcase classname="pages.services getPaginas [C0109] filtra páginas según formId cuando el backend no lo hace" name="pages.services getPaginas [C0109] filtra páginas según formId cuando el backend no lo hace" time="0.001">
+    </testcase>
+    <testcase classname="pages.services createPagina [C0110] crea página con bump=true por defecto" name="pages.services createPagina [C0110] crea página con bump=true por defecto" time="0.001">
+    </testcase>
+    <testcase classname="pages.services createPagina [C0111] crea página con bump=false cuando se especifica" name="pages.services createPagina [C0111] crea página con bump=false cuando se especifica" time="0.001">
+    </testcase>
+    <testcase classname="pages.services createPagina [C0112] maneja respuesta plana del backend y la normaliza" name="pages.services createPagina [C0112] maneja respuesta plana del backend y la normaliza" time="0.001">
+    </testcase>
+    <testcase classname="pages.services createPagina [C0113] lanza error cuando la respuesta es inesperada" name="pages.services createPagina [C0113] lanza error cuando la respuesta es inesperada" time="0.006">
+    </testcase>
+    <testcase classname="pages.services createPagina [C0114] respeta la señal de abort" name="pages.services createPagina [C0114] respeta la señal de abort" time="0.001">
+    </testcase>
+  </testsuite>
+  <testsuite name="categories.service" errors="0" failures="0" skipped="0" timestamp="2025-10-20T23:27:13" time="0.798" tests="4">
+    <testcase classname="categories.service getCategorias [C0149] obtiene lista de categorías exitosamente" name="categories.service getCategorias [C0149] obtiene lista de categorías exitosamente" time="0.001">
+    </testcase>
+    <testcase classname="categories.service getCategorias [C0150] retorna array vacío cuando no hay categorías" name="categories.service getCategorias [C0150] retorna array vacío cuando no hay categorías" time="0.001">
+    </testcase>
+    <testcase classname="categories.service getCategorias [C0151] maneja error de red" name="categories.service getCategorias [C0151] maneja error de red" time="0.002">
+    </testcase>
+    <testcase classname="categories.service getCategorias [C0152] cada categoría tiene la estructura correcta" name="categories.service getCategorias [C0152] cada categoría tiene la estructura correcta" time="0">
+    </testcase>
+  </testsuite>
+  <testsuite name="CreateFormsPage" errors="0" failures="0" skipped="0" timestamp="2025-10-20T23:27:14" time="0.863" tests="1">
+    <testcase classname="CreateFormsPage [C0181] se monta la página y renderiza el feature" name="CreateFormsPage [C0181] se monta la página y renderiza el feature" time="0.004">
+    </testcase>
+  </testsuite>
+  <testsuite name="useCategorias hooks" errors="0" failures="0" skipped="0" timestamp="2025-10-20T23:27:15" time="0.893" tests="9">
+    <testcase classname="useCategorias hooks useCategorias [C0120] hook existe y es una función" name="useCategorias hooks useCategorias [C0120] hook existe y es una función" time="0.001">
+    </testcase>
+    <testcase classname="useCategorias hooks useCategorias [C0121] puede ser mockeado para retornar datos" name="useCategorias hooks useCategorias [C0121] puede ser mockeado para retornar datos" time="0.001">
+    </testcase>
+    <testcase classname="useCategorias hooks useCategorias [C0122] puede simular estado de loading" name="useCategorias hooks useCategorias [C0122] puede simular estado de loading" time="0">
+    </testcase>
+    <testcase classname="useCategorias hooks useCategorias [C0123] puede simular estado de error" name="useCategorias hooks useCategorias [C0123] puede simular estado de error" time="0.001">
+    </testcase>
+    <testcase classname="useCategorias hooks useCreateCategoria [C0124] hook existe y es una función" name="useCategorias hooks useCreateCategoria [C0124] hook existe y es una función" time="0.001">
+    </testcase>
+    <testcase classname="useCategorias hooks useCreateCategoria [C0125] puede ser mockeado con estructura correcta" name="useCategorias hooks useCreateCategoria [C0125] puede ser mockeado con estructura correcta" time="0.001">
+    </testcase>
+    <testcase classname="useCategorias hooks useCreateCategoria [C0126] mutate puede ser llamado" name="useCategorias hooks useCreateCategoria [C0126] mutate puede ser llamado" time="0">
+    </testcase>
+    <testcase classname="useCategorias hooks useCreateCategoria [C0127] puede simular estado de éxito" name="useCategorias hooks useCreateCategoria [C0127] puede simular estado de éxito" time="0.001">
+    </testcase>
+    <testcase classname="useCategorias hooks useCreateCategoria [C0128] puede simular estado de error" name="useCategorias hooks useCreateCategoria [C0128] puede simular estado de error" time="0">
+    </testcase>
+  </testsuite>
+  <testsuite name="campos.services" errors="0" failures="0" skipped="0" timestamp="2025-10-20T23:27:16" time="0.862" tests="13">
+    <testcase classname="campos.services postCampoActualSingle [C0092] envía un campo exitosamente" name="campos.services postCampoActualSingle [C0092] envía un campo exitosamente" time="0.001">
+    </testcase>
+    <testcase classname="campos.services postCampoActualSingle [C0093] sanitiza valores undefined a null" name="campos.services postCampoActualSingle [C0093] sanitiza valores undefined a null" time="0">
+    </testcase>
+    <testcase classname="campos.services postCampoActualSingle [C0094] lanza error cuando pageId está vacío" name="campos.services postCampoActualSingle [C0094] lanza error cuando pageId está vacío" time="0.005">
+    </testcase>
+    <testcase classname="campos.services postCampoActualSingle [C0095] respeta la señal de abort" name="campos.services postCampoActualSingle [C0095] respeta la señal de abort" time="0">
+    </testcase>
+    <testcase classname="campos.services postCampoActualSingle [C0096] maneja error con status y detail del backend" name="campos.services postCampoActualSingle [C0096] maneja error con status y detail del backend" time="0">
+    </testcase>
+    <testcase classname="campos.services postCampoActualSingle [C0097] maneja error con mensaje de texto plano" name="campos.services postCampoActualSingle [C0097] maneja error con mensaje de texto plano" time="0">
+    </testcase>
+    <testcase classname="campos.services postCampoActualSingle [C0098] retorna null cuando no hay body en la respuesta" name="campos.services postCampoActualSingle [C0098] retorna null cuando no hay body en la respuesta" time="0">
+    </testcase>
+    <testcase classname="campos.services postCamposActualBatch [C0099] envía múltiples campos exitosamente" name="campos.services postCamposActualBatch [C0099] envía múltiples campos exitosamente" time="0.001">
+    </testcase>
+    <testcase classname="campos.services postCamposActualBatch [C0100] maneja errores parciales en batch" name="campos.services postCamposActualBatch [C0100] maneja errores parciales en batch" time="0.001">
+    </testcase>
+    <testcase classname="campos.services postCamposActualBatch [C0101] retorna todos los errores cuando todos fallan" name="campos.services postCamposActualBatch [C0101] retorna todos los errores cuando todos fallan" time="0.001">
+    </testcase>
+    <testcase classname="campos.services postCamposActualBatch [C0102] maneja array vacío sin errores" name="campos.services postCamposActualBatch [C0102] maneja array vacío sin errores" time="0.001">
+    </testcase>
+    <testcase classname="campos.services postCamposActualBatch [C0103] respeta la señal de abort en batch" name="campos.services postCamposActualBatch [C0103] respeta la señal de abort en batch" time="0.001">
+    </testcase>
+    <testcase classname="campos.services postCamposActualBatch [C0104] continúa procesando después de un error" name="campos.services postCamposActualBatch [C0104] continúa procesando después de un error" time="0">
+    </testcase>
+  </testsuite>
+  <testsuite name="forms-services" errors="0" failures="0" skipped="0" timestamp="2025-10-20T23:27:17" time="1.083" tests="12">
+    <testcase classname="forms-services getFormularios [C0153] obtiene lista de formularios exitosamente" name="forms-services getFormularios [C0153] obtiene lista de formularios exitosamente" time="0.001">
+    </testcase>
+    <testcase classname="forms-services getFormularios [C0154] maneja error al obtener formularios" name="forms-services getFormularios [C0154] maneja error al obtener formularios" time="0.004">
+    </testcase>
+    <testcase classname="forms-services createFormulario [C0155] crea formulario exitosamente" name="forms-services createFormulario [C0155] crea formulario exitosamente" time="0">
+    </testcase>
+    <testcase classname="forms-services createFormulario [C0156] respeta la señal de abort" name="forms-services createFormulario [C0156] respeta la señal de abort" time="0">
+    </testcase>
+    <testcase classname="forms-services getFormularioById [C0157] obtiene formulario por ID exitosamente" name="forms-services getFormularioById [C0157] obtiene formulario por ID exitosamente" time="0.001">
+    </testcase>
+    <testcase classname="forms-services deleteFormulario [C0158] elimina formulario exitosamente" name="forms-services deleteFormulario [C0158] elimina formulario exitosamente" time="0">
+    </testcase>
+    <testcase classname="forms-services duplicateFormulario [C0159] duplica formulario exitosamente" name="forms-services duplicateFormulario [C0159] duplica formulario exitosamente" time="0">
+    </testcase>
+    <testcase classname="forms-services crearAsignacion [C0160] crea asignación exitosamente" name="forms-services crearAsignacion [C0160] crea asignación exitosamente" time="0.005">
+    </testcase>
+    <testcase classname="forms-services crearAsignacion [C0161] maneja error al crear asignación" name="forms-services crearAsignacion [C0161] maneja error al crear asignación" time="0.001">
+    </testcase>
+    <testcase classname="forms-services crearAsignacionMultipleUsuarios [C0162] crea asignaciones para múltiples usuarios exitosamente" name="forms-services crearAsignacionMultipleUsuarios [C0162] crea asignaciones para múltiples usuarios exitosamente" time="0.001">
+    </testcase>
+    <testcase classname="forms-services crearAsignacionMultipleUsuarios [C0163] maneja errores parciales en asignaciones múltiples" name="forms-services crearAsignacionMultipleUsuarios [C0163] maneja errores parciales en asignaciones múltiples" time="0.003">
+    </testcase>
+    <testcase classname="forms-services crearAsignacionMultipleUsuarios [C0164] retorna todos los errores cuando todas las asignaciones fallan" name="forms-services crearAsignacionMultipleUsuarios [C0164] retorna todos los errores cuando todas las asignaciones fallan" time="0.002">
+    </testcase>
+  </testsuite>
+</testsuites>

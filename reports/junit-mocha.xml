@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuites name="Mocha Suite" time="0.875" tests="50" failures="0">
+  <testsuite name="Root Suite" timestamp="2025-10-20T23:28:53" tests="0" time="0.000" failures="0">
+  </testsuite>
+  <testsuite name="Accesibilidad mínima" timestamp="2025-10-20T23:28:53" tests="4" file="C:\Users\mague\Downloads\santa-ana-agroforms\mocha_tests\mocha\accessibility.spec.tsx" time="0.257" failures="0">
+    <testcase name="Accesibilidad mínima [C0194] AppHeader tiene role banner" time="0.216" classname="[C0194] AppHeader tiene role banner">
+    </testcase>
+    <testcase name="Accesibilidad mínima [C0195] links accesibles" time="0.012" classname="[C0195] links accesibles">
+    </testcase>
+    <testcase name="Accesibilidad mínima [C0196] botones visibles" time="0.010" classname="[C0196] botones visibles">
+    </testcase>
+    <testcase name="Accesibilidad mínima [C0197] título se renderiza" time="0.010" classname="[C0197] título se renderiza">
+    </testcase>
+  </testsuite>
+  <testsuite name="Components render" timestamp="2025-10-20T23:28:53" tests="8" file="C:\Users\mague\Downloads\santa-ana-agroforms\mocha_tests\mocha\components.spec.tsx" time="0.249" failures="0">
+    <testcase name="Components render [C0198] AppHeader renderiza sin crashear" time="0.050" classname="[C0198] AppHeader renderiza sin crashear">
+    </testcase>
+    <testcase name="Components render [C0199] AppSideBar renderiza menú" time="0.060" classname="[C0199] AppSideBar renderiza menú">
+    </testcase>
+    <testcase name="Components render [C0200] BaseModal acepta children" time="0.067" classname="[C0200] BaseModal acepta children">
+    </testcase>
+    <testcase name="Components render [C0201] LoginCard renderiza formulario" time="0.062" classname="[C0201] LoginCard renderiza formulario">
+    </testcase>
+    <testcase name="Components render [C0202] UserTable exporta componente" time="0.000" classname="[C0202] UserTable exporta componente">
+    </testcase>
+    <testcase name="Components render [C0203] FlatTables exporta componente" time="0.000" classname="[C0203] FlatTables exporta componente">
+    </testcase>
+    <testcase name="Components render [C0204] DeviceTables exporta componente" time="0.000" classname="[C0204] DeviceTables exporta componente">
+    </testcase>
+    <testcase name="Components render [C0205] CategoryTables exporta componente" time="0.000" classname="[C0205] CategoryTables exporta componente">
+    </testcase>
+  </testsuite>
+  <testsuite name="Features export" timestamp="2025-10-20T23:28:54" tests="6" file="C:\Users\mague\Downloads\santa-ana-agroforms\mocha_tests\mocha\features.spec.tsx" time="0.018" failures="0">
+    <testcase name="Features export [C0212] Feature[0] (../../src/features/create-forms) puede ser importado" time="0.002" classname="[C0212] Feature[0] (../../src/features/create-forms) puede ser importado">
+    </testcase>
+    <testcase name="Features export [C0213] Feature[1] (../../src/features/data-sources) puede ser importado" time="0.001" classname="[C0213] Feature[1] (../../src/features/data-sources) puede ser importado">
+    </testcase>
+    <testcase name="Features export [C0214] Feature[2] (../../src/features/devices-list) puede ser importado" time="0.004" classname="[C0214] Feature[2] (../../src/features/devices-list) puede ser importado">
+    </testcase>
+    <testcase name="Features export [C0215] Feature[3] (../../src/features/forms-list) puede ser importado" time="0.003" classname="[C0215] Feature[3] (../../src/features/forms-list) puede ser importado">
+    </testcase>
+    <testcase name="Features export [C0216] Feature[4] (../../src/features/users-list) puede ser importado" time="0.003" classname="[C0216] Feature[4] (../../src/features/users-list) puede ser importado">
+    </testcase>
+    <testcase name="Features export [C0217] Al menos un feature se puede verificar" time="0.000" classname="[C0217] Al menos un feature se puede verificar">
+    </testcase>
+  </testsuite>
+  <testsuite name="Integración básica" timestamp="2025-10-20T23:28:54" tests="2" file="C:\Users\mague\Downloads\santa-ana-agroforms\mocha_tests\mocha\integration.spec.tsx" time="0.068" failures="0">
+    <testcase name="Integración básica [C0206] componentes React se renderizan sin errores" time="0.065" classname="[C0206] componentes React se renderizan sin errores">
+    </testcase>
+    <testcase name="Integración básica [C0207] variables de entorno están configuradas correctamente" time="0.001" classname="[C0207] variables de entorno están configuradas correctamente">
+    </testcase>
+  </testsuite>
+  <testsuite name="lib/queryClient" timestamp="2025-10-20T23:28:54" tests="4" file="C:\Users\mague\Downloads\santa-ana-agroforms\mocha_tests\mocha\lib.queryClient.spec.tsx" time="0.004" failures="0">
+    <testcase name="lib/queryClient [C0208] exporta instancia" time="0.000" classname="[C0208] exporta instancia">
+    </testcase>
+    <testcase name="lib/queryClient [C0209] tiene métodos básicos" time="0.001" classname="[C0209] tiene métodos básicos">
+    </testcase>
+    <testcase name="lib/queryClient [C0210] permite set/get" time="0.003" classname="[C0210] permite set/get">
+    </testcase>
+    <testcase name="lib/queryClient [C0211] clear cache" time="0.000" classname="[C0211] clear cache">
+    </testcase>
+  </testsuite>
+  <testsuite name="Pages export &amp; render básico" timestamp="2025-10-20T23:28:54" tests="3" file="C:\Users\mague\Downloads\santa-ana-agroforms\mocha_tests\mocha\pages.spec.tsx" time="0.008" failures="0">
+    <testcase name="Pages export &amp; render básico [C0218] LoginPage exporta función" time="0.000" classname="[C0218] LoginPage exporta función">
+    </testcase>
+    <testcase name="Pages export &amp; render básico [C0219] LoginPage tiene componente válido" time="0.000" classname="[C0219] LoginPage tiene componente válido">
+    </testcase>
+    <testcase name="Pages export &amp; render básico [C0220] Otras páginas pueden ser importadas" time="0.007" classname="[C0220] Otras páginas pueden ser importadas">
+    </testcase>
+  </testsuite>
+  <testsuite name="Regresión básica" timestamp="2025-10-20T23:28:54" tests="2" file="C:\Users\mague\Downloads\santa-ana-agroforms\mocha_tests\mocha\regression.basic.spec.tsx" time="0.000" failures="0">
+    <testcase name="Regresión básica [C0221] Math y utilidades" time="0.000" classname="[C0221] Math y utilidades">
+    </testcase>
+    <testcase name="Regresión básica [C0222] Strings" time="0.000" classname="[C0222] Strings">
+    </testcase>
+  </testsuite>
+  <testsuite name="Routing básico" timestamp="2025-10-20T23:28:54" tests="4" file="C:\Users\mague\Downloads\santa-ana-agroforms\mocha_tests\mocha\routing.spec.tsx" time="0.076" failures="0">
+    <testcase name="Routing básico [C0223] App renderiza" time="0.041" classname="[C0223] App renderiza">
+    </testcase>
+    <testcase name="Routing básico [C0224] incluye layout base" time="0.033" classname="[C0224] incluye layout base">
+    </testcase>
+    <testcase name="Routing básico [C0225] sincrónico" time="0.000" classname="[C0225] sincrónico">
+    </testcase>
+    <testcase name="Routing básico [C0226] placeholder de ruta" time="0.000" classname="[C0226] placeholder de ruta">
+    </testcase>
+  </testsuite>
+  <testsuite name="services/categories (vía axios api base)" timestamp="2025-10-20T23:28:54" tests="5" file="C:\Users\mague\Downloads\santa-ana-agroforms\mocha_tests\mocha\services.categories.spec.tsx" time="0.130" failures="0">
+    <testcase name="services/categories (vía axios api base) [C0227] GET /api/categories/ 200" time="0.023" classname="[C0227] GET /api/categories/ 200">
+    </testcase>
+    <testcase name="services/categories (vía axios api base) [C0228] POST /api/categories/ 201" time="0.027" classname="[C0228] POST /api/categories/ 201">
+    </testcase>
+    <testcase name="services/categories (vía axios api base) [C0229] PUT /api/categories/1 200" time="0.017" classname="[C0229] PUT /api/categories/1 200">
+    </testcase>
+    <testcase name="services/categories (vía axios api base) [C0230] DELETE /api/categories/1 204" time="0.016" classname="[C0230] DELETE /api/categories/1 204">
+    </testcase>
+    <testcase name="services/categories (vía axios api base) [C0231] 404 controlado" time="0.047" classname="[C0231] 404 controlado">
+    </testcase>
+  </testsuite>
+  <testsuite name="services/forms-services api" timestamp="2025-10-20T23:28:54" tests="8" file="C:\Users\mague\Downloads\santa-ana-agroforms\mocha_tests\mocha\services.forms.spec.tsx" time="0.063" failures="0">
+    <testcase name="services/forms-services api [C0232] api tiene baseURL por defecto" time="0.000" classname="[C0232] api tiene baseURL por defecto">
+    </testcase>
+    <testcase name="services/forms-services api  [C0233] interceptor CSRF agrega header cuando método es mutación" time="0.000" classname=" [C0233] interceptor CSRF agrega header cuando método es mutación">
+    </testcase>
+    <testcase name="services/forms-services api [C0234] GET a /formularios (mockeado) devuelve 200" time="0.012" classname="[C0234] GET a /formularios (mockeado) devuelve 200">
+    </testcase>
+    <testcase name="services/forms-services api [C0235] POST a /formularios duplica (mock 201)" time="0.017" classname="[C0235] POST a /formularios duplica (mock 201)">
+    </testcase>
+    <testcase name="services/forms-services api [C0236] maneja error 500" time="0.031" classname="[C0236] maneja error 500">
+    </testcase>
+    <testcase name="services/forms-services api [C0237] headers se pueden configurar" time="0.000" classname="[C0237] headers se pueden configurar">
+    </testcase>
+    <testcase name="services/forms-services api [C0238] no muta headers en métodos GET" time="0.000" classname="[C0238] no muta headers en métodos GET">
+    </testcase>
+    <testcase name="services/forms-services api [C0239] baseURL permite override por env" time="0.000" classname="[C0239] baseURL permite override por env">
+    </testcase>
+  </testsuite>
+  <testsuite name="Smoke de exports" timestamp="2025-10-20T23:28:54" tests="4" file="C:\Users\mague\Downloads\santa-ana-agroforms\mocha_tests\mocha\smoke.exports.spec.tsx" time="0.001" failures="0">
+    <testcase name="Smoke de exports [C0240] services exporta api" time="0.000" classname="[C0240] services exporta api">
+    </testcase>
+    <testcase name="Smoke de exports [C0241] types módulo existe" time="0.000" classname="[C0241] types módulo existe">
+    </testcase>
+    <testcase name="Smoke de exports [C0242] services tiene métodos axios" time="0.001" classname="[C0242] services tiene métodos axios">
+    </testcase>
+    <testcase name="Smoke de exports [C0243] api tiene configuración base" time="0.000" classname="[C0243] api tiene configuración base">
+    </testcase>
+  </testsuite>
+</testsuites>

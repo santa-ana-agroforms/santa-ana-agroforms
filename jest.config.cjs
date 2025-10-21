@@ -1,5 +1,9 @@
 /** @type {import('jest').Config} */
 module.exports = {
+  reporters: [
+    "default",
+    ["jest-junit", { outputDirectory: "reports", outputName: "junit-jest.xml" }],
+  ],
   testEnvironment: "jsdom",
   collectCoverage: true,
   coverageProvider: "v8",

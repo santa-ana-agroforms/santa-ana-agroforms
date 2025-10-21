@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuites name="Selenium" time="137.170" tests="30" failures="0">
+  <testsuite name="" timestamp="2025-10-20T23:43:58" tests="0" time="0.000" failures="0">
+  </testsuite>
+  <testsuite name="Root Suite Selenium Smoke" timestamp="2025-10-20T23:43:58" tests="5" file="C:\Users\mague\Downloads\santa-ana-agroforms\selenium_tests\selenium\specs\smoke.spec.cjs" time="14.511" failures="0">
+    <testcase name="Selenium Smoke [C0294] carga home (login)" time="2.832" classname="[C0294] carga home (login)">
+    </testcase>
+    <testcase name="Selenium Smoke [C0295] tiene botón Entrar (por tipo submit)" time="0.022" classname="[C0295] tiene botón Entrar (por tipo submit)">
+    </testcase>
+    <testcase name="Selenium Smoke [C0296] tiene logo" time="0.018" classname="[C0296] tiene logo">
+    </testcase>
+    <testcase name="Selenium Smoke [C0297] puede hacer login y carga /home" time="8.939" classname="[C0297] puede hacer login y carga /home">
+    </testcase>
+    <testcase name="Selenium Smoke [C0298] sidebar visible en /home" time="0.025" classname="[C0298] sidebar visible en /home">
+    </testcase>
+  </testsuite>
+  <testsuite name="Root Suite Selenium Error Cases" timestamp="2025-10-20T23:44:12" tests="4" file="C:\Users\mague\Downloads\santa-ana-agroforms\selenium_tests\selenium\specs\error_cases.spec.cjs" time="18.486" failures="0">
+    <testcase name="Selenium Error Cases [C0299] Login con credenciales vacías muestra error" time="5.867" classname="[C0299] Login con credenciales vacías muestra error">
+    </testcase>
+    <testcase name="Selenium Error Cases [C0300] Login con solo usuario sin contraseña muestra error" time="5.637" classname="[C0300] Login con solo usuario sin contraseña muestra error">
+    </testcase>
+    <testcase name="Selenium Error Cases [C0301] Navegación a ruta inexistente redirige correctamente" time="2.270" classname="[C0301] Navegación a ruta inexistente redirige correctamente">
+    </testcase>
+    <testcase name="Selenium Error Cases [C0302] Acceso a /home sin login redirige a login" time="3.524" classname="[C0302] Acceso a /home sin login redirige a login">
+    </testcase>
+  </testsuite>
+  <testsuite name="Root Suite Selenium Navegación" timestamp="2025-10-20T23:44:31" tests="6" file="C:\Users\mague\Downloads\santa-ana-agroforms\selenium_tests\selenium\specs\navigation.spec.cjs" time="32.366" failures="0">
+    <testcase name="Selenium Navegación [C0303] menú Dashboard existe" time="0.025" classname="[C0303] menú Dashboard existe">
+    </testcase>
+    <testcase name="Selenium Navegación [C0304] puede hacer click en Dashboard" time="3.573" classname="[C0304] puede hacer click en Dashboard">
+    </testcase>
+    <testcase name="Selenium Navegación [C0305] abre Formularios → Listado" time="4.100" classname="[C0305] abre Formularios → Listado">
+    </testcase>
+    <testcase name="Selenium Navegación [C0306] abre Sesión → Terminales (o Dispositivos/Devices)" time="5.190" classname="[C0306] abre Sesión → Terminales (o Dispositivos/Devices)">
+    </testcase>
+    <testcase name="Selenium Navegación [C0307] abre Sesión → Usuarios/Users" time="5.073" classname="[C0307] abre Sesión → Usuarios/Users">
+    </testcase>
+    <testcase name="Selenium Navegación [C0308] abre Formularios → Fuentes de Datos" time="4.054" classname="[C0308] abre Formularios → Fuentes de Datos">
+    </testcase>
+  </testsuite>
+  <testsuite name="Root Suite Selenium Pages elementos clave" timestamp="2025-10-20T23:45:03" tests="5" file="C:\Users\mague\Downloads\santa-ana-agroforms\selenium_tests\selenium\specs\pages.spec.cjs" time="23.707" failures="0">
+    <testcase name="Selenium Pages elementos clave [C0309] Login tiene inputs" time="0.683" classname="[C0309] Login tiene inputs">
+    </testcase>
+    <testcase name="Selenium Pages elementos clave [C0310] puede hacer login" time="8.923" classname="[C0310] puede hacer login">
+    </testcase>
+    <testcase name="Selenium Pages elementos clave [C0311] Home tiene sidebar" time="0.024" classname="[C0311] Home tiene sidebar">
+    </testcase>
+    <testcase name="Selenium Pages elementos clave [C0312] Dashboard tiene gráficas (canvas/svg si existen)" time="3.590" classname="[C0312] Dashboard tiene gráficas (canvas/svg si existen)">
+    </testcase>
+    <testcase name="Selenium Pages elementos clave [C0313] Formularios tiene tabla" time="7.109" classname="[C0313] Formularios tiene tabla">
+    </testcase>
+  </testsuite>
+  <testsuite name="Root Suite Selenium Extras" timestamp="2025-10-20T23:45:27" tests="10" file="C:\Users\mague\Downloads\santa-ana-agroforms\selenium_tests\selenium\specs\extras.spec.cjs" time="48.099" failures="0">
+    <testcase name="Selenium Extras [C0314] Fuentes de Datos muestra botones de acción" time="5.958" classname="[C0314] Fuentes de Datos muestra botones de acción">
+    </testcase>
+    <testcase name="Selenium Extras [C0315] Fuentes de Datos → modal con selects" time="0.016" classname="[C0315] Fuentes de Datos → modal con selects">
+    </testcase>
+    <testcase name="Selenium Extras [C0316] Listado de Formularios → buscador" time="4.177" classname="[C0316] Listado de Formularios → buscador">
+    </testcase>
+    <testcase name="Selenium Extras [C0317] Asignación de Formularios → combos/tabla/botón" time="2.411" classname="[C0317] Asignación de Formularios → combos/tabla/botón">
+    </testcase>
+    <testcase name="Selenium Extras [C0318] Asignaciones en proceso → filtros (opcionales)" time="3.050" classname="[C0318] Asignaciones en proceso → filtros (opcionales)">
+    </testcase>
+    <testcase name="Selenium Extras [C0319] Rutas de Aprobación carga" time="3.067" classname="[C0319] Rutas de Aprobación carga">
+    </testcase>
+    <testcase name="Selenium Extras [C0320] Procesos de Exportación muestra tabla" time="4.712" classname="[C0320] Procesos de Exportación muestra tabla">
+    </testcase>
+    <testcase name="Selenium Extras [C0321] Crear desde Excel muestra UI básica" time="4.099" classname="[C0321] Crear desde Excel muestra UI básica">
+    </testcase>
+    <testcase name="Selenium Extras [C0322] Terminales muestra lista/acciones" time="5.137" classname="[C0322] Terminales muestra lista/acciones">
+    </testcase>
+    <testcase name="Selenium Extras [C0323] Usuarios muestra tabla/buscador" time="5.136" classname="[C0323] Usuarios muestra tabla/buscador">
+    </testcase>
+  </testsuite>
+</testsuites>
