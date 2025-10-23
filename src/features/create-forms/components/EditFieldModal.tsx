@@ -1,5 +1,5 @@
 // src/components/EditFieldModal.tsx
-import { FC, useEffect } from "react";
+import { FC, useEffect, useRef } from "react";
 
 import {
   Button,
@@ -15,7 +15,10 @@ import {
 
 import BaseModal from "@/components/BaseModal";
 
+import { ElementItem } from "..";
 import { FieldJson } from "../types";
+import TsEditorCode, { type TsEditorCodeRef } from "./TsEditorCode";
+import { normalizeFieldName } from "./utils";
 
 const { Option } = Select;
 const { TextArea } = Input;
@@ -39,6 +42,7 @@ export type VariantType =
   | "dato"
   | "niveles"
   | "switch"
+  | "numero"
   | "fecha"
   | "hora"
   | "combo"
@@ -71,6 +75,7 @@ export interface EditFieldModalProps extends Omit<ModalProps, "title"> {
   gruposList: string[];
   onDelete?: () => void;
   onBuild?: (json: FieldJson) => void;
+  fieldsList?: ElementItem[];
 }
 
 const EditFieldModal: FC<EditFieldModalProps> = ({
@@ -83,9 +88,12 @@ const EditFieldModal: FC<EditFieldModalProps> = ({
   opcionesList,
   gruposList,
   onBuild,
+  fieldsList,
   ...modalProps
 }) => {
   const [form] = Form.useForm<FieldFormValues>();
+
+  const tsEditorRef = useRef<TsEditorCodeRef>(null);
 
   // Cuando se abre el modal, cargamos valores o reseteamos
   useEffect(() => {
@@ -100,13 +108,24 @@ const EditFieldModal: FC<EditFieldModalProps> = ({
 
   // 4) En handleFinish: construir y devolver el JSON + normalizar values.opciones
   const handleFinish = (values: FieldFormValues) => {
+    const normalizedName = normalizeFieldName(values.nombre);
+
+    // OBTENER EL CÓDIGO DEL EDITOR SI EXISTE
+    let codigoCalculado = "";
+    let propsList: string[] = [];
+
+    if (variant === "calc" && tsEditorRef.current) {
+      codigoCalculado = tsEditorRef.current.getFullCode();
+      propsList = tsEditorRef.current.getPropsList(); // Obtener la lista de props
+    }
+
     if (variant === "dato") {
       const { clase } = mapDatoToTipoClase(values.opciones);
 
       // JSON compilado
       const compiled = {
         clase,
-        nombre_campo: values.nombre,
+        nombre_campo: normalizedName,
         etiqueta: values.etiqueta,
         ayuda: values.ayuda ?? "",
         requerido: !!values.requerido,
@@ -124,11 +143,16 @@ const EditFieldModal: FC<EditFieldModalProps> = ({
       // JSON compilado
       const compiled = {
         clase,
-        nombre_campo: values.nombre,
+        nombre_campo: normalizedName,
         etiqueta: values.etiqueta,
         ayuda: values.ayuda ?? "",
         requerido: !!values.requerido,
-        config: {},
+        config:
+          variant === "calc" ?
+            { vars: propsList, operation: codigoCalculado }
+          : {},
+        grupoTemporal: values.grupo || undefined,
+        ...(variant === "calc" && { tipo: "texto" }),
       };
 
       // Devuélvelo al padre inmediato
@@ -169,12 +193,15 @@ const EditFieldModal: FC<EditFieldModalProps> = ({
     opcion?: string,
     variant?: string
   ): { clase: string } => {
-    if (opcion === "Número") return { clase: "number" };
+    if (opcion === "Numero" || opcion === "numero" || variant === "numero")
+      return { clase: "number" };
     if (opcion === "Comentarios") return { clase: "string" };
     if (opcion === "Nombre") return { clase: "string" };
     if (variant === "switch") return { clase: "boolean" };
     if (variant === "fecha") return { clase: "date" };
     if (variant === "hora") return { clase: "hour" };
+    if (variant === "grupo") return { clase: "group" };
+    if (variant === "calc") return { clase: "calc" };
     return { clase: "string" };
   };
 
@@ -235,7 +262,8 @@ const EditFieldModal: FC<EditFieldModalProps> = ({
               variant === "combo" ||
               variant === "firma" ||
               variant === "switch" ||
-              variant === "fecha") && (
+              variant === "fecha" ||
+              variant === "numero") && (
               <Form.Item name="requerido" valuePropName="checked">
                 <Checkbox className="flex-row-reverse">Requerido</Checkbox>
               </Form.Item>
@@ -406,6 +434,10 @@ const EditFieldModal: FC<EditFieldModalProps> = ({
           </>
         )}
 
+        {variant === "calc" && (
+          <TsEditorCode ref={tsEditorRef} fieldsList={fieldsList} />
+        )}
+
         {variant === "combo" && (
           <div className="flex flex-col w-full pl-2 gap-4">
             <Card
@@ -435,7 +467,7 @@ const EditFieldModal: FC<EditFieldModalProps> = ({
           </div>
         )}
 
-        <div className="flex flex-row w-full h-8 justify-end gap-5">
+        <div className="flex flex-row w-full h-16 justify-end gap-5 pt-8">
           {initialValues && (
             <Form.Item className="text-right">
               <Button type="primary" danger onClick={handleDelete}>

@@ -4,6 +4,7 @@ import type { AxiosError } from "axios";
 import { api } from "@/features/user-autentication/services/auth.service";
 
 import { FieldJson } from "../types";
+import { getGrupoByIdCampoGroup } from "./grupos.service";
 
 export type CampoAPI = FieldJson;
 
@@ -64,24 +65,101 @@ export async function postCampoActualSingle(
 }
 
 /** Helper para enviar una lista secuencialmente (con reporte de errores) */
-export async function postCamposActualBatch(
+export async function postCamposSecuenciales(
   pageId: string,
-  campos: CampoAPI[],
-  opts?: { signal?: AbortSignal }
+  campos: CampoAPI[]
 ) {
-  const ok: unknown[] = [];
-  const errors: { index: number; message: string }[] = [];
+  const gruposMap: Record<string, { id: string; nombre: string }> = {}; // { nombreTemporal: id_campoReal }
+  const ok: any[] = [];
+  const errors: any[] = [];
+  let grupoId = "";
 
-  for (let i = 0; i < campos.length; i++) {
-    try {
-      const r = await postCampoActualSingle(pageId, campos[i], opts);
-      ok.push(r);
-    } catch (e) {
-      errors.push({
-        index: i,
-        message: e instanceof Error ? e.message : String(e),
-      });
+  // Función auxiliar con reintentos
+  async function fetchGrupoWithRetry(
+    idCampoGroup: string,
+    maxRetries = 5,
+    delay = 300
+  ) {
+    for (let i = 0; i < maxRetries; i++) {
+      try {
+        const grupo = await getGrupoByIdCampoGroup(idCampoGroup);
+        return grupo;
+      } catch (e) {
+        if (i === maxRetries - 1) throw e;
+        console.warn(`Reintentando obtener grupo (${i + 1}/${maxRetries})...`);
+        await new Promise((r) => setTimeout(r, delay));
+      }
     }
+    throw new Error(
+      `No se pudo obtener grupo con id_campo_group=${idCampoGroup}`
+    );
+  }
+
+  try {
+    // 🟩 Paso 1: crear primero los grupos
+    // console.warn("grupos: ", campos);
+    const grupos = campos.filter((c) => c.clase === "group");
+    for (const grupo of grupos) {
+      try {
+        const res = await postCampoActualSingle(pageId, grupo);
+        ok.push(res);
+        const idCampoGroup = res.id_campo;
+        // console.warn(
+        //   `✅ Grupo creado: ${grupo.nombre_campo} (id_campo=${idCampoGroup})`
+        // );
+
+        // Obtener el id_grupo con reintento
+        const grupoData = await fetchGrupoWithRetry(idCampoGroup);
+        const idGrupoReal = grupoData.id_grupo;
+
+        gruposMap[grupo.nombre_campo] = {
+          id: idGrupoReal,
+          nombre: grupoData.nombre,
+        };
+        grupoId = grupo.nombre_campo;
+        console.warn(`✅ id_grupo asignado: ${idGrupoReal}`);
+      } catch (err) {
+        console.error("Error creando grupo:", grupo.nombre_campo, err);
+        errors.push({ campo: grupo.nombre_campo, err });
+      }
+    }
+
+    // 🟦 Paso 2: crear los campos hijos (no grupos)
+    const hijos = campos.filter((c) => c.clase !== "group");
+    for (const hijo of hijos) {
+      try {
+        // console.warn("gruposMap: ", gruposMap);
+        // console.warn("Creando hijo (antes de grupo):", hijo, grupoId);
+        // Si tiene grupoTemporal, buscar su id real
+        if (hijo.grupoTemporal) {
+          const grupoInfo = gruposMap[grupoId];
+          if (grupoInfo) {
+            hijo.grupo = grupoInfo.id;
+            delete hijo.grupoTemporal;
+
+            // 🔧 Aquí agregas tu config
+            hijo.config = {
+              id_group: grupoInfo.id,
+              name: grupoInfo.nombre,
+            };
+
+            console.warn(
+              `Asignado id_grupo=${hijo.grupo} (nombre=${grupoInfo.nombre}) a hijo ${hijo.nombre_campo}`
+            );
+          } else {
+            console.warn(`⚠ No se encontró grupoInfo para ${grupoId}`);
+          }
+        }
+
+        const res = await postCampoActualSingle(pageId, hijo);
+        ok.push(res);
+      } catch (err) {
+        console.error("Error creando campo:", hijo.nombre_campo, err);
+        errors.push({ campo: hijo.nombre_campo, err });
+      }
+    }
+  } catch (e) {
+    console.error("Error general:", e);
   }
 
   return { ok, errors };
@@ -123,8 +201,6 @@ export async function patchCamposActualBatch(
   for (let i = 0; i < campos.length; i++) {
     const campo = campos[i];
     const campoId = campo.id_campo?.toString();
-
-    console.warn("todoOK: ", campo, campoId, opts);
 
     if (!campoId) {
       errors.push({

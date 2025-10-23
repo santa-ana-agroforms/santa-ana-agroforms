@@ -3,6 +3,7 @@
 import { api } from "@/features/user-autentication/services/auth.service";
 
 import {
+  Categoria,
   CreateAsignacionDto,
   FormularioAPI,
   UpdateFormularioDto,
@@ -26,6 +27,11 @@ export interface Formulario {
 export interface CreateFormularioDto {
   id?: number;
   nombre: string;
+  descripcion?: string;
+}
+
+export interface UpdateCategoriaDto {
+  nombre?: string;
   descripcion?: string;
 }
 
@@ -98,7 +104,6 @@ export async function crearAsignacion(
   payload: CreateAsignacionDto,
   opts?: { signal?: AbortSignal }
 ) {
-  console.warn("payload: ", payload);
   const res = await api.post("/api/asignaciones/crear-asignacion/", payload, {
     signal: opts?.signal,
   });
@@ -164,5 +169,32 @@ export async function updateFormulario(
     payload,
     { signal: opts?.signal }
   );
+  return res.data;
+}
+
+/**
+ * Elimina una categoría por su ID
+ * @param id ID de la categoría
+ */
+export async function deleteCategoria(
+  id: string,
+  opts?: { signal?: AbortSignal }
+): Promise<void> {
+  await api.delete(`/api/categorias/${id}/`, {
+    signal: opts?.signal,
+  });
+}
+
+/**
+ * PATCH — Actualiza una categoría existente
+ */
+export async function updateCategoria(
+  id: string | undefined,
+  payload: UpdateCategoriaDto,
+  opts?: { signal?: AbortSignal }
+): Promise<Categoria> {
+  const res = await api.patch<Categoria>(`/api/categorias/${id}/`, payload, {
+    signal: opts?.signal,
+  });
   return res.data;
 }

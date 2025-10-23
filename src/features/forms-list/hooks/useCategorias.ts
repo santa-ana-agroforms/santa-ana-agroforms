@@ -3,7 +3,7 @@ import { useEffect } from "react";
 
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
-import { getCategorias } from "../services/categories.service";
+import { createCategoria, getCategorias } from "../services/categories.service";
 
 export interface Categoria {
   id: string;
@@ -20,7 +20,7 @@ export interface CreateCategoriaDto {
 export function useCategorias() {
   const { data } = useQuery({
     queryKey: ["categorias"],
-    queryFn: ({ signal }) => getCategorias({ signal }),
+    queryFn: ({ signal }) => getCategorias(),
     staleTime: 60_000,
   });
 
@@ -34,43 +34,9 @@ export function useCategorias() {
   // Retorna todas las propiedades de useQuery
   return useQuery({
     queryKey: ["categorias"],
-    queryFn: ({ signal }) => getCategorias({ signal }),
+    queryFn: ({ signal }) => getCategorias(),
     staleTime: 60_000,
   });
-}
-
-export async function createCategoria(
-  dto: CreateCategoriaDto,
-  options?: { signal?: AbortSignal }
-): Promise<Categoria> {
-  const res = await fetch(
-    `${import.meta.env.VITE_API_BASE_URL}/api/categorias/`,
-    {
-      method: "POST",
-      headers: {
-        Accept: "application/json",
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(dto), // { nombre, descripcion }
-      signal: options?.signal,
-    }
-  );
-
-  if (!res.ok) {
-    // Intenta extraer mensaje del backend si viene en JSON
-    try {
-      const err = await res.json();
-      const msg =
-        err?.message ??
-        err?.detail ??
-        "No se pudo crear la categoría. Intenta de nuevo.";
-      throw new Error(msg);
-    } catch {
-      throw new Error("No se pudo crear la categoría. Intenta de nuevo.");
-    }
-  }
-
-  return res.json();
 }
 
 export function useCreateCategoria() {

@@ -8,15 +8,19 @@ import {
   crearAsignacionMultipleUsuarios,
   createFormulario,
   CreateFormularioDto,
+  deleteCategoria,
   deleteFormulario,
   duplicateFormulario,
   Formulario,
   getFormularioById,
   getFormularios,
   suspendFormulario,
+  updateCategoria,
+  UpdateCategoriaDto,
   updateFormulario,
 } from "../services/forms-services";
 import {
+  Categoria,
   CreateAsignacionDto,
   FormularioAPI,
   UpdateFormularioDto,
@@ -170,6 +174,63 @@ export function useUpdateFormulario() {
 
     onError: (error) => {
       console.error("❌ Error al actualizar formulario:", error);
+    },
+  });
+}
+
+export function useDeleteCategoria() {
+  const qc = useQueryClient();
+
+  return useMutation({
+    mutationFn: (id: string) => deleteCategoria(id),
+
+    onSuccess: (_, id) => {
+      // 🧹 Elimina la categoría de la lista cacheada
+      qc.setQueryData<any[]>(["categorias"], (prev) =>
+        prev ? prev.filter((cat) => cat.id.toString() !== id) : []
+      );
+
+      // 🗑️ Elimina también la query individual
+      qc.removeQueries({ queryKey: ["categoria", id] });
+    },
+
+    onError: (error) => {
+      console.error("❌ Error al eliminar categoría:", error);
+      // Opcional: mostrar mensaje de error con antd
+      // message.error("No se pudo eliminar la categoría");
+    },
+  });
+}
+
+/**
+ * Hook para actualizar (editar) una categoría
+ */
+export function useUpdateCategoria() {
+  const qc = useQueryClient();
+
+  return useMutation({
+    mutationFn: ({
+      id,
+      payload,
+    }: {
+      id: string | undefined;
+      payload: UpdateCategoriaDto;
+    }) => updateCategoria(id, payload),
+
+    onSuccess: (actualizada, { id }) => {
+      // Actualiza cache de lista
+      qc.setQueryData<Categoria[]>(["categorias"], (old) =>
+        old ?
+          old.map((c) => (c.id.toString() === id ? actualizada : c))
+        : [actualizada]
+      );
+
+      // Actualiza cache individual
+      qc.setQueryData(["categoria", id], actualizada);
+    },
+
+    onError: (error) => {
+      console.error("❌ Error al actualizar categoría:", error);
     },
   });
 }

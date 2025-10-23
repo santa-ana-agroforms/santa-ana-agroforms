@@ -32,7 +32,6 @@ export type ElementItem = {
 
 const CreateForms: React.FC<CreateFormsProps> = ({ formId, onBack }) => {
   const [groups, setGroups] = useState<string[]>([]);
-  console.warn("formID: ", formId);
   const {
     data: formulario,
     isLoading,
@@ -152,7 +151,7 @@ const CreateForms: React.FC<CreateFormsProps> = ({ formId, onBack }) => {
     values?: FieldFormValues
   ) => {
     const pageKey = selectedPage.sequence;
-    const currentList = elementsByPage[pageKey] ?? [];
+    const currentList = accumulatedElements ?? [];
     const newName = values?.nombre ?? key;
 
     // 🔍 Validar duplicado (insensible a mayúsculas/minúsculas)
@@ -163,7 +162,7 @@ const CreateForms: React.FC<CreateFormsProps> = ({ formId, onBack }) => {
     if (nameExists) {
       // aquí puedes usar AntD message.error o alert
       message.warning(
-        `El nombre del campo: "${newName}", ya existe en esta página`
+        `El nombre del campo: "${newName}", ya existe en este formulario`
       );
       return; // cancela la adición
     }
@@ -306,9 +305,17 @@ const CreateForms: React.FC<CreateFormsProps> = ({ formId, onBack }) => {
     setEditVariant(undefined);
   };
 
-  const currentElements = elementsByPage[selectedPage.sequence] ?? [];
+  // console.warn("elementsByPage: ", elementsByPage, selectedPage.sequence);
 
-  console.warn("currentElement: ", currentElements);
+  const accumulatedElements = Object.keys(elementsByPage)
+    .filter((pageNum) => {
+      const pageNumber = parseInt(pageNum);
+      return pageNumber >= 1 && pageNumber <= selectedPage.sequence;
+    })
+    .sort((a, b) => parseInt(a) - parseInt(b))
+    .flatMap((pageNum) => elementsByPage[pageNum] || []);
+
+  const currentElements = elementsByPage[selectedPage.sequence] ?? [];
 
   const handleMenuClick: MenuProps["onClick"] = ({ key }) => {
     setSelectedKey(key as VariantType);
@@ -342,11 +349,13 @@ const CreateForms: React.FC<CreateFormsProps> = ({ formId, onBack }) => {
         <EditFieldModal
           visible={visible}
           variant={selectedKey}
+          initialValues={undefined}
           opcionesList={opciones}
           gruposList={groups}
           onSave={(vals) => handleSave?.(vals)}
           onCancel={handleCancel}
           onBuild={handleCompiled}
+          fieldsList={accumulatedElements}
         />
 
         {/* Modal de EDICIÓN (controlado por CreateForms) */}
@@ -360,6 +369,7 @@ const CreateForms: React.FC<CreateFormsProps> = ({ formId, onBack }) => {
           onCancel={() => setEditOpen(false) ?? (() => {})}
           onDelete={handleEditDelete}
           onBuild={handleCompiled}
+          fieldsList={accumulatedElements}
         />
 
         {/* 

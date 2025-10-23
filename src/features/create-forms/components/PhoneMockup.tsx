@@ -2,6 +2,7 @@
 import React from "react";
 
 import {
+  GroupOutlined,
   HighlightOutlined,
   LeftOutlined,
   RightOutlined,
@@ -72,9 +73,6 @@ const PhoneMockup: React.FC<PhoneMockupProps> = ({
   if (isError) return <div>Cargando...</div>;
   if (!formulario) return <div>Cargando...</div>;
 
-  //console.warn("form: ", formulario, selectedPage);
-  console.warn("selectedElements: ", selectedElements);
-
   return (
     <div className="w-80 h-[600px] border border-gray-300 rounded-3xl shadow-lg flex flex-col overflow-hidden bg-white">
       {/* Header */}
@@ -103,17 +101,17 @@ const PhoneMockup: React.FC<PhoneMockupProps> = ({
 
         {selectedElements.map((element, index) => {
           // si es cabecera de grupo → actualizar "grupo actual" y renderizar bloque de grupo
-          if (element.type === "grupo") {
+          if (element.type === "grupo" || element.type === "group") {
             currentGroupName = element.name; // ← este será el grupo al que tabulamos después
             return (
               <div key={index} className="mb-4">
                 <div className="flex flex-row gap-4">
-                  <HighlightOutlined
+                  <GroupOutlined
                     className="cursor-pointer"
                     onClick={() => onEditElement?.(index)}
                   />
                   <div className="bg-amber-100 p-1 w-full flex">
-                    <Text>{element.name}</Text>
+                    <Text>{element.values?.etiqueta}</Text>
                   </div>
                 </div>
               </div>
@@ -122,7 +120,9 @@ const PhoneMockup: React.FC<PhoneMockupProps> = ({
 
           // si NO es grupo → ver si pertenece al grupo actual
           const belongsToCurrent =
-            !!element.group && currentGroupName === element.group;
+            (!!element.group && currentGroupName === element.group) ||
+            (!!element.values?.grupo &&
+              currentGroupName === element.values.grupo);
 
           const indentClass = belongsToCurrent ? "pl-6" : "";
 
@@ -135,7 +135,7 @@ const PhoneMockup: React.FC<PhoneMockupProps> = ({
                     onClick={() => onEditElement?.(index)}
                   />
                   <div className="flex flex-col w-full">
-                    <Text>{element.name}</Text>
+                    <Text>{element.values?.etiqueta}</Text>
                   </div>
                 </div>
               )}
@@ -147,7 +147,7 @@ const PhoneMockup: React.FC<PhoneMockupProps> = ({
                     onClick={() => onEditElement?.(index)}
                   />
                   <div className="flex flex-col w-full">
-                    <Text>{element.name}:</Text>
+                    <Text>{element.values?.etiqueta}:</Text>
                     <Input placeholder="Introduce texto..." disabled />
                   </div>
                 </div>
@@ -161,7 +161,7 @@ const PhoneMockup: React.FC<PhoneMockupProps> = ({
                   />
                   <div className="flex flex-col">
                     <div className="flex w-full">
-                      <Text>{element.name}</Text>
+                      <Text>{element.values?.etiqueta}</Text>
                     </div>
                     <div className="flex w-1/3">
                       <Switch />
@@ -177,7 +177,7 @@ const PhoneMockup: React.FC<PhoneMockupProps> = ({
                     onClick={() => onEditElement?.(index)}
                   />
                   <div className="flex flex-col w-full">
-                    <Text>{element.name}</Text>
+                    <Text>{element.values?.etiqueta}</Text>
                     <Select
                       placeholder="Selecciona una opción"
                       style={{ width: "100%" }}
@@ -194,7 +194,7 @@ const PhoneMockup: React.FC<PhoneMockupProps> = ({
                     onClick={() => onEditElement?.(index)}
                   />
                   <div className="flex flex-col w-full">
-                    <Text>{element.name}:</Text>
+                    <Text>{element.values?.etiqueta}:</Text>
                     <DatePicker disabled />
                   </div>
                 </div>
@@ -207,8 +207,21 @@ const PhoneMockup: React.FC<PhoneMockupProps> = ({
                     onClick={() => onEditElement?.(index)}
                   />
                   <div className="flex flex-col w-full">
-                    <Text>{element.name}:</Text>
+                    <Text>{element.values?.etiqueta}:</Text>
                     <TimePicker disabled />
+                  </div>
+                </div>
+              )}
+
+              {element.type === "numero" && (
+                <div className="flex flex-row gap-4 items-center">
+                  <HighlightOutlined
+                    className="cursor-pointer"
+                    onClick={() => onEditElement?.(index)}
+                  />
+                  <div className="flex flex-col w-full">
+                    <Text>{element.values?.etiqueta}</Text>
+                    <Input placeholder="Introduce un valor..." disabled />
                   </div>
                 </div>
               )}
@@ -230,16 +243,16 @@ const PhoneMockup: React.FC<PhoneMockupProps> = ({
                 </>
               )}
 
-              {/* {element.type === "grupo" && (
+              {(element.type === "grupo" || element.type === "group") && (
                 <>
                   <div className="flex flex-row gap-4">
-                    <HighlightOutlined className="cursor-pointer" />
+                    <GroupOutlined className="cursor-pointer" />
                     <div className=" bg-amber-100 p-1 w-full flex">
-                      <Text>{element.name}</Text>
+                      <Text>{element.values?.etiqueta}</Text>
                     </div>
                   </div>
                 </>
-              )} */}
+              )}
 
               {/* Aquí puedes seguir agregando el resto de tipos de elementos */}
             </div>

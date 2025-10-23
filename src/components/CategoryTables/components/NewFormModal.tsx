@@ -109,7 +109,6 @@ const NewFormModal: FC<NewFormModalProps> = ({
 
     // 🧠 Si initialValues existe → estamos editando
     if (initialValues && initialValues.id) {
-      console.warn("editando chavaeles");
       updateFormulario(
         { id: String(initialValues.id), payload },
         {
@@ -227,11 +226,11 @@ const NewFormModal: FC<NewFormModalProps> = ({
             className="w-2/7"
           >
             <Select placeholder="Selecciona estado">
-              <Option value="Ingresada">Ingresada</Option>
-              <Option value="Activa">Activa</Option>
-              <Option value="Suspendida">Suspendida</Option>
+              <Option value="Ingresado">Ingresado</Option>
+              <Option value="Activo">Activo</Option>
+              <Option value="Suspendido">Suspendido</Option>
               <Option value="Pruebas">Pruebas</Option>
-              <Option value="Anulada">Anulada</Option>
+              <Option value="Anulado">Anulado</Option>
             </Select>
           </Form.Item>
 

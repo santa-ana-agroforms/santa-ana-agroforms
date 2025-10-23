@@ -19,6 +19,10 @@ import NewFormModal, {
 } from "@/components/CategoryTables/components/NewFormModal";
 import SuspendFormModal from "@/components/CategoryTables/components/SuspendFormModal";
 import { getColumns } from "@/components/CategoryTables/data";
+import DeleteCategoryModal from "@/components/CategoryTables/DeleteCategoryModal";
+import EditCategoryModal, {
+  EditCategoryValues,
+} from "@/components/EditCategoryModal";
 
 import { useUsuarios } from "../users-list/hooks/useUsuarios";
 import { Usuario } from "../users-list/services/types";
@@ -33,7 +37,7 @@ import {
 const { Panel } = Collapse;
 const { Title } = Typography;
 
-interface ItemType {
+export interface ItemType {
   key: string;
   id: number | string;
   titulo: string;
@@ -72,6 +76,11 @@ const FormsLists: React.FC<FormsListsProps> = ({ onSelectForm, sortAsc }) => {
   const [selectedItem, setSelectedItem] = useState<ItemType | null>(null);
   const [modalVisible, setModalVisible] = useState(false);
 
+  const [categorySelected, setCategorySelected] = useState(String);
+  const [categoryValues, setCategoryValues] = useState<
+    EditCategoryValues | undefined
+  >(undefined);
+
   //Modal para borrar
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
 
@@ -83,6 +92,13 @@ const FormsLists: React.FC<FormsListsProps> = ({ onSelectForm, sortAsc }) => {
 
   // Modal Asignar
   const [isAssignModalOpen, setIsAssignModalOpen] = useState(false);
+
+  // Modal para borrar categorias
+  const [isDeleteCategoryModalOpen, setIsDeleteCategoryModalOpen] =
+    useState(false);
+
+  // Modal para editar categorias
+  const [isEditCategoryModalOpen, setIsEditCategoryModalOpen] = useState(false);
   //const [assigning, setAssigning] = useState(false);
 
   const { mutate: deleteForm, isPending: isDeletingForm } =
@@ -108,7 +124,6 @@ const FormsLists: React.FC<FormsListsProps> = ({ onSelectForm, sortAsc }) => {
 
   const handleEdit = useCallback((record: ItemType) => {
     setOpen(true);
-    console.warn("record: ", record);
     setSelectedItem(record);
     setModalVisible(true);
   }, []);
@@ -131,6 +146,16 @@ const FormsLists: React.FC<FormsListsProps> = ({ onSelectForm, sortAsc }) => {
   const handleAssignOpen = useCallback((record: ItemType) => {
     setSelectedItem(record);
     setIsAssignModalOpen(true);
+  }, []);
+
+  const handleDeleteCategory = useCallback((record: string) => {
+    setCategorySelected(record);
+    setIsDeleteCategoryModalOpen(true);
+  }, []);
+
+  const handleEditCategory = useCallback((record: EditCategoryValues) => {
+    setCategoryValues(record);
+    setIsEditCategoryModalOpen(true);
   }, []);
 
   const handleCreate = (values: NewFormValues) => {
@@ -282,13 +307,6 @@ const FormsLists: React.FC<FormsListsProps> = ({ onSelectForm, sortAsc }) => {
     [rows, sortedInfo, filteredInfo]
   );
 
-  // console.warn(
-  //   "que coñoi es esto: ",
-  //   categoriesData.find((c) => c.items.some((i) => i.key === selectedItem?.key))
-  // );
-
-  console.warn("selectedItem: ", selectedItem);
-
   return (
     <div className="flex flex-col p-4 w-full gap-7 ">
       {isLoading || categoriesData.length === 0 ?
@@ -301,6 +319,8 @@ const FormsLists: React.FC<FormsListsProps> = ({ onSelectForm, sortAsc }) => {
             data={sortedCategories}
             columns={columns as TableColumnType<ItemType>[]}
             onTableChange={handleChange}
+            onOpenDeleteModal={handleDeleteCategory}
+            onOpenEditModal={handleEditCategory}
           />
 
           <NewFormModal
@@ -370,6 +390,21 @@ const FormsLists: React.FC<FormsListsProps> = ({ onSelectForm, sortAsc }) => {
             loadingOptions={isLoadingUsuarios}
             submitting={assigning}
             onAssign={handleAssignConfirm}
+          />
+
+          <EditCategoryModal
+            visible={isEditCategoryModalOpen}
+            categoryId={categoryValues?.key}
+            onCancel={() => setIsEditCategoryModalOpen(false)}
+            initialValues={categoryValues}
+          />
+
+          <DeleteCategoryModal
+            visible={isDeleteCategoryModalOpen}
+            open={isDeleteCategoryModalOpen}
+            categoryId={categorySelected}
+            categoryName={selectedItem?.titulo ?? ""}
+            onCancel={() => setIsDeleteCategoryModalOpen(false)}
           />
         </>
       }

@@ -95,8 +95,6 @@ const PageSettings: React.FC<PageSettingsProps> = ({
   };
 
   const handleContinue = async () => {
-    console.warn("➡️ JSONs compilados (front):", compiledList);
-
     // Separar campos nuevos y existentes
     const nuevos = compiledList.filter((f) => !f.id_campo);
     const existentes = compiledList.filter((f) => f.id_campo);
@@ -107,7 +105,6 @@ const PageSettings: React.FC<PageSettingsProps> = ({
     }
 
     if (!selectedId) {
-      console.warn("⚠️ No hay pageId: no se puede enviar al backend.");
       message.error("No se pudo identificar la página actual (pageId).");
       return;
     }
@@ -164,10 +161,6 @@ const PageSettings: React.FC<PageSettingsProps> = ({
         message.warning(
           `Algunos campos no se procesaron correctamente (${totalErrores}).`
         );
-        console.warn("Detalles de errores:", {
-          nuevos: postResult.errors,
-          existentes: patchResult.errors,
-        });
       } else {
         message.success("✅ Todos los campos se guardaron correctamente.");
       }
@@ -178,8 +171,6 @@ const PageSettings: React.FC<PageSettingsProps> = ({
       message.destroy("saving");
     }
   };
-
-  console.warn("selectedPage: ", selectedPage);
 
   return (
     <div className="bg-white rounded-lg shadow max-w-sm mt-7">

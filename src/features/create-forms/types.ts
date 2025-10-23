@@ -5,5 +5,8 @@ export type FieldJson = {
   etiqueta: string; // del form: etiqueta
   ayuda: string; // del form: ayuda
   requerido: boolean; // del form: requerido
-  config: { max?: number }; // del form: tamano
+  config: { id_group?: string; name?: string }; // del form: tamano
+  tipo?: string; // ej: "group", "input", etc.
+  grupoTemporal?: string; // referencia temporal al grupo (nombre_campo)
+  grupo?: string; // id real del grupo una vez creado
 };
