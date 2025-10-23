@@ -5,7 +5,6 @@ import {
   CalculatorOutlined,
   CalendarOutlined,
   ClockCircleOutlined,
-  DatabaseOutlined,
   EditOutlined,
   FieldNumberOutlined,
   FontSizeOutlined,
@@ -22,14 +21,18 @@ interface FormElementsListProps {
 
 const items = [
   { key: "texto", icon: <FontSizeOutlined />, label: "Texto" },
-  { key: "dato", icon: <DatabaseOutlined />, label: "Dato" },
+  // { key: "dato", icon: <DatabaseOutlined />, label: "Dato" },
   { key: "numero", icon: <FieldNumberOutlined />, label: "Numero" },
   // { key: "niveles", icon: <SlidersOutlined />, label: "Niveles" },
   { key: "switch", icon: <SwitcherOutlined />, label: "Switch" },
   { key: "fecha", icon: <CalendarOutlined />, label: "Fecha" },
   { key: "hora", icon: <ClockCircleOutlined />, label: "Hora" },
-  { key: "combo", icon: <UnorderedListOutlined />, label: "Combo" },
-  { key: "multicombo", icon: <MenuOutlined />, label: "MultiCombo" },
+  { key: "combo", icon: <UnorderedListOutlined />, label: "Combo (pendiente)" },
+  {
+    key: "multicombo",
+    icon: <MenuOutlined />,
+    label: "MultiCombo (pendiente)",
+  },
   // { key: "barra", icon: <BarChartOutlined />, label: "Barra" },
   // {
   //   key: "completadoAuto",
@@ -37,7 +40,7 @@ const items = [
   //   label: "Completado Auto",
   // },
   // { key: "linea", icon: <LineChartOutlined />, label: "Linea" },
-  { key: "firma", icon: <EditOutlined />, label: "Firma" },
+  { key: "firma", icon: <EditOutlined />, label: "Firma (pendiente)" },
   // { key: "fotos", icon: <PictureOutlined />, label: "Fotos" },
   // { key: "codigoBarra", icon: <BarcodeOutlined />, label: "CodigoBarra" },
   // { key: "email", icon: <MailOutlined />, label: "Email" },

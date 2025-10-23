@@ -7,7 +7,7 @@ import {
   FilterOutlined,
   PlusSquareOutlined,
 } from "@ant-design/icons";
-import { Button, Col, Input } from "antd";
+import { Button, Col } from "antd";
 
 import NewCategoryModal from "@/components/NewCategoryModal";
 import FormsLists from "@/features/forms-list";
@@ -45,10 +45,10 @@ const FormListPage: React.FC<FormListPageProps> = ({ onSelectForm }) => {
 
         <Col className="w-60">
           {/* Input de búsqueda */}
-          <Input
+          {/* <Input
             placeholder="Introduzca el texto a buscar..."
             className="w-48"
-          />
+          /> */}
         </Col>
       </div>
       <FormsLists onSelectForm={onSelectForm} sortAsc={sortAsc} />

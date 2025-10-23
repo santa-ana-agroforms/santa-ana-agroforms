@@ -1,9 +1,12 @@
 import React, { useState } from "react";
 import { Document, Page, pdfjs } from "react-pdf";
 
-import { DownloadOutlined, LeftOutlined, RightOutlined } from "@ant-design/icons";
+import {
+  DownloadOutlined,
+  LeftOutlined,
+  RightOutlined,
+} from "@ant-design/icons";
 import { Button, Card, Spin } from "antd";
-
 import workerSrc from "pdfjs-dist/build/pdf.worker.mjs?url";
 
 pdfjs.GlobalWorkerOptions.workerSrc = workerSrc;
@@ -16,7 +19,7 @@ const HelpSystemPage: React.FC = () => {
     setNumPages(numPages);
   };
 
-  const pdfPath = "/u327230.pdf";
+  const pdfPath = "/Manual_usuario_SantaAna.pdf";
 
   return (
     <div className="flex justify-center items-center p-6 bg-gray-100 min-h-screen">

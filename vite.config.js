@@ -3,6 +3,10 @@ import { fileURLToPath, URL } from "url";
 import tailwindcss from "@tailwindcss/vite";
 import react from "@vitejs/plugin-react";
 import { defineConfig } from "vite";
+import monacoEditorPluginModule from "vite-plugin-monaco-editor";
+
+const monacoEditorPlugin =
+  monacoEditorPluginModule.default || monacoEditorPluginModule;
 
 const __filename = fileURLToPath(import.meta.url);
 
@@ -54,6 +58,9 @@ export default defineConfig(({ mode }) => ({
     react(),
     tailwindcss(),
     defineMonacoWorkers(),
+    monacoEditorPlugin({
+      languageWorkers: ["editorWorkerService", "typescript", "json"],
+    }),
     ...(mode === "production" ? [] : []),
   ],
   resolve: {
