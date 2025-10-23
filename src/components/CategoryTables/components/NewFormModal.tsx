@@ -15,7 +15,10 @@ import type { Moment } from "moment";
 
 import BaseModal from "@/components/BaseModal";
 import { useCategorias } from "@/features/forms-list/hooks/useCategorias";
-import { useCreateFormulario } from "@/features/forms-list/hooks/useFormularios";
+import {
+  useCreateFormulario,
+  useUpdateFormulario,
+} from "@/features/forms-list/hooks/useFormularios";
 
 import { type CategoryType } from "../data";
 
@@ -23,6 +26,7 @@ const { Option } = Select;
 
 // Definimos la forma de los valores que devuelve el form
 export interface NewFormValues {
+  id?: string | number;
   descripcion: string;
   titulo: string;
   permitirFotos: boolean;
@@ -43,6 +47,7 @@ export interface NewFormModalProps extends Omit<ModalProps, "title"> {
   /** Callback con los valores al hacer submit */
   onCreate: (values: NewFormValues) => void;
   initialValues?: Partial<NewFormValues>;
+  title?: string;
 }
 
 const NewFormModal: FC<NewFormModalProps> = ({
@@ -50,6 +55,7 @@ const NewFormModal: FC<NewFormModalProps> = ({
   onCancel,
   onCreate,
   initialValues,
+  title = "Adición de Formulario",
   ...modalProps
 }) => {
   const [form] = Form.useForm<NewFormValues>();
@@ -64,6 +70,8 @@ const NewFormModal: FC<NewFormModalProps> = ({
 
   // Mutación: crear formulario
   const { mutate: createFormulario, isPending } = useCreateFormulario();
+  const { mutate: updateFormulario, isPending: updating } =
+    useUpdateFormulario();
 
   useEffect(() => {
     if (visible) {
@@ -92,25 +100,48 @@ const NewFormModal: FC<NewFormModalProps> = ({
   }
 
   const handleFinish = (values: NewFormValues) => {
-    // Validación simple de rango de fechas
     if (values.hasta.isBefore(values.desde, "day")) {
       message.warning("La fecha 'Hasta' no puede ser anterior a 'Desde'.");
       return;
     }
 
-    createFormulario(mapToDto(values), {
-      onSuccess: () => {
-        message.success("Formulario creado");
-        onCreate?.(values); // si el padre quiere reaccionar
-        form.resetFields();
-        onCancel();
-      },
-      onError: (err: any) => {
-        message.error(
-          err?.message ?? "No se pudo crear el formulario. Intenta de nuevo."
-        );
-      },
-    });
+    const payload = mapToDto(values);
+
+    // 🧠 Si initialValues existe → estamos editando
+    if (initialValues && initialValues.id) {
+      updateFormulario(
+        { id: String(initialValues.id), payload },
+        {
+          onSuccess: () => {
+            message.success("Formulario actualizado correctamente");
+            onCreate?.(values);
+            form.resetFields();
+            onCancel();
+          },
+          onError: (err: any) => {
+            message.error(
+              err?.message ??
+                "No se pudo actualizar el formulario. Intenta de nuevo."
+            );
+          },
+        }
+      );
+    } else {
+      // 🧠 Si no hay initialValues → creamos un nuevo formulario
+      createFormulario(payload, {
+        onSuccess: () => {
+          message.success("Formulario creado correctamente");
+          onCreate?.(values);
+          form.resetFields();
+          onCancel();
+        },
+        onError: (err: any) => {
+          message.error(
+            err?.message ?? "No se pudo crear el formulario. Intenta de nuevo."
+          );
+        },
+      });
+    }
   };
 
   const handleCancel = () => {
@@ -122,7 +153,7 @@ const NewFormModal: FC<NewFormModalProps> = ({
     <BaseModal
       open={visible}
       onCancel={handleCancel}
-      title="Adición de Formulario"
+      title={title}
       {...modalProps}
       width={750}
     >
@@ -151,9 +182,7 @@ const NewFormModal: FC<NewFormModalProps> = ({
           <Form.Item
             label="Descripción"
             name="descripcion"
-            rules={[
-              { required: true, message: "Por favor ingresa una descripción" },
-            ]}
+            rules={[{ required: false }]}
           >
             <Input />
           </Form.Item>
@@ -197,11 +226,11 @@ const NewFormModal: FC<NewFormModalProps> = ({
             className="w-2/7"
           >
             <Select placeholder="Selecciona estado">
-              <Option value="Ingresada">Ingresada</Option>
-              <Option value="Activa">Activa</Option>
-              <Option value="Suspendida">Suspendida</Option>
+              <Option value="Ingresado">Ingresado</Option>
+              <Option value="Activo">Activo</Option>
+              <Option value="Suspendido">Suspendido</Option>
               <Option value="Pruebas">Pruebas</Option>
-              <Option value="Anulada">Anulada</Option>
+              <Option value="Anulado">Anulado</Option>
             </Select>
           </Form.Item>
 
@@ -260,7 +289,11 @@ const NewFormModal: FC<NewFormModalProps> = ({
 
         <div className="flex justify-end h-9">
           <Form.Item>
-            <Button type="primary" htmlType="submit" loading={isPending}>
+            <Button
+              type="primary"
+              htmlType="submit"
+              loading={isPending || updating}
+            >
               Guardar
             </Button>
             <Button style={{ marginLeft: 8 }} onClick={handleCancel}>

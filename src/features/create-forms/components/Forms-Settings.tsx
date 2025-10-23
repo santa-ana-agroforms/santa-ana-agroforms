@@ -1,9 +1,12 @@
 import { useEffect, useMemo, useState } from "react";
 
-import { DiffOutlined, DownOutlined } from "@ant-design/icons";
+import { DiffOutlined, DownOutlined, FormOutlined } from "@ant-design/icons";
 import { Button, Input, InputNumber, message, Tooltip } from "antd";
 
-import { usePostCamposActualBatch } from "../hooks/useCampoActual";
+import {
+  usePatchCamposActualBatch,
+  usePostCamposActualBatch,
+} from "../hooks/useCampoActual";
 import { FieldJson } from "../types";
 import PageEditModal, { PageValues } from "./PageEditModal";
 
@@ -28,16 +31,23 @@ const PageSettings: React.FC<PageSettingsProps> = ({
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const [selectedSeq, setSelectedSeq] = useState<number | undefined>(undefined);
 
+  const [editPageModalVisible, setEditPageModalVisible] = useState(false); // editar 👈
+
   const selectedPage = useMemo(
     () => pages.find((p) => p.sequence === selectedSeq),
     [pages, selectedSeq]
   );
 
   // Solo un estado para el ID seleccionado
-  const [selectedId, setSelectedId] = useState<string | number | undefined>(undefined);
+  const [selectedId, setSelectedId] = useState<string | number | undefined>(
+    undefined
+  );
 
   const { mutateAsync: postCamposBulk, isPending: sendingBulk } =
     usePostCamposActualBatch();
+
+  const { mutateAsync: patchCamposBulk, isPending: patchingBulk } =
+    usePatchCamposActualBatch();
 
   // inicializar
   useEffect(() => {
@@ -72,13 +82,22 @@ const PageSettings: React.FC<PageSettingsProps> = ({
   const handleIconClick = () => setPageModalVisible(true);
   const handleCancel = () => setPageModalVisible(false);
 
+  const handleEditClick = () => {
+    if (!selectedPage) {
+      message.warning("No hay una página seleccionada para editar.");
+      return;
+    }
+    setEditPageModalVisible(true);
+  };
+
   const handleDelete = () => {
     console.log("Eliminar clicked");
   };
 
-
   const handleContinue = async () => {
-    // console.warn("➡️ JSONs compilados (front):", compiledList);
+    // Separar campos nuevos y existentes
+    const nuevos = compiledList.filter((f) => !f.id_campo);
+    const existentes = compiledList.filter((f) => f.id_campo);
 
     if (compiledList.length === 0) {
       message.warning("¡Necesitas seleccionar al menos un campo! ⚠️");
@@ -86,29 +105,70 @@ const PageSettings: React.FC<PageSettingsProps> = ({
     }
 
     if (!selectedId) {
-      console.warn("⚠️ No hay pageId: no se puede enviar al backend.");
       message.error("No se pudo identificar la página actual (pageId).");
       return;
     }
 
-
     try {
-      const { ok, errors } = await postCamposBulk({
-        pageId: pageId as string,
-        campos: compiledList,
-      });
+      // 🟢 1. Crear nuevos campos (POST)
+      let postResult: { ok: any[]; errors: any[] } = { ok: [], errors: [] };
+      if (nuevos.length > 0) {
+        message.loading({ content: "Creando nuevos campos...", key: "saving" });
+        postResult = await postCamposBulk({
+          pageId: pageId as string,
+          campos: nuevos,
+        });
 
+        if (postResult.errors.length) {
+          message.warning(
+            `${postResult.errors.length} campos nuevos fallaron al crearse.`
+          );
+        } else {
+          message.success(
+            `${nuevos.length} campos nuevos creados correctamente.`
+          );
+        }
+      }
 
-      if (errors.length) {
-        message.error(
-          `Algunos campos fallaron (${errors.length}). Revisa la consola.`
+      // 🟡 2. Actualizar existentes (PATCH)
+      let patchResult: { ok: any[]; errors: any[] } = { ok: [], errors: [] };
+      if (existentes.length > 0) {
+        message.loading({
+          content: "Actualizando campos existentes...",
+          key: "saving",
+        });
+        patchResult = await patchCamposBulk({
+          pageId: pageId as string,
+          campos: existentes,
+        });
+
+        if (patchResult.errors.length) {
+          message.warning(
+            `${patchResult.errors.length} campos existentes fallaron al actualizarse.`
+          );
+        } else {
+          message.success(
+            `${existentes.length} campos actualizados correctamente.`
+          );
+        }
+      }
+
+      // 🧩 3. Resultado combinado
+      const totalErrores =
+        (postResult.errors?.length || 0) + (patchResult.errors?.length || 0);
+
+      if (totalErrores > 0) {
+        message.warning(
+          `Algunos campos no se procesaron correctamente (${totalErrores}).`
         );
       } else {
-        message.success("Campos enviados correctamente.");
+        message.success("✅ Todos los campos se guardaron correctamente.");
       }
     } catch (e) {
       console.error("❌ Error al enviar campos:", e);
       message.error("Error al enviar campos al backend.");
+    } finally {
+      message.destroy("saving");
     }
   };
 
@@ -117,13 +177,21 @@ const PageSettings: React.FC<PageSettingsProps> = ({
       {/* Header */}
       <div className="flex flex-col border-b">
         <div className="flex items-center px-4 py-3">
-          <Button
-            onClick={handleIconClick}
-            className="p-1 rounded hover:bg-gray-100 transition"
-          >
-            <DiffOutlined />
-          </Button>
-          <h3 className="ml-2 text-lg font-medium">Página</h3>
+          <h3 className="ml-2 text-lg font-medium pr-14">Página</h3>
+          <div className="flex flex-row gap-1">
+            <Button
+              onClick={handleIconClick}
+              className="p-1 rounded hover:bg-gray-100 transition"
+            >
+              <DiffOutlined />
+            </Button>
+            <Button
+              onClick={handleEditClick}
+              className="p-1 rounded hover:bg-gray-100 transition"
+            >
+              <FormOutlined />
+            </Button>
+          </div>
         </div>
 
         {/* Custom Dropdown Selector */}
@@ -163,15 +231,32 @@ const PageSettings: React.FC<PageSettingsProps> = ({
 
       <PageEditModal
         visible={pageModalVisible}
-        initialValues={
-          selectedPage ?? {
-            sequence: 1,
-            description: "",
-            title: "",
-          }
-        }
+        initialValues={undefined}
         onCancel={handleCancel}
         onUpdate={() => setPageModalVisible(false)}
+        existingPages={pages}
+        formId={formId !== undefined ? String(formId) : undefined}
+      />
+
+      <PageEditModal
+        title="Edición de Página"
+        visible={editPageModalVisible}
+        initialValues={selectedPage}
+        onCancel={() => setEditPageModalVisible(false)}
+        onUpdate={(updatedValues) => {
+          // 👇 aquí decides cómo guardar la edición
+          message.success("Página actualizada correctamente ✅");
+          setEditPageModalVisible(false);
+
+          // Opcionalmente actualizas el array `pages`
+          // si quieres reflejar el cambio en la UI
+          // Ejemplo:
+          // setPages((prev) =>
+          //   prev.map((p) =>
+          //     p.id === updatedValues.id ? { ...p, ...updatedValues } : p
+          //   )
+          // );
+        }}
         existingPages={pages}
         formId={formId !== undefined ? String(formId) : undefined}
       />

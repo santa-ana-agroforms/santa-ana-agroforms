@@ -1,18 +1,12 @@
 // src/components/PageEditModal.tsx
-import { FC } from "react";
+import { FC, useEffect } from "react";
 
-import {
-  Button,
-  Form,
-  Input,
-  message,
-  type ModalProps
-} from "antd";
+import { Button, Form, Input, message, type ModalProps } from "antd";
 
 import BaseModal from "@/components/BaseModal";
 
 import { useCreatePagina } from "../hooks/useCreatePage";
-import { type PaginaAPI } from "../services/pages.services";
+import { usePatchPagina } from "../hooks/usePatchPagina";
 
 /** Forma de los datos de página */
 export interface PageValues {
@@ -26,10 +20,11 @@ export interface PageValues {
 export interface PageEditModalProps extends Omit<ModalProps, "title"> {
   visible: boolean;
   /** Inicializamos el form con estos valores */
-  initialValues: PaginaAPI;
+  initialValues?: PageValues;
   onCancel: () => void;
   /** Se dispara al hacer click en “Guardar” */
   onUpdate: (values: PageValues) => void;
+  title?: string;
   /** Prop para validar existencia de paginas */
   existingPages: PageValues[];
   formId?: string;
@@ -44,11 +39,28 @@ const PageEditModal: FC<PageEditModalProps> = ({
   existingPages,
   formId,
   isLoading,
+  title = "Creación de Página",
   ...modalProps
 }) => {
   const [form] = Form.useForm<PageValues>();
 
   const { mutate: createPage, isPending, error } = useCreatePagina(formId!);
+  const { mutate: patchPage, isPending: patching } = usePatchPagina();
+
+  const isEditMode = Boolean(initialValues?.id);
+
+  useEffect(() => {
+    if (visible && initialValues) {
+      form.setFieldsValue({
+        title: initialValues.title ?? "",
+        description: initialValues.description ?? "",
+        sequence: initialValues.sequence ?? 1,
+        id: initialValues.id,
+      });
+    } else if (visible && !initialValues) {
+      form.resetFields(); // modo creación, limpia todo
+    }
+  }, [visible, initialValues, form]);
 
   // const handleFinish = (values: PageValues) => {
   //   onUpdate(values);
@@ -65,54 +77,82 @@ const PageEditModal: FC<PageEditModalProps> = ({
   }
 
   const handleFinish = (values: PageValues) => {
-  if (!values.title?.trim()) {
-    message.warning("El título es obligatorio.");
-    return;
-  }
-  if (!values.description?.trim()) {
-    message.warning("La descripción es obligatoria.");
-    return;
-  }
+    if (!values.title?.trim()) {
+      message.warning("El título es obligatorio.");
+      return;
+    }
+    if (!values.description?.trim()) {
+      message.warning("La descripción es obligatoria.");
+      return;
+    }
 
-  createPage(mapToDto(values), {
+    // 🔵 MODO EDICIÓN
+    if (isEditMode && initialValues?.id) {
+      patchPage(
+        {
+          pageId: String(initialValues.id),
+          payload: mapToDto(values),
+        },
+        {
+          onSuccess: (resp) => {
+            const pagina = resp.pagina ?? ({} as any);
+
+            const updatedPage: PageValues = {
+              id: pagina.id ?? String(initialValues.id),
+              sequence: pagina.secuencia ?? values.sequence,
+              title: pagina.nombre ?? values.title,
+              description: pagina.descripcion ?? values.description,
+            };
+
+            message.success("Página actualizada correctamente ✅");
+            onUpdate(updatedPage);
+            form.resetFields();
+            onCancel();
+          },
+          onError: (err: any) => {
+            console.error("Error al actualizar:", err);
+            message.error(err?.message ?? "No se pudo actualizar la página ❌");
+          },
+        }
+      );
+      return;
+    }
+
+    // 🟢 MODO CREACIÓN
+    createPage(mapToDto(values), {
       onSuccess: (data: any) => {
-        // Tu backend devuelve { ok: true, id_pagina: string }
         const newId =
           data?.id_pagina ??
-          data?.pagina?.id_pagina ?? // por si en algún caso viene anidado
-          data?.pagina?.id ?? null;
+          data?.pagina?.id_pagina ??
+          data?.pagina?.id ??
+          null;
 
         if (!newId) {
           console.warn("⚠️ Respuesta sin id de página:", data);
           message.warning("Se creó la página, pero no llegó el ID.");
         }
 
-        // construimos la “nueva página” con fallback a los valores del form
-        const nuevaPagina = {
-          id: String(newId ?? values.id ?? ""),          // 👈 IMPORTANTE: incluir id
+        const nuevaPagina: PageValues = {
+          id: String(newId ?? values.id ?? ""),
           sequence: data?.pagina?.secuencia ?? values.sequence,
           title: data?.pagina?.nombre ?? values.title,
           description: data?.pagina?.descripcion ?? values.description,
-        } satisfies PageValues;
+        };
 
-        message.success("Página creada correctamente");
-        try {
-          onUpdate(nuevaPagina); // <- si aquí truena, verás el catch
-        } catch (e) {
-          console.error("onUpdate lanzó error:", e);
-          throw e; // deja que React Query lo trate como error
-        }
+        message.success("Página creada correctamente ✅");
+        onUpdate(nuevaPagina);
         form.resetFields();
         onCancel();
       },
 
       onError: (err: any) => {
         console.warn("error.mesg: ", err?.message);
-        message.error(err?.message ?? "No se pudo crear la página. Intenta de nuevo.");
+        message.error(
+          err?.message ?? "No se pudo crear la página. Intenta de nuevo."
+        );
       },
     });
   };
-
 
   const handleCancel = () => {
     form.resetFields();
@@ -123,7 +163,7 @@ const PageEditModal: FC<PageEditModalProps> = ({
     <BaseModal
       open={visible}
       onCancel={handleCancel}
-      title="Creación de Página"
+      title={title}
       width={500}
       {...modalProps}
     >
@@ -131,7 +171,7 @@ const PageEditModal: FC<PageEditModalProps> = ({
         form={form}
         layout="vertical"
         onFinish={handleFinish}
-        initialValues={undefined}
+        initialValues={initialValues}
         preserve={false}
       >
         <div className="grid grid-cols-1 gap-0 px-6 py-4">
@@ -195,7 +235,11 @@ const PageEditModal: FC<PageEditModalProps> = ({
         {/* Botones */}
         <div className="flex justify-end px-6 gap-4 space-x-4">
           <Button onClick={handleCancel}>Cancelar</Button>
-          <Button type="primary" htmlType="submit" loading={isPending}>
+          <Button
+            type="primary"
+            htmlType="submit"
+            loading={isPending || patching}
+          >
             Guardar
           </Button>
         </div>

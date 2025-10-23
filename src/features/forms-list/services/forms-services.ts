@@ -1,7 +1,13 @@
 // services/forms.service.ts
 
 import { api } from "@/features/user-autentication/services/auth.service";
-import { CreateAsignacionDto } from "./types";
+
+import {
+  Categoria,
+  CreateAsignacionDto,
+  FormularioAPI,
+  UpdateFormularioDto,
+} from "./types";
 
 // export const api = axios.create({
 //   baseURL:
@@ -15,12 +21,17 @@ export interface Formulario {
   nombre: string;
   descripcion?: string;
   formulario_id?: string;
-  paginas: string[],
+  paginas: string[];
 }
 
 export interface CreateFormularioDto {
   id?: number;
   nombre: string;
+  descripcion?: string;
+}
+
+export interface UpdateCategoriaDto {
+  nombre?: string;
   descripcion?: string;
 }
 
@@ -93,12 +104,9 @@ export async function crearAsignacion(
   payload: CreateAsignacionDto,
   opts?: { signal?: AbortSignal }
 ) {
-  console.warn("payload: ", payload);
-  const res = await api.post(
-    "/api/asignaciones/crear-asignacion/",
-    payload,
-    { signal: opts?.signal }
-  );
+  const res = await api.post("/api/asignaciones/crear-asignacion/", payload, {
+    signal: opts?.signal,
+  });
   return res.data; // backend puede devolver {detail, ...} u otro shape
 }
 
@@ -126,10 +134,67 @@ export async function crearAsignacionMultipleUsuarios(
     } else {
       errors.push({
         usuario,
-        message: r.reason instanceof Error ? r.reason.message : String(r.reason),
+        message:
+          r.reason instanceof Error ? r.reason.message : String(r.reason),
       });
     }
   });
 
   return { ok, errors };
+}
+
+/** Suspende un formulario específico por ID */
+export async function suspendFormulario(
+  id: string,
+  opts?: { signal?: AbortSignal }
+): Promise<Formulario> {
+  const res = await api.post<Formulario>(
+    `/api/formularios/${id}/suspender/`,
+    {},
+    { signal: opts?.signal }
+  );
+  return res.data;
+}
+
+/**
+ * Actualiza un formulario existente vía PATCH
+ */
+export async function updateFormulario(
+  id: string,
+  payload: UpdateFormularioDto,
+  opts?: { signal?: AbortSignal }
+): Promise<FormularioAPI> {
+  const res = await api.patch<FormularioAPI>(
+    `/api/formularios/${id}/`,
+    payload,
+    { signal: opts?.signal }
+  );
+  return res.data;
+}
+
+/**
+ * Elimina una categoría por su ID
+ * @param id ID de la categoría
+ */
+export async function deleteCategoria(
+  id: string,
+  opts?: { signal?: AbortSignal }
+): Promise<void> {
+  await api.delete(`/api/categorias/${id}/`, {
+    signal: opts?.signal,
+  });
+}
+
+/**
+ * PATCH — Actualiza una categoría existente
+ */
+export async function updateCategoria(
+  id: string | undefined,
+  payload: UpdateCategoriaDto,
+  opts?: { signal?: AbortSignal }
+): Promise<Categoria> {
+  const res = await api.patch<Categoria>(`/api/categorias/${id}/`, payload, {
+    signal: opts?.signal,
+  });
+  return res.data;
 }

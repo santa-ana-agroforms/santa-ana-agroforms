@@ -45,3 +45,5 @@ export interface CreateAsignacionDto {
   /** lista de ids de formularios (uuid o id que tu backend espera) */
   formularios: string[];
 }
+
+export interface UpdateFormularioDto extends Partial<FormularioAPI> {}

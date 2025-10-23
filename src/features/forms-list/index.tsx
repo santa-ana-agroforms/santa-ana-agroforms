@@ -11,6 +11,7 @@ import {
 import moment from "moment";
 
 import CategoryTables from "@/components/CategoryTables";
+import AssignFormModal from "@/components/CategoryTables/components/AssignFormModal";
 import DeleteFormModal from "@/components/CategoryTables/components/DeleteFormModal";
 import DuplicateFormModal from "@/components/CategoryTables/components/DuplicateFormModal";
 import NewFormModal, {
@@ -18,8 +19,11 @@ import NewFormModal, {
 } from "@/components/CategoryTables/components/NewFormModal";
 import SuspendFormModal from "@/components/CategoryTables/components/SuspendFormModal";
 import { getColumns } from "@/components/CategoryTables/data";
+import DeleteCategoryModal from "@/components/CategoryTables/DeleteCategoryModal";
+import EditCategoryModal, {
+  EditCategoryValues,
+} from "@/components/EditCategoryModal";
 
-import AssignFormModal from "@/components/CategoryTables/components/AssignFormModal";
 import { useUsuarios } from "../users-list/hooks/useUsuarios";
 import { Usuario } from "../users-list/services/types";
 import { useFormsListsData } from "./hooks/useFormsListsData";
@@ -27,12 +31,13 @@ import {
   useCrearAsignacionMultiple,
   useDeleteFormulario,
   useDuplicateFormulario,
+  useSuspendFormulario,
 } from "./hooks/useFormularios";
 
 const { Panel } = Collapse;
 const { Title } = Typography;
 
-interface ItemType {
+export interface ItemType {
   key: string;
   id: number | string;
   titulo: string;
@@ -41,6 +46,8 @@ interface ItemType {
   estado: string;
   esPublico: boolean;
   autoEnvio: boolean;
+  forma_envio?: string;
+  descripcion?: string;
 }
 
 interface CategoryType {
@@ -60,7 +67,6 @@ type Sorts = GetSingle<Parameters<OnChange>[2]>;
 type Filters = Parameters<OnChange>[1];
 
 const FormsLists: React.FC<FormsListsProps> = ({ onSelectForm, sortAsc }) => {
-
   const { data: usuarios = [], isLoading: isLoadingUsuarios } = useUsuarios();
 
   const [filteredInfo, setFilteredInfo] = useState<Filters>({});
@@ -69,6 +75,11 @@ const FormsLists: React.FC<FormsListsProps> = ({ onSelectForm, sortAsc }) => {
   const [open, setOpen] = useState(false);
   const [selectedItem, setSelectedItem] = useState<ItemType | null>(null);
   const [modalVisible, setModalVisible] = useState(false);
+
+  const [categorySelected, setCategorySelected] = useState(String);
+  const [categoryValues, setCategoryValues] = useState<
+    EditCategoryValues | undefined
+  >(undefined);
 
   //Modal para borrar
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
@@ -81,6 +92,13 @@ const FormsLists: React.FC<FormsListsProps> = ({ onSelectForm, sortAsc }) => {
 
   // Modal Asignar
   const [isAssignModalOpen, setIsAssignModalOpen] = useState(false);
+
+  // Modal para borrar categorias
+  const [isDeleteCategoryModalOpen, setIsDeleteCategoryModalOpen] =
+    useState(false);
+
+  // Modal para editar categorias
+  const [isEditCategoryModalOpen, setIsEditCategoryModalOpen] = useState(false);
   //const [assigning, setAssigning] = useState(false);
 
   const { mutate: deleteForm, isPending: isDeletingForm } =
@@ -89,8 +107,10 @@ const FormsLists: React.FC<FormsListsProps> = ({ onSelectForm, sortAsc }) => {
   const { mutate: duplicate, isPending: isDuplicateForm } =
     useDuplicateFormulario();
 
-  const { mutate: asignarMultiple, isPending: assigning } = 
+  const { mutate: asignarMultiple, isPending: assigning } =
     useCrearAsignacionMultiple();
+
+  const { mutate: suspender, isPending } = useSuspendFormulario();
 
   const handleAdd = () => {
     setOpen(true);
@@ -126,6 +146,16 @@ const FormsLists: React.FC<FormsListsProps> = ({ onSelectForm, sortAsc }) => {
   const handleAssignOpen = useCallback((record: ItemType) => {
     setSelectedItem(record);
     setIsAssignModalOpen(true);
+  }, []);
+
+  const handleDeleteCategory = useCallback((record: string) => {
+    setCategorySelected(record);
+    setIsDeleteCategoryModalOpen(true);
+  }, []);
+
+  const handleEditCategory = useCallback((record: EditCategoryValues) => {
+    setCategoryValues(record);
+    setIsEditCategoryModalOpen(true);
   }, []);
 
   const handleCreate = (values: NewFormValues) => {
@@ -175,6 +205,29 @@ const FormsLists: React.FC<FormsListsProps> = ({ onSelectForm, sortAsc }) => {
     });
   }, [selectedItem, duplicate]);
 
+  const handleSuspendConfirm = useCallback(() => {
+    if (!selectedItem) {
+      message.warning("No hay un formulario seleccionado para suspender.");
+      return;
+    }
+
+    suspender(selectedItem.id.toString(), {
+      onSuccess: () => {
+        message.success(
+          `Formulario "${selectedItem.titulo}" suspendido correctamente.`
+        );
+        setIsSuspendModalOpen(false);
+        setSelectedItem(null);
+      },
+      onError: (err: any) => {
+        message.error(
+          err?.message ??
+            "No se pudo suspender el formulario. Intenta de nuevo."
+        );
+      },
+    });
+  }, [selectedItem, suspender]);
+
   const handleAssignConfirm = useCallback(
     async (userIds: string[]) => {
       if (!selectedItem) {
@@ -203,7 +256,8 @@ const FormsLists: React.FC<FormsListsProps> = ({ onSelectForm, sortAsc }) => {
           },
           onError: (err: any) => {
             message.error(
-              err?.message ?? "No se pudo asignar el formulario. Intenta de nuevo."
+              err?.message ??
+                "No se pudo asignar el formulario. Intenta de nuevo."
             );
           },
         }
@@ -230,8 +284,8 @@ const FormsLists: React.FC<FormsListsProps> = ({ onSelectForm, sortAsc }) => {
     () =>
       (usuarios as Usuario[]).map((u) => ({
         label: u.nombre?.trim() || u.nombre_usuario || u.email,
-        value: u.nombre_usuario,          // usamos nombre_usuario como id único
-        disabled: u.activo === false,     // si quieres deshabilitar inactivos
+        value: u.nombre_usuario, // usamos nombre_usuario como id único
+        disabled: u.activo === false, // si quieres deshabilitar inactivos
       })),
     [usuarios]
   );
@@ -253,7 +307,6 @@ const FormsLists: React.FC<FormsListsProps> = ({ onSelectForm, sortAsc }) => {
     [rows, sortedInfo, filteredInfo]
   );
 
-
   return (
     <div className="flex flex-col p-4 w-full gap-7 ">
       {isLoading || categoriesData.length === 0 ?
@@ -266,15 +319,19 @@ const FormsLists: React.FC<FormsListsProps> = ({ onSelectForm, sortAsc }) => {
             data={sortedCategories}
             columns={columns as TableColumnType<ItemType>[]}
             onTableChange={handleChange}
+            onOpenDeleteModal={handleDeleteCategory}
+            onOpenEditModal={handleEditCategory}
           />
 
           <NewFormModal
+            title={selectedItem ? "Edición de formulario" : undefined}
             visible={open}
             onCancel={() => setOpen(false)}
             onCreate={handleCreate}
             initialValues={
               selectedItem ?
                 {
+                  id: selectedItem.id,
                   titulo: selectedItem.titulo,
                   desde: moment(selectedItem.desde, "DD/MM/YYYY"),
                   hasta: moment(selectedItem.hasta, "DD/MM/YYYY"),
@@ -283,7 +340,9 @@ const FormsLists: React.FC<FormsListsProps> = ({ onSelectForm, sortAsc }) => {
                   autoEnvio: selectedItem.autoEnvio,
                   categoria: categoriesData.find((c) =>
                     c.items.some((i) => i.key === selectedItem.key)
-                  )!.key,
+                  )?.key,
+                  formaEnvio: selectedItem.forma_envio,
+                  descripcion: selectedItem.descripcion,
                 }
               : undefined
             }
@@ -314,8 +373,8 @@ const FormsLists: React.FC<FormsListsProps> = ({ onSelectForm, sortAsc }) => {
           <SuspendFormModal
             open={isSuspendModalOpen}
             formTitle={selectedItem ? selectedItem.titulo : ""}
-            loading={false}
-            onConfirm={() => {}}
+            loading={isPending}
+            onConfirm={handleSuspendConfirm}
             onCancel={() => {
               setIsSuspendModalOpen(false);
               setSelectedItem(null);
@@ -331,6 +390,21 @@ const FormsLists: React.FC<FormsListsProps> = ({ onSelectForm, sortAsc }) => {
             loadingOptions={isLoadingUsuarios}
             submitting={assigning}
             onAssign={handleAssignConfirm}
+          />
+
+          <EditCategoryModal
+            visible={isEditCategoryModalOpen}
+            categoryId={categoryValues?.key}
+            onCancel={() => setIsEditCategoryModalOpen(false)}
+            initialValues={categoryValues}
+          />
+
+          <DeleteCategoryModal
+            visible={isDeleteCategoryModalOpen}
+            open={isDeleteCategoryModalOpen}
+            categoryId={categorySelected}
+            categoryName={selectedItem?.titulo ?? ""}
+            onCancel={() => setIsDeleteCategoryModalOpen(false)}
           />
         </>
       }

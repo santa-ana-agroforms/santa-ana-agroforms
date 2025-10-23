@@ -1,7 +1,22 @@
 // src/components/FormsLists/CategoryTables.tsx
 import React from "react";
 
-import { Collapse, Table, type TableColumnType, type TableProps } from "antd";
+import {
+  CaretRightOutlined,
+  DeleteOutlined,
+  EditOutlined,
+} from "@ant-design/icons";
+import {
+  Button,
+  Collapse,
+  Space,
+  Table,
+  Tooltip,
+  type TableColumnType,
+  type TableProps,
+} from "antd";
+
+import { EditCategoryValues } from "../EditCategoryModal";
 
 const { Panel } = Collapse;
 
@@ -15,6 +30,10 @@ interface Props<T> {
   data: Category<T>[];
   columns: TableColumnType<T>[];
   onTableChange: TableProps<T>["onChange"];
+  /** Abre el modal de edición de categoría */
+  onOpenEditModal?: (values: EditCategoryValues) => void;
+  /** Abre el modal de eliminación de categoría */
+  onOpenDeleteModal?: (categoryKey: string) => void;
 }
 
 // 3) Hacemos el componente genérico en T
@@ -22,6 +41,8 @@ function CategoryTables<T extends { key: React.Key }>({
   data,
   columns,
   onTableChange,
+  onOpenEditModal,
+  onOpenDeleteModal,
 }: Props<T>) {
   return (
     <>
@@ -36,11 +57,49 @@ function CategoryTables<T extends { key: React.Key }>({
       />
 
       <div className="-mt-6">
-        {/* 2) Collapse con header vacío */}
         <Collapse
+          expandIcon={({ isActive }) => (
+            <CaretRightOutlined
+              rotate={isActive ? 90 : 0}
+              className="transform translate-y-1.5"
+            />
+          )}
           items={data.map((cat) => ({
             key: cat.key,
-            label: `Categoría: ${cat.name}`,
+            label: (
+              <div className="flex justify-between items-center w-full">
+                <span>{`Categoría: ${cat.name}`}</span>
+
+                <Space size="small">
+                  <Button
+                    type="text"
+                    icon={<EditOutlined />}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      onOpenEditModal?.(cat);
+                    }}
+                  />
+                  <Tooltip
+                    title={
+                      cat.items.length > 0 ?
+                        "Para eliminar una categoría, no puede haber formularios."
+                      : "Eliminar categoria"
+                    }
+                  >
+                    <Button
+                      type="text"
+                      icon={<DeleteOutlined />}
+                      danger
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        onOpenDeleteModal?.(cat.key);
+                      }}
+                      disabled={cat.items.length > 0}
+                    />
+                  </Tooltip>
+                </Space>
+              </div>
+            ),
             children: (
               <Table<T>
                 columns={columns}

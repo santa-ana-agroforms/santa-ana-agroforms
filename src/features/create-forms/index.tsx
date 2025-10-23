@@ -2,7 +2,7 @@
 import React, { useEffect, useMemo, useState } from "react";
 
 import { ArrowLeftOutlined } from "@ant-design/icons";
-import { Button, MenuProps } from "antd";
+import { Button, MenuProps, message } from "antd";
 
 import { useFormulario } from "../forms-list/hooks/useFormularios";
 import EditFieldModal, {
@@ -22,6 +22,7 @@ interface CreateFormsProps {
 }
 
 export type ElementItem = {
+  id?: string;
   type: string;
   name: string;
   group?: string;
@@ -42,6 +43,7 @@ const CreateForms: React.FC<CreateFormsProps> = ({ formId, onBack }) => {
       const inicial: Record<number, ElementItem[]> = {};
       formulario.paginas.forEach((pagina: any) => {
         inicial[pagina.secuencia] = pagina.campos.map((campo: any) => ({
+          id: campo.id_campo,
           type: campo.tipo,
           name: campo.nombre_campo,
           group: campo.grupo ?? undefined,
@@ -124,6 +126,10 @@ const CreateForms: React.FC<CreateFormsProps> = ({ formId, onBack }) => {
         while (list.length < currentElements.length)
           list.push(undefined as unknown as FieldJson);
         list[editIndex] = json;
+        const editedElement = currentElements[editIndex];
+        if (editedElement?.id) {
+          json.id_campo = editedElement.id;
+        }
       } else {
         // CREACIÓN: se apendea al final. (coincidirá con el elemento que se creará en handleSave)
         list.push(json);
@@ -144,6 +150,23 @@ const CreateForms: React.FC<CreateFormsProps> = ({ formId, onBack }) => {
     groupName?: string,
     values?: FieldFormValues
   ) => {
+    const pageKey = selectedPage.sequence;
+    const currentList = accumulatedElements ?? [];
+    const newName = values?.nombre ?? key;
+
+    // 🔍 Validar duplicado (insensible a mayúsculas/minúsculas)
+    const nameExists = currentList.some(
+      (el) => el.name.toLowerCase() === newName.toLowerCase()
+    );
+
+    if (nameExists) {
+      // aquí puedes usar AntD message.error o alert
+      message.warning(
+        `El nombre del campo: "${newName}", ya existe en este formulario`
+      );
+      return; // cancela la adición
+    }
+
     setElementsByPage((prev) => {
       const pageKey = selectedPage.sequence;
       const prevList = prev[pageKey] ?? [];
@@ -217,7 +240,6 @@ const CreateForms: React.FC<CreateFormsProps> = ({ formId, onBack }) => {
     title: "Generales",
   });
 
-
   useEffect(() => {
     if (formulario?.paginas) {
       const mappedPages: PageValues[] = formulario.paginas.map((p: any) => ({
@@ -228,21 +250,21 @@ const CreateForms: React.FC<CreateFormsProps> = ({ formId, onBack }) => {
       }));
       setPages(mappedPages);
 
-      console.warn("mapped:", mappedPages);
-
-      if (mappedPages.length > 0 ) {
-        setSelectedPage(prev => {
-        const isSentinel = !prev || String(prev.id) === "0";
-        const stillExists = prev && mappedPages.some(p => String(p.id) === String(prev.id));
-        if (isSentinel || !stillExists) return mappedPages[0];
-        // opcional: sincroniza datos (title/description) con el backend si cambiaron
-        const updated = mappedPages.find(p => String(p.id) === String(prev.id))!;
-        return updated;
-      });
-  }
+      if (mappedPages.length > 0) {
+        setSelectedPage((prev) => {
+          const isSentinel = !prev || String(prev.id) === "0";
+          const stillExists =
+            prev && mappedPages.some((p) => String(p.id) === String(prev.id));
+          if (isSentinel || !stillExists) return mappedPages[0];
+          // opcional: sincroniza datos (title/description) con el backend si cambiaron
+          const updated = mappedPages.find(
+            (p) => String(p.id) === String(prev.id)
+          )!;
+          return updated;
+        });
+      }
     }
   }, [formulario]);
-
 
   const handleEditDelete = () => {
     const pageKey = selectedPage.sequence;
@@ -283,6 +305,15 @@ const CreateForms: React.FC<CreateFormsProps> = ({ formId, onBack }) => {
     setEditVariant(undefined);
   };
 
+  // console.warn("elementsByPage: ", elementsByPage, selectedPage.sequence);
+
+  const accumulatedElements = Object.keys(elementsByPage)
+    .filter((pageNum) => {
+      const pageNumber = parseInt(pageNum);
+      return pageNumber >= 1 && pageNumber <= selectedPage.sequence;
+    })
+    .sort((a, b) => parseInt(a) - parseInt(b))
+    .flatMap((pageNum) => elementsByPage[pageNum] || []);
 
   const currentElements = elementsByPage[selectedPage.sequence] ?? [];
 
@@ -318,11 +349,13 @@ const CreateForms: React.FC<CreateFormsProps> = ({ formId, onBack }) => {
         <EditFieldModal
           visible={visible}
           variant={selectedKey}
+          initialValues={undefined}
           opcionesList={opciones}
           gruposList={groups}
           onSave={(vals) => handleSave?.(vals)}
           onCancel={handleCancel}
           onBuild={handleCompiled}
+          fieldsList={accumulatedElements}
         />
 
         {/* Modal de EDICIÓN (controlado por CreateForms) */}
@@ -336,6 +369,7 @@ const CreateForms: React.FC<CreateFormsProps> = ({ formId, onBack }) => {
           onCancel={() => setEditOpen(false) ?? (() => {})}
           onDelete={handleEditDelete}
           onBuild={handleCompiled}
+          fieldsList={accumulatedElements}
         />
 
         {/* 

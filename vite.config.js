@@ -11,7 +11,7 @@ const DEV_CSP = [
   "base-uri 'self'",
   "object-src 'none'",
   "frame-ancestors 'none'",
-  "script-src 'self' 'unsafe-inline' 'unsafe-eval' blob:",
+  "script-src 'self' 'unsafe-inline' 'unsafe-eval' blob: data:",
   "style-src 'self' 'unsafe-inline'",
   "img-src 'self' data: blob:",
   "font-src 'self'",
@@ -42,8 +42,20 @@ function cspHeaderPlugin() {
   };
 }
 
-export default defineConfig({
-  plugins: [react(), tailwindcss(), cspHeaderPlugin()],
+const defineMonacoWorkers = () => ({
+  name: "monaco-local-workers",
+  configureServer() {
+    // No hace falta nada aquí, solo evita que busque en CDN
+  },
+});
+
+export default defineConfig(({ mode }) => ({
+  plugins: [
+    react(),
+    tailwindcss(),
+    defineMonacoWorkers(),
+    ...(mode === "production" ? [] : []),
+  ],
   resolve: {
     alias: {
       "@": new URL("./src", import.meta.url).pathname,
@@ -58,4 +70,4 @@ export default defineConfig({
       },
     },
   },
-});
+}));
