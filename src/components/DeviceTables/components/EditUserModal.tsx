@@ -113,6 +113,7 @@ const EditUserModal: FC<EditUserModalProps> = ({
           <Form.Item
             name="activo"
             valuePropName="checked"
+            initialValue={false}
             rules={[
               { required: true, message: "Marca para activar el usuario" },
             ]}
@@ -125,9 +126,8 @@ const EditUserModal: FC<EditUserModalProps> = ({
           <Form.Item
             name="acceso_web"
             valuePropName="checked"
-            rules={[
-              { required: true, message: "Marca para activar acceso a la web" },
-            ]}
+            initialValue={false}
+            // rules={[{ message: "Marca para activar acceso a la web" }]}
           >
             <Checkbox className="flex-row-reverse">Acceso a la web</Checkbox>
           </Form.Item>
@@ -137,7 +137,13 @@ const EditUserModal: FC<EditUserModalProps> = ({
           <Form.Item
             label="Email"
             name="email"
-            rules={[{ type: "email", message: "El email no es válido" }]}
+            rules={[
+              {
+                required: true,
+                type: "email",
+                message: "El email no es válido",
+              },
+            ]}
           >
             <Input />
           </Form.Item>

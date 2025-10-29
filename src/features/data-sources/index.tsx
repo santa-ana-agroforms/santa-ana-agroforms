@@ -1,26 +1,24 @@
 // src/components/DataSources.tsx
 import React, { useCallback, useState } from "react";
 
-import { TableProps } from "antd";
+import { message, TableProps } from "antd";
 
-import CategoryTables from "@/components/CategoryTables";
+import CategoryTables, { Category } from "@/components/CategoryTables";
 import DeleteFormModal from "@/components/CategoryTables/components/DeleteFormModal";
 import { categories, getColumns } from "@/features/data-sources/data";
 
 import DataModal from "./components/DataModal";
 import DataSourceModal, { NewFormValues } from "./components/DataSourceModal";
+import { useFuentesDatos } from "./hooks/useDataSources";
+import { useDeleteFuenteDato } from "./hooks/useDeleteFuenteDato";
+import { FuenteDatoAPI } from "./services/data-sources.services";
 
 export interface ItemType {
   key: string;
-  codigo: string;
+  nombre: string;
   descripcion: string;
   tipoFuente: string;
-  conexion?: string;
-  comando?: string;
-  intervalo?: string;
-  ultActualizacion?: string;
-  ultMensaje?: string;
-  datos?: string;
+  datos: string;
 }
 
 type OnChange = NonNullable<TableProps<ItemType>["onChange"]>;
@@ -37,6 +35,30 @@ const DataSources: React.FC = () => {
   const [modalDeleteVisible, setModalDeleteVisible] = useState(false);
   const [selected, setSelected] = useState<ItemType | null>(null);
   const [data, setData] = useState(categories);
+  const [selectedFuente, setSelectedFuente] = useState<FuenteDatoAPI | null>(
+    null
+  );
+
+  const { data: dataSources, isLoading, error } = useFuentesDatos();
+  const { mutateAsync: eliminarFuenteDato, isPending: deleting } =
+    useDeleteFuenteDato();
+
+  console.warn("Fuentes de datos cargadas:", dataSources, isLoading, error);
+
+  const transformedData: Category<ItemType>[] = [
+    {
+      key: "fuentes-datos",
+      name: "Fuentes de Datos locales",
+      items:
+        dataSources?.map((item) => ({
+          key: item.id,
+          nombre: item.nombre,
+          descripcion: item.descripcion,
+          tipoFuente: item.tipo_archivo,
+          datos: item.columnas?.join(", ") ?? "",
+        })) ?? [],
+    },
+  ];
 
   const handleAdd = () => {
     setOpen(true);
@@ -58,7 +80,8 @@ const DataSources: React.FC = () => {
   };
 
   const handleDatos = (record: ItemType) => {
-    setSelected(record);
+    const fuente = dataSources?.find((d) => d.nombre === record.nombre);
+    setSelectedFuente(fuente ?? null);
     setModalVisible(true);
   };
 
@@ -66,7 +89,7 @@ const DataSources: React.FC = () => {
     sortedInfo,
     filteredInfo,
     handleAdd,
-    handleEdit,
+    //handleEdit,
     handleDelete,
     handleDatos
   );
@@ -91,15 +114,17 @@ const DataSources: React.FC = () => {
   return (
     <div className="flex flex-col w-full h-full gap-5">
       <CategoryTables<ItemType>
-        data={data}
+        data={transformedData}
         columns={columns}
         onTableChange={handleChange}
+        showOptions={false}
       />
 
       <DataModal
         visible={modalVisible}
         onCancel={handleCancel}
         onSubmit={handleSubmit}
+        fuenteSeleccionada={selectedFuente}
       />
 
       <DataSourceModal
@@ -111,16 +136,17 @@ const DataSources: React.FC = () => {
 
       <DeleteFormModal
         open={modalDeleteVisible}
-        confirmText={`¿Estás seguro de querer borrar el dato: ${selectedItem?.descripcion}?`}
-        loading={false}
-        onConfirm={() => {
+        confirmText={`¿Estás seguro de querer borrar la fuente de dato: ${selectedItem?.nombre}?`}
+        loading={deleting}
+        onConfirm={async () => {
           if (selectedItem) {
-            setData((prev) =>
-              prev.map((cat) => ({
-                ...cat,
-                items: cat.items.filter((it) => it.key !== selectedItem.key),
-              }))
-            );
+            try {
+              await eliminarFuenteDato(selectedItem.key); // key = id de la fuente
+              message.success("Fuente de datos eliminada correctamente");
+            } catch (err) {
+              console.error(err);
+              message.error("Error al eliminar la fuente de datos");
+            }
           }
           setModalDeleteVisible(false);
           setSelectedItem(null);

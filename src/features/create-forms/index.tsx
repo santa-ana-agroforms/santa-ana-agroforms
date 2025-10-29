@@ -2,6 +2,7 @@
 import React, { useEffect, useMemo, useState } from "react";
 
 import { ArrowLeftOutlined } from "@ant-design/icons";
+import { useQueryClient } from "@tanstack/react-query";
 import { Button, MenuProps, message } from "antd";
 
 import { useFormulario } from "../forms-list/hooks/useFormularios";
@@ -32,6 +33,7 @@ export type ElementItem = {
 
 const CreateForms: React.FC<CreateFormsProps> = ({ formId, onBack }) => {
   const [groups, setGroups] = useState<string[]>([]);
+  const queryClient = useQueryClient();
   const {
     data: formulario,
     isLoading,
@@ -324,6 +326,39 @@ const CreateForms: React.FC<CreateFormsProps> = ({ formId, onBack }) => {
     setVisible(true);
   };
 
+  const handlePageDeleted = (deletedId: string) => {
+    setPages((prevPages) => {
+      const updatedPages = prevPages.filter((p) => String(p.id) !== deletedId);
+
+      if (updatedPages.length === 0) {
+        // Si ya no hay páginas
+        setSelectedPage({
+          id: "0",
+          sequence: 1,
+          description: "Sin páginas",
+          title: "Sin páginas",
+        });
+      } else {
+        // Buscar la página siguiente o la primera disponible
+        const deletedIndex = prevPages.findIndex(
+          (p) => String(p.id) === deletedId
+        );
+        const nextPage =
+          updatedPages[deletedIndex] ||
+          updatedPages[deletedIndex - 1] ||
+          updatedPages[0];
+
+        setSelectedPage(nextPage);
+      }
+
+      queryClient.invalidateQueries({
+        queryKey: ["formulario", formId.toString()],
+      });
+
+      return updatedPages;
+    });
+  };
+
   return (
     <div className="flex h-full bg-gray-50">
       {/* Sidebar con la lista de elementos */}
@@ -356,6 +391,7 @@ const CreateForms: React.FC<CreateFormsProps> = ({ formId, onBack }) => {
           onCancel={handleCancel}
           onBuild={handleCompiled}
           fieldsList={accumulatedElements}
+          pageId={String(selectedPage.id)}
         />
 
         {/* Modal de EDICIÓN (controlado por CreateForms) */}
@@ -370,6 +406,7 @@ const CreateForms: React.FC<CreateFormsProps> = ({ formId, onBack }) => {
           onDelete={handleEditDelete}
           onBuild={handleCompiled}
           fieldsList={accumulatedElements}
+          pageId={String(selectedPage.id)}
         />
 
         {/* 
@@ -394,6 +431,7 @@ const CreateForms: React.FC<CreateFormsProps> = ({ formId, onBack }) => {
       <div>
         <PageSettings
           onPageChange={setSelectedPage}
+          onPageDeleted={handlePageDeleted}
           pages={pages}
           pageId={String(selectedPage.id)}
           compiledList={allCompiled}

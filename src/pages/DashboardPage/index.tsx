@@ -28,6 +28,8 @@ const DashboardPage: React.FC = () => {
 
   const { data: dashboard, isLoading, isError } = useDashboardResumen();
 
+  console.warn("Dashboard data:", dashboard);
+
   useEffect(() => {
     // 2) Último acceso (ejemplo: días desde el último acceso por terminal)
     setLastAccess([
@@ -221,7 +223,7 @@ const DashboardPage: React.FC = () => {
 
           <div className="flex flex-col w-full bg-transparent p-4 rounded shadow gap-6">
             <h3 className="text-base font-semibold mb-2">
-              Cantidad de formularios por categoria
+              Cantidad de formularios por fecha de creación
             </h3>
             <Line {...config} />
           </div>
@@ -230,7 +232,7 @@ const DashboardPage: React.FC = () => {
             {/* gráfica izquierda */}
             <div className="flex-1 bg-white p-4 rounded shadow">
               <h3 className="text-base font-semibold mb-2">
-                Cantidad de formularios por tipos de estado
+                Cantidad de formularios por categoria
               </h3>
               <Pie {...pieConfig} />
             </div>

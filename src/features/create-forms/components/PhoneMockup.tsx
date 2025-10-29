@@ -11,7 +11,9 @@ import {
   Button,
   DatePicker,
   Input,
+  InputNumber,
   Select,
+  Space,
   Switch,
   TimePicker,
   Typography,
@@ -39,11 +41,9 @@ interface PhoneMockupProps {
 }
 
 const PhoneMockup: React.FC<PhoneMockupProps> = ({
-  formId,
   formulario,
   isLoading,
   isError,
-  onBack,
   selectedElements,
   pages,
   onPageChange,
@@ -54,6 +54,8 @@ const PhoneMockup: React.FC<PhoneMockupProps> = ({
   const totalPages = pages.length;
 
   if (isLoading && !formulario) return <div>Cargando…</div>;
+
+  // console.warn("Renderizando PhoneMockup con formulario:", formulario);
 
   const handlePrev = () => {
     if (currentIndex > 0) {
@@ -213,7 +215,7 @@ const PhoneMockup: React.FC<PhoneMockupProps> = ({
                 </div>
               )}
 
-              {element.type === "numero" && (
+              {(element.type === "numero" || element.type === "number") && (
                 <div className="flex flex-row gap-4 items-center">
                   <HighlightOutlined
                     className="cursor-pointer"
@@ -226,7 +228,7 @@ const PhoneMockup: React.FC<PhoneMockupProps> = ({
                 </div>
               )}
 
-              {element.type === "firma" && (
+              {(element.type === "firma" || element.type === "firm") && (
                 <>
                   <HighlightOutlined
                     className="cursor-pointer"
@@ -252,6 +254,23 @@ const PhoneMockup: React.FC<PhoneMockupProps> = ({
                     </div>
                   </div>
                 </>
+              )}
+
+              {element.type === "calc" && (
+                <div className="flex flex-row gap-4 items-center">
+                  <HighlightOutlined
+                    className="cursor-pointer"
+                    onClick={() => onEditElement?.(index)}
+                  />
+                  <div className="flex flex-col w-full">
+                    <Text>{element.values?.etiqueta}</Text>
+                    <Space>
+                      <InputNumber disabled />
+                      <span>+</span>
+                      <InputNumber disabled />
+                    </Space>
+                  </div>
+                </div>
               )}
 
               {/* Aquí puedes seguir agregando el resto de tipos de elementos */}

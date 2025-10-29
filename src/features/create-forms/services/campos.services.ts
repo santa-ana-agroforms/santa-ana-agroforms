@@ -223,3 +223,29 @@ export async function patchCamposActualBatch(
 
   return { ok, errors };
 }
+
+/** DELETE de un (1) campo existente */
+export async function deleteCampoActualSingle(
+  campoId: string,
+  opts?: { signal?: AbortSignal }
+) {
+  if (!campoId) throw new Error("campoId es requerido");
+
+  const url = `/api/campos/${campoId}/`;
+
+  try {
+    const res = await api.delete(url, {
+      signal: opts?.signal,
+    });
+
+    // El endpoint devuelve 204 No Content → sin body
+    if (res.status === 204) return { success: true };
+
+    return res?.data ?? { success: true };
+  } catch (e) {
+    const { status, detail } = extractAxiosError(e);
+    throw new Error(
+      `Error al eliminar campo (${status ?? "sin status"}): ${detail}`
+    );
+  }
+}

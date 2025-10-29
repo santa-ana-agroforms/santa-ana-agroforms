@@ -34,6 +34,7 @@ interface Props<T> {
   onOpenEditModal?: (values: EditCategoryValues) => void;
   /** Abre el modal de eliminación de categoría */
   onOpenDeleteModal?: (categoryKey: string) => void;
+  showOptions?: boolean;
 }
 
 // 3) Hacemos el componente genérico en T
@@ -43,6 +44,7 @@ function CategoryTables<T extends { key: React.Key }>({
   onTableChange,
   onOpenEditModal,
   onOpenDeleteModal,
+  showOptions = true,
 }: Props<T>) {
   return (
     <>
@@ -61,7 +63,11 @@ function CategoryTables<T extends { key: React.Key }>({
           expandIcon={({ isActive }) => (
             <CaretRightOutlined
               rotate={isActive ? 90 : 0}
-              className="transform translate-y-1.5"
+              className={
+                showOptions ?
+                  "transform translate-y-1.5"
+                : "transform translate-y-0"
+              }
             />
           )}
           items={data.map((cat) => ({
@@ -70,34 +76,36 @@ function CategoryTables<T extends { key: React.Key }>({
               <div className="flex justify-between items-center w-full">
                 <span>{`Categoría: ${cat.name}`}</span>
 
-                <Space size="small">
-                  <Button
-                    type="text"
-                    icon={<EditOutlined />}
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      onOpenEditModal?.(cat);
-                    }}
-                  />
-                  <Tooltip
-                    title={
-                      cat.items.length > 0 ?
-                        "Para eliminar una categoría, no puede haber formularios."
-                      : "Eliminar categoria"
-                    }
-                  >
+                {showOptions && (
+                  <Space size="small">
                     <Button
                       type="text"
-                      icon={<DeleteOutlined />}
-                      danger
+                      icon={<EditOutlined />}
                       onClick={(e) => {
                         e.stopPropagation();
-                        onOpenDeleteModal?.(cat.key);
+                        onOpenEditModal?.(cat);
                       }}
-                      disabled={cat.items.length > 0}
                     />
-                  </Tooltip>
-                </Space>
+                    <Tooltip
+                      title={
+                        cat.items.length > 0 ?
+                          "Para eliminar una categoría, no puede haber formularios."
+                        : "Eliminar categoria"
+                      }
+                    >
+                      <Button
+                        type="text"
+                        icon={<DeleteOutlined />}
+                        danger
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          onOpenDeleteModal?.(cat.key);
+                        }}
+                        disabled={cat.items.length > 0}
+                      />
+                    </Tooltip>
+                  </Space>
+                )}
               </div>
             ),
             children: (

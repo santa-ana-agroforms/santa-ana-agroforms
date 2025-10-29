@@ -1,10 +1,22 @@
 // src/components/NewFormModal.tsx
 import { FC, useEffect, useState } from "react";
 
-import { Button, Form, Input, Select, type ModalProps } from "antd";
+import { InboxOutlined } from "@ant-design/icons";
+import {
+  Button,
+  Form,
+  Input,
+  message,
+  Select,
+  UploadFile,
+  type ModalProps,
+} from "antd";
+import Dragger from "antd/es/upload/Dragger";
 import type { Moment } from "moment";
 
 import BaseModal from "@/components/BaseModal";
+
+import { useCreateFuenteDato } from "../hooks/useCreateFuenteDato";
 
 const { Option } = Select;
 
@@ -44,6 +56,21 @@ const DataSouceModal: FC<NewFormModalProps> = ({
   const [tipoObtencionDato, setTipoObtencionDato] = useState<
     string | undefined
   >(undefined);
+  const [fileList, setFileList] = useState<UploadFile[]>([]);
+
+  const { mutateAsync: createFuenteDato, isPending } = useCreateFuenteDato();
+
+  const uploadProps = {
+    multiple: false,
+    fileList,
+    beforeUpload: () => false,
+    onChange(info: { fileList: UploadFile[] }) {
+      setFileList(info.fileList);
+    },
+    onRemove() {
+      setFileList([]);
+    },
+  };
 
   useEffect(() => {
     if (visible) {
@@ -55,12 +82,29 @@ const DataSouceModal: FC<NewFormModalProps> = ({
     }
   }, [visible, initialValues, form]);
 
-  const handleFinish = (values: NewFormValues) => {
-    onCreate(values);
-    form.resetFields();
-    onCancel();
-    setTipoFuente(undefined);
-    setTipoObtencionDato(undefined);
+  const handleFinish = async (values: any) => {
+    try {
+      const archivo = fileList[0]?.originFileObj;
+      if (!archivo) {
+        throw new Error("Debes seleccionar un archivo antes de guardar");
+      }
+
+      console.warn("Valores del formulario:", values, archivo);
+
+      await createFuenteDato({
+        nombre: values.nombre,
+        descripcion: values.descripcion,
+        archivo,
+      });
+
+      form.resetFields();
+      setTipoFuente(undefined);
+      setTipoObtencionDato(undefined);
+      onCancel();
+    } catch (err) {
+      console.error("Error al crear fuente de datos:", err);
+      message.error("Error al subir la fuente de datos");
+    }
   };
 
   const handleCancel = () => {
@@ -91,8 +135,8 @@ const DataSouceModal: FC<NewFormModalProps> = ({
       >
         <div className="w-2xl">
           <Form.Item
-            label="Código"
-            name="codigo"
+            label="Nombre"
+            name="nombre"
             rules={[
               { required: true, message: "Por favor ingresa una código" },
             ]}
@@ -102,13 +146,7 @@ const DataSouceModal: FC<NewFormModalProps> = ({
         </div>
 
         <div className="w-2xl">
-          <Form.Item
-            label="Descripción"
-            name="descripcion"
-            rules={[
-              { required: true, message: "Por favor ingresa una descripcion" },
-            ]}
-          >
+          <Form.Item label="Descripción" name="descripcion">
             <Input />
           </Form.Item>
         </div>
@@ -228,9 +266,13 @@ const DataSouceModal: FC<NewFormModalProps> = ({
         )}
 
         <div className="w-2xl ">
-          <Form.Item label="Intervalo (segs):" name="intervalo">
-            <Input />
-          </Form.Item>
+          <Dragger {...uploadProps} style={{ padding: 16 }}>
+            <p className="ant-upload-drag-icon">
+              <InboxOutlined />
+            </p>
+            <p className="ant-upload-text">Arrastra el archivo aquí</p>
+            <p className="ant-upload-hint">o haz clic para seleccionarlo</p>
+          </Dragger>
         </div>
 
         <div className="flex justify-end h-9">
@@ -263,10 +305,14 @@ const DataSouceModal: FC<NewFormModalProps> = ({
                 Probar conexión
               </Button>
             )}
-            <Button type="primary" htmlType="submit">
+            <Button type="primary" htmlType="submit" loading={isPending}>
               Guardar
             </Button>
-            <Button style={{ marginLeft: 8 }} onClick={handleCancel}>
+            <Button
+              style={{ marginLeft: 8 }}
+              onClick={handleCancel}
+              loading={isPending}
+            >
               Cancelar
             </Button>
           </Form.Item>

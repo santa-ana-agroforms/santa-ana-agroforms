@@ -27,6 +27,7 @@ export interface UserType {
   activo: boolean;
   nombre_usuario: string;
   email: string;
+  correo?: string;
   acceso_web?: boolean;
   // roles: Array<{
   //   id: string;
@@ -56,9 +57,7 @@ const UsersTable: React.FC<Props> = ({
   onTableChange,
 }) => {
   // filtros únicos
-  const perfilFilters = Array.from(
-    new Set(data.map((u) => u.nombre_usuario))
-  ).map((p) => ({ text: p, value: p }));
+
   const activeFilters = [
     { text: "Sí", value: true },
     { text: "No", value: false },
@@ -159,14 +158,23 @@ const UsersTable: React.FC<Props> = ({
       }
     } else {
       // 🟢 CREAR → POST con validación y errores detallados
+
+      if (data.some((user) => user.correo === values.email)) {
+        message.warning("El correo ya está registrado, por favor usa otro");
+        return;
+      } else if (!values.contrasena || values.contrasena.length < 8) {
+        message.warning("La contraseña debe tener al menos 8 caracteres");
+        return;
+      }
+
       try {
         await create({
           nombre_usuario: values.nombre_usuario,
           nombre: values.nombre,
           password: values.contrasena ?? "",
-          activo: values.activo,
+          activo: values.activo ?? false,
           correo: values.email,
-          acceso_web: values.acceso_web,
+          acceso_web: values.acceso_web ?? false,
         });
 
         message.success("Usuario creado con éxito");

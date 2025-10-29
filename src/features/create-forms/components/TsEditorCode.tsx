@@ -120,7 +120,7 @@ const TsEditorCode = forwardRef<TsEditorCodeRef, TsEditorCodeProps>(
       const propsContent = fields
         .map((field) => {
           const tsType = mapFieldTypeToTS(field.type);
-          return `  ${field.values?.etiqueta}: ${tsType};`;
+          return `  ${field.values?.nombre}: ${tsType};`;
         })
         .join("\n");
 

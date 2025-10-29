@@ -1,7 +1,6 @@
 // components/DataModal.tsx
 import React, { useCallback, useEffect, useState } from "react";
 
-import { InboxOutlined } from "@ant-design/icons";
 import { Button, Form, TableProps, Upload } from "antd";
 // Remove this import, it's not needed
 import type { UploadFile } from "antd/lib/upload/interface";
@@ -11,6 +10,7 @@ import DeleteFormModal from "@/components/CategoryTables/components/DeleteFormMo
 import FlatTables from "@/components/FlatTables";
 
 import { useExcelUpload } from "../hooks/useExcelUpload";
+import { FuenteDatoAPI } from "../services/data-sources.services";
 import { CategoryType, DataManualType, getColumns, ItemType } from "./data";
 import DataManualModal from "./DataManualModa";
 
@@ -20,12 +20,14 @@ interface DataModalProps {
   visible: boolean;
   onCancel: () => void;
   onSubmit: (files: UploadFile[]) => void;
+  fuenteSeleccionada?: FuenteDatoAPI | null;
 }
 
 const DataModal: React.FC<DataModalProps> = ({
   visible,
   onCancel,
   onSubmit,
+  fuenteSeleccionada,
 }) => {
   //const [fileList, setFileList] = useState<UploadFile[]>([]);
 
@@ -120,6 +122,8 @@ const DataModal: React.FC<DataModalProps> = ({
 
   const { uploadProps, fileList, setFileList } = useExcelUpload(setDataManual);
 
+  console.warn("Data manual:", fuenteSeleccionada);
+
   return (
     <>
       <BaseModal
@@ -154,17 +158,35 @@ const DataModal: React.FC<DataModalProps> = ({
         ]}
       >
         <div className="flex flex-col w-full h-full gap-4">
-          <Dragger {...uploadProps} style={{ padding: 16 }}>
+          {/* <Dragger {...uploadProps} style={{ padding: 16 }}>
             <p className="ant-upload-drag-icon">
               <InboxOutlined />
             </p>
             <p className="ant-upload-text">Arrastra el archivo aquí</p>
             <p className="ant-upload-hint">o haz clic para seleccionarlo</p>
-          </Dragger>
+          </Dragger> */}
 
           <FlatTables
-            data={dataManual}
-            columns={columns}
+            data={[
+              {
+                key: fuenteSeleccionada?.id ?? "sin-id",
+                name: fuenteSeleccionada?.nombre ?? "Sin nombre",
+                items:
+                  fuenteSeleccionada?.preview_data?.map((p, i) => ({
+                    key: i.toString(),
+                    ...p,
+                  })) ?? [],
+              },
+            ]}
+            columns={
+              fuenteSeleccionada?.columnas
+                ?.filter((col) => col !== "0")
+                .map((col) => ({
+                  title: col,
+                  dataIndex: col,
+                  key: col,
+                })) ?? []
+            }
             onTableChange={handleChange}
           />
         </div>

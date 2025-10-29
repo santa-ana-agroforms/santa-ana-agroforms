@@ -1,17 +1,15 @@
 import { useEffect, useMemo, useState } from "react";
 
 import { DiffOutlined, DownOutlined, FormOutlined } from "@ant-design/icons";
-import { Button, Input, InputNumber, message, Tooltip } from "antd";
+import { Button, Input, InputNumber, message, Modal } from "antd";
 
-import {
-  usePatchCamposActualBatch,
-  usePostCamposActualBatch,
-} from "../hooks/useCampoActual";
+import { useDeletePagina } from "../hooks/useDeletePagina";
 import { FieldJson } from "../types";
 import PageEditModal, { PageValues } from "./PageEditModal";
 
 interface PageSettingsProps {
   onPageChange?: (page: PageValues) => void;
+  onPageDeleted?: (deletedId: string) => void;
   pages: PageValues[];
   pageId?: string;
   formId?: string | number;
@@ -21,6 +19,7 @@ interface PageSettingsProps {
 
 const PageSettings: React.FC<PageSettingsProps> = ({
   onPageChange,
+  onPageDeleted,
   pages,
   pageId,
   formId,
@@ -43,11 +42,14 @@ const PageSettings: React.FC<PageSettingsProps> = ({
     undefined
   );
 
-  const { mutateAsync: postCamposBulk, isPending: sendingBulk } =
-    usePostCamposActualBatch();
+  // const { mutateAsync: postCamposBulk, isPending: sendingBulk } =
+  //   usePostCamposActualBatch();
 
-  const { mutateAsync: patchCamposBulk, isPending: patchingBulk } =
-    usePatchCamposActualBatch();
+  // const { mutateAsync: patchCamposBulk, isPending: patchingBulk } =
+  //   usePatchCamposActualBatch();
+
+  const { mutateAsync: deletePagina, isPending: deletingPagina } =
+    useDeletePagina();
 
   // inicializar
   useEffect(() => {
@@ -90,85 +92,53 @@ const PageSettings: React.FC<PageSettingsProps> = ({
     setEditPageModalVisible(true);
   };
 
-  const handleDelete = () => {
-    console.log("Eliminar clicked");
-  };
-
-  const handleContinue = async () => {
-    // Separar campos nuevos y existentes
-    const nuevos = compiledList.filter((f) => !f.id_campo);
-    const existentes = compiledList.filter((f) => f.id_campo);
-
-    if (compiledList.length === 0) {
-      message.warning("¡Necesitas seleccionar al menos un campo! ⚠️");
-      return;
-    }
-
+  const handleDelete = async () => {
     if (!selectedId) {
-      message.error("No se pudo identificar la página actual (pageId).");
+      message.error("No se pudo identificar la página a eliminar.");
       return;
     }
+
+    console.warn("Eliminando página con ID:", selectedId);
+
+    const confirmed = await new Promise<boolean>((resolve) => {
+      Modal.confirm({
+        title: "¿Eliminar esta página?",
+        content: "Esta acción no se puede deshacer.",
+        okText: "Sí, eliminar",
+        okType: "danger",
+        cancelText: "Cancelar",
+        onOk: () => resolve(true),
+        onCancel: () => resolve(false),
+      });
+    });
+
+    if (!confirmed) return;
 
     try {
-      // 🟢 1. Crear nuevos campos (POST)
-      let postResult: { ok: any[]; errors: any[] } = { ok: [], errors: [] };
-      if (nuevos.length > 0) {
-        message.loading({ content: "Creando nuevos campos...", key: "saving" });
-        postResult = await postCamposBulk({
-          pageId: pageId as string,
-          campos: nuevos,
-        });
+      message.loading({ content: "Eliminando página...", key: "delete" });
 
-        if (postResult.errors.length) {
-          message.warning(
-            `${postResult.errors.length} campos nuevos fallaron al crearse.`
-          );
-        } else {
-          message.success(
-            `${nuevos.length} campos nuevos creados correctamente.`
-          );
-        }
-      }
+      await deletePagina({ pageId: String(selectedId) });
 
-      // 🟡 2. Actualizar existentes (PATCH)
-      let patchResult: { ok: any[]; errors: any[] } = { ok: [], errors: [] };
-      if (existentes.length > 0) {
-        message.loading({
-          content: "Actualizando campos existentes...",
-          key: "saving",
-        });
-        patchResult = await patchCamposBulk({
-          pageId: pageId as string,
-          campos: existentes,
-        });
+      message.success({
+        content: "Página eliminada correctamente ✅",
+        key: "delete",
+        duration: 2, // ⏱ visible 2 segundos
+      });
 
-        if (patchResult.errors.length) {
-          message.warning(
-            `${patchResult.errors.length} campos existentes fallaron al actualizarse.`
-          );
-        } else {
-          message.success(
-            `${existentes.length} campos actualizados correctamente.`
-          );
-        }
-      }
+      // Limpia estados
+      setSelectedSeq(undefined);
+      setSelectedId(undefined);
 
-      // 🧩 3. Resultado combinado
-      const totalErrores =
-        (postResult.errors?.length || 0) + (patchResult.errors?.length || 0);
+      onPageDeleted?.(String(selectedId));
 
-      if (totalErrores > 0) {
-        message.warning(
-          `Algunos campos no se procesaron correctamente (${totalErrores}).`
-        );
-      } else {
-        message.success("✅ Todos los campos se guardaron correctamente.");
-      }
-    } catch (e) {
-      console.error("❌ Error al enviar campos:", e);
-      message.error("Error al enviar campos al backend.");
-    } finally {
-      message.destroy("saving");
+      // Notifica al padre
+      onPageChange?.({ id: "", title: "", description: "", sequence: 0 });
+    } catch (err) {
+      console.error("Error al eliminar página:", err);
+      message.error({
+        content: "Error al eliminar la página ❌",
+        key: "delete",
+      });
     }
   };
 
@@ -280,11 +250,11 @@ const PageSettings: React.FC<PageSettingsProps> = ({
       </div>
 
       {/* Footer */}
-      <div className="flex justify-end gap-3 px-4 py-3 border-t space-x-2">
-        <Button danger onClick={handleDelete}>
+      <div className="flex justify-center gap-3 px-4 py-3 border-t space-x-2">
+        <Button danger onClick={handleDelete} loading={deletingPagina}>
           ELIMINAR
         </Button>
-        <Tooltip
+        {/* <Tooltip
           title={
             compiledList.length === 0 ?
               "Debes seleccionar un campo para guardar"
@@ -301,7 +271,7 @@ const PageSettings: React.FC<PageSettingsProps> = ({
               GUARDAR
             </Button>
           </span>
-        </Tooltip>
+        </Tooltip> */}
       </div>
     </div>
   );

@@ -1,5 +1,5 @@
 // src/components/EditFieldModal.tsx
-import { FC, useEffect, useRef } from "react";
+import { FC, useEffect, useRef, useState } from "react";
 
 import {
   Button,
@@ -8,14 +8,19 @@ import {
   Form,
   Input,
   InputNumber,
+  message,
   Modal,
   Select,
   type ModalProps,
 } from "antd";
 
 import BaseModal from "@/components/BaseModal";
+import { useFuentesDatos } from "@/features/data-sources/hooks/useDataSources";
 
 import { ElementItem } from "..";
+import { usePatchCampoActualSingle } from "../hooks/useCampoActual";
+import { useDeleteCampoActualSingle } from "../hooks/useDeleteCampoActualSingle";
+import { usePostCampoActualSingle } from "../hooks/usePostCampoActualSingle";
 import { FieldJson } from "../types";
 import TsEditorCode, { type TsEditorCodeRef } from "./TsEditorCode";
 import { normalizeFieldName } from "./utils";
@@ -35,6 +40,8 @@ export interface FieldFormValues {
   opciones: string;
   grupo: string;
   reglaVisualizacion: string;
+  min: number;
+  max: number;
 }
 
 export type VariantType =
@@ -47,6 +54,7 @@ export type VariantType =
   | "hora"
   | "combo"
   | "multicombo"
+  | "dataset"
   | "barra"
   | "completadoAuto"
   | "linea"
@@ -76,6 +84,7 @@ export interface EditFieldModalProps extends Omit<ModalProps, "title"> {
   onDelete?: () => void;
   onBuild?: (json: FieldJson) => void;
   fieldsList?: ElementItem[];
+  pageId?: string;
 }
 
 const EditFieldModal: FC<EditFieldModalProps> = ({
@@ -89,11 +98,21 @@ const EditFieldModal: FC<EditFieldModalProps> = ({
   gruposList,
   onBuild,
   fieldsList,
+  pageId,
   ...modalProps
 }) => {
   const [form] = Form.useForm<FieldFormValues>();
 
   const tsEditorRef = useRef<TsEditorCodeRef>(null);
+
+  const { mutateAsync: postCampoSingle, isPending: savingPost } =
+    usePostCampoActualSingle();
+
+  const { mutateAsync: patchCampoSingle, isPending: savingPatch } =
+    usePatchCampoActualSingle();
+
+  const { mutateAsync: deleteCampoSingle, isPending: deletingCampo } =
+    useDeleteCampoActualSingle();
 
   // Cuando se abre el modal, cargamos valores o reseteamos
   useEffect(() => {
@@ -107,7 +126,7 @@ const EditFieldModal: FC<EditFieldModalProps> = ({
   }, [visible, initialValues, form]);
 
   // 4) En handleFinish: construir y devolver el JSON + normalizar values.opciones
-  const handleFinish = (values: FieldFormValues) => {
+  const handleFinish = async (values: FieldFormValues) => {
     const normalizedName = normalizeFieldName(values.nombre);
 
     // OBTENER EL CÓDIGO DEL EDITOR SI EXISTE
@@ -130,7 +149,7 @@ const EditFieldModal: FC<EditFieldModalProps> = ({
         ayuda: values.ayuda ?? "",
         requerido: !!values.requerido,
         config: {},
-      };
+      } as unknown as FieldJson;
 
       // Devuélvelo al padre inmediato
       onBuild?.(compiled);
@@ -148,12 +167,64 @@ const EditFieldModal: FC<EditFieldModalProps> = ({
         ayuda: values.ayuda ?? "",
         requerido: !!values.requerido,
         config:
-          variant === "calc" ?
-            { vars: propsList, operation: codigoCalculado }
+          variant === "calc" ? { vars: propsList, operation: codigoCalculado }
+          : variant === "numero" ? { min: values.min, max: values.max }
           : {},
         grupoTemporal: values.grupo || undefined,
         ...(variant === "calc" && { tipo: "texto" }),
       };
+
+      console.warn("Compiled field:", fieldsList);
+
+      console.warn("Compiled field:", compiled);
+
+      if (!initialValues) {
+        // 🟢 Crear nuevo campo (uno por uno)
+        message.loading({ content: "Creando campo...", key: "saving" });
+
+        const res = await postCampoSingle({
+          pageId: pageId!,
+          campo: compiled,
+        });
+
+        message.destroy("saving");
+
+        if (!res) {
+          message.error("Error al crear el campo.");
+        } else {
+          message.success("Campo creado correctamente ✅");
+        }
+      } else {
+        // 🔵 Actualizar campo existente
+        if (!pageId) {
+          message.error("Falta pageId para actualizar el campo.");
+          return;
+        }
+
+        // Detectar campo actual si existe fieldsList
+        const currentField = fieldsList?.find(
+          (f) => f.name === values.nombre || f.values?.nombre === values.nombre
+        );
+
+        const campoId = currentField?.id;
+
+        if (!campoId) {
+          message.error("No se encontró el ID del campo a actualizar.");
+          return;
+        }
+
+        message.loading({ content: "Actualizando campo...", key: "saving" });
+
+        const res = await patchCampoSingle({ campoId, campo: compiled });
+
+        message.destroy("saving");
+
+        if (!res) {
+          message.error("Error al actualizar el campo.");
+        } else {
+          message.success("Campo actualizado correctamente ✅");
+        }
+      }
 
       // Devuélvelo al padre inmediato
       onBuild?.(compiled);
@@ -173,7 +244,19 @@ const EditFieldModal: FC<EditFieldModalProps> = ({
   };
 
   const handleDelete = () => {
-    if (!onDelete) return;
+    // Buscar el campo actual por nombre (como se hace en handleFinish)
+    const currentField = fieldsList?.find(
+      (f) =>
+        f.name === form.getFieldValue("nombre") ||
+        f.values?.nombre === form.getFieldValue("nombre")
+    );
+
+    const campoId = currentField?.id;
+
+    if (!campoId) {
+      message.error("No se encontró el ID del campo a eliminar.");
+      return;
+    }
 
     Modal.confirm({
       title: "¿Eliminar este campo?",
@@ -181,10 +264,23 @@ const EditFieldModal: FC<EditFieldModalProps> = ({
       okText: "Sí, eliminar",
       okType: "danger",
       cancelText: "Cancelar",
-      onOk: async () => {
-        await onDelete();
-        form.resetFields();
-        onCancel();
+      async onOk() {
+        try {
+          message.loading({ content: "Eliminando campo...", key: "delete" });
+
+          await deleteCampoSingle({ campoId });
+
+          message.destroy("delete");
+          message.success("Campo eliminado correctamente ✅");
+          onDelete?.();
+
+          form.resetFields();
+          onCancel();
+        } catch (err) {
+          message.destroy("delete");
+          message.error("Error al eliminar el campo ❌");
+          console.error(err);
+        }
       },
     });
   };
@@ -193,6 +289,7 @@ const EditFieldModal: FC<EditFieldModalProps> = ({
     opcion?: string,
     variant?: string
   ): { clase: string } => {
+    console.warn("mapDatoToTipoClase", { opcion, variant });
     if (opcion === "Numero" || opcion === "numero" || variant === "numero")
       return { clase: "number" };
     if (opcion === "Comentarios") return { clase: "string" };
@@ -202,6 +299,8 @@ const EditFieldModal: FC<EditFieldModalProps> = ({
     if (variant === "hora") return { clase: "hour" };
     if (variant === "grupo") return { clase: "group" };
     if (variant === "calc") return { clase: "calc" };
+    if (variant === "firma") return { clase: "firm" };
+    if (variant === "combo") return { clase: "list" };
     return { clase: "string" };
   };
 
@@ -269,7 +368,7 @@ const EditFieldModal: FC<EditFieldModalProps> = ({
               </Form.Item>
             )}
 
-            {variant === "combo" && (
+            {/* {variant === "combo" && (
               <Form.Item
                 label="Tipo selección: "
                 name="opciones"
@@ -284,7 +383,7 @@ const EditFieldModal: FC<EditFieldModalProps> = ({
                   ))}
                 </Select>
               </Form.Item>
-            )}
+            )} */}
           </div>
           <div className="flex flex-col pl-2 w-1/2">
             {variant === "dato" && (
@@ -343,12 +442,85 @@ const EditFieldModal: FC<EditFieldModalProps> = ({
         </div>
 
         {variant === "texto" ||
-          variant === "fecha" ||
-          (variant === "combo" && (
+          (variant === "fecha" && (
             <Form.Item label="Regla de Visualización" name="reglaVisualizacion">
               <TextArea rows={3} placeholder="Condición..." />
             </Form.Item>
           ))}
+
+        {variant === "numero" && (
+          <div className="flex flex-col gap-5">
+            <Card
+              size="small"
+              title={<span className="font-semibold">Límites de datos</span>}
+              className="shadow-sm border"
+            >
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <Form.Item
+                  label="Cantidad mínima"
+                  name={"min"}
+                  // 💡 ARREGLO: Agregamos la dependencia para que se revalide cuando cambie 'max'
+                  dependencies={["max"]}
+                  rules={[
+                    // La regla 'type: "number"' es redundante si usas InputNumber,
+                    // pero la dejo si estás usando una versión anterior de Ant Design.
+                    { type: "number", min: 0, message: "Debe ser ≥ 0" },
+                    ({ getFieldValue }) => ({
+                      validator(_, value) {
+                        const max = getFieldValue("max");
+                        if (value == null || max == null) {
+                          // Resuelve si el campo actual o el campo opuesto están vacíos
+                          return Promise.resolve();
+                        }
+
+                        // Asegúrate de que ambos valores sean números para la comparación estricta
+                        if (Number(value) >= Number(max)) {
+                          return Promise.reject(
+                            new Error("La mínima debe ser menor que la máxima")
+                          );
+                        }
+
+                        return Promise.resolve();
+                      },
+                    }),
+                  ]}
+                >
+                  <InputNumber disabled={false} min={0} className="w-full" />
+                </Form.Item>
+
+                <Form.Item
+                  label="Cantidad máxima"
+                  name={"max"}
+                  // 💡 ARREGLO: Agregamos la dependencia para que se revalide cuando cambie 'min'
+                  dependencies={["min"]}
+                  rules={[
+                    { type: "number", min: 0, message: "Debe ser ≥ 0" },
+                    ({ getFieldValue }) => ({
+                      validator(_, value) {
+                        const min = getFieldValue("min");
+                        if (value == null || min == null) {
+                          // Resuelve si el campo actual o el campo opuesto están vacíos
+                          return Promise.resolve();
+                        }
+
+                        // Asegúrate de que ambos valores sean números para la comparación estricta
+                        if (Number(value) <= Number(min)) {
+                          return Promise.reject(
+                            new Error("La máxima debe ser mayor que la mínima")
+                          );
+                        }
+
+                        return Promise.resolve();
+                      },
+                    }),
+                  ]}
+                >
+                  <InputNumber disabled={false} min={0} className="w-full" />
+                </Form.Item>
+              </div>
+            </Card>
+          </div>
+        )}
 
         {variant === "grupo" && (
           <div className="flex flex-col gap-5">
@@ -438,46 +610,28 @@ const EditFieldModal: FC<EditFieldModalProps> = ({
           <TsEditorCode ref={tsEditorRef} fieldsList={fieldsList} />
         )}
 
-        {variant === "combo" && (
-          <div className="flex flex-col w-full pl-2 gap-4">
-            <Card
-              size="small"
-              title={<span className="font-semibold">Datos</span>}
-              className="shadow-sm border"
-            >
-              <Form.Item
-                label="Valores: "
-                name="valores"
-                initialValue={"Normal"}
-                className="w-full"
-              >
-                <TextArea rows={3} />
-              </Form.Item>
-
-              <Form.Item label="DataSet" name="dataset">
-                <Select placeholder="Selecciona un dataset">
-                  {gruposList.map((g) => (
-                    <Option key={g} value={g}>
-                      {g}
-                    </Option>
-                  ))}
-                </Select>
-              </Form.Item>
-            </Card>
-          </div>
-        )}
+        {variant === "combo" && <ComboSection gruposList={gruposList} />}
 
         <div className="flex flex-row w-full h-16 justify-end gap-5 pt-8">
           {initialValues && (
             <Form.Item className="text-right">
-              <Button type="primary" danger onClick={handleDelete}>
+              <Button
+                type="primary"
+                danger
+                onClick={handleDelete}
+                loading={savingPost || savingPatch || deletingCampo}
+              >
                 Eliminar
               </Button>
             </Form.Item>
           )}
 
           <Form.Item className="text-right">
-            <Button type="primary" htmlType="submit">
+            <Button
+              type="primary"
+              htmlType="submit"
+              loading={savingPost || savingPatch || deletingCampo}
+            >
               Guardar
             </Button>
           </Form.Item>
@@ -488,3 +642,63 @@ const EditFieldModal: FC<EditFieldModalProps> = ({
 };
 
 export default EditFieldModal;
+
+function ComboSection({ gruposList }: { gruposList: string[] }) {
+  const { data: dataSources, isLoading, error } = useFuentesDatos();
+  const [selectedDataset, setSelectedDataset] = useState<any>(null);
+
+  if (isLoading) {
+    return <div>Cargando datos...</div>;
+  }
+
+  if (error) {
+    return <div>Error al cargar los datos: {error.message}</div>;
+  }
+
+  // Manejar selección del dataset
+  const handleDatasetChange = (datasetName: string) => {
+    const ds = dataSources?.find((d) => d.nombre === datasetName);
+    setSelectedDataset(ds || null);
+  };
+
+  return (
+    <div className="flex flex-col w-full pl-2 gap-4">
+      <Card
+        size="small"
+        title={<span className="font-semibold">Datos</span>}
+        className="shadow-sm border"
+      >
+        <Form.Item label="Valores:" name="valores" className="w-full">
+          <TextArea rows={5} />
+        </Form.Item>
+
+        <Form.Item label="DataSet" name="dataset">
+          <Select
+            placeholder="Selecciona un dataset"
+            onChange={handleDatasetChange}
+            allowClear
+          >
+            {dataSources?.map((g) => (
+              <Option key={g.id} value={g.nombre}>
+                {g.nombre}
+              </Option>
+            ))}
+          </Select>
+        </Form.Item>
+
+        {/* Segundo Select: solo aparece cuando hay dataset seleccionado */}
+        {selectedDataset && (
+          <Form.Item label="Columna" name="columna">
+            <Select placeholder="Selecciona una columna">
+              {selectedDataset.columnas?.map((col: string) => (
+                <Option key={col} value={col}>
+                  {col}
+                </Option>
+              ))}
+            </Select>
+          </Form.Item>
+        )}
+      </Card>
+    </div>
+  );
+}

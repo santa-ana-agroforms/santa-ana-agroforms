@@ -180,3 +180,35 @@ export async function patchPagina(
     pagina,
   };
 }
+
+/**
+ * DELETE de una (1) página existente
+ * Endpoint: DELETE /api/paginas/{id_pagina}/
+ */
+export async function deletePagina(
+  pageId: string,
+  opts?: { signal?: AbortSignal }
+): Promise<{ success: boolean }> {
+  if (!pageId) throw new Error("pageId es requerido");
+
+  const url = `/api/paginas/${pageId}/`;
+
+  try {
+    const res = await api.delete(url, { signal: opts?.signal });
+
+    // El endpoint devuelve 204 → sin body
+    if (res.status === 204) return { success: true };
+
+    return res?.data ?? { success: true };
+  } catch (error: any) {
+    const status = error?.response?.status;
+    const detail =
+      error?.response?.data?.detail ||
+      error?.message ||
+      "Error desconocido al eliminar la página";
+
+    throw new Error(
+      `Error al eliminar página (${status ?? "sin status"}): ${detail}`
+    );
+  }
+}

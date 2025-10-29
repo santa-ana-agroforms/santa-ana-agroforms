@@ -71,7 +71,7 @@ const PageEditModal: FC<PageEditModalProps> = ({
   // En tu componente PageEditModal, cambia la función mapToDto:
   function mapToDto(values: PageValues) {
     return {
-      description: values.description.trim(),
+      description: values?.description?.trim() ?? "",
       title: values.title.trim(),
     };
   }
@@ -79,10 +79,6 @@ const PageEditModal: FC<PageEditModalProps> = ({
   const handleFinish = (values: PageValues) => {
     if (!values.title?.trim()) {
       message.warning("El título es obligatorio.");
-      return;
-    }
-    if (!values.description?.trim()) {
-      message.warning("La descripción es obligatoria.");
       return;
     }
 
@@ -215,14 +211,7 @@ const PageEditModal: FC<PageEditModalProps> = ({
           </Form.Item>
 
           {/* Descripción */}
-          <Form.Item
-            label="Descripción"
-            name="description"
-            className="h-1/2"
-            rules={[
-              { required: true, message: "Por favor ingresa la descripción" },
-            ]}
-          >
+          <Form.Item label="Descripción" name="description" className="h-1/2">
             <Input.TextArea
               autoSize={false}
               rows={4}

@@ -27,11 +27,11 @@ const items = [
   { key: "switch", icon: <SwitcherOutlined />, label: "Switch" },
   { key: "fecha", icon: <CalendarOutlined />, label: "Fecha" },
   { key: "hora", icon: <ClockCircleOutlined />, label: "Hora" },
-  { key: "combo", icon: <UnorderedListOutlined />, label: "Combo (pendiente)" },
+  { key: "combo", icon: <UnorderedListOutlined />, label: "Combo" },
   {
-    key: "multicombo",
+    key: "dataset",
     icon: <MenuOutlined />,
-    label: "MultiCombo (pendiente)",
+    label: "DataSet",
   },
   // { key: "barra", icon: <BarChartOutlined />, label: "Barra" },
   // {
@@ -40,7 +40,7 @@ const items = [
   //   label: "Completado Auto",
   // },
   // { key: "linea", icon: <LineChartOutlined />, label: "Linea" },
-  { key: "firma", icon: <EditOutlined />, label: "Firma (pendiente)" },
+  { key: "firma", icon: <EditOutlined />, label: "Firma" },
   // { key: "fotos", icon: <PictureOutlined />, label: "Fotos" },
   // { key: "codigoBarra", icon: <BarcodeOutlined />, label: "CodigoBarra" },
   // { key: "email", icon: <MailOutlined />, label: "Email" },
