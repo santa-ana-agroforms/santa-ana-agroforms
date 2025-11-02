@@ -5,6 +5,9 @@
 
 ---
 
+> **Branch Notice**  
+> The latest stable work is on **`deploy2`**.
+
 ## 🚀 Overview
 
 **Santa Ana AgroForms** is a *frontend module* designed for **Ingenio Santa Ana**, aimed at optimizing the collection, validation, and management of agricultural data through **dynamic and adaptable forms**.
@@ -112,4 +115,53 @@ During functional and usability testing with real users:
 The interface adheres to the **usability heuristics of visibility, consistency, and error prevention**, ensuring an intuitive and effective user experience.
 
 ---
+
+## 🛠 Installation & Setup
+Prerequisites
+
+- Git
+- Node.js 20 LTS (recommended)
+- Yarn
+
+### 1) Clone the repository
+```bash
+git clone https://github.com/ingenio-santa-ana/agroforms-frontend.git
+cd agroforms-frontend
+```
+
+### 2) Install dependencies
+```bash
+yarn install --frozen-lockfile
+```
+
+### 3) Configure environment variables
+```bash
+# Backend / APIs
+VITE_API_BASE_URL=https://api.santa-ana.local
+
+# Auth (if applicable)
+VITE_AUTH_PROVIDER=custom
+VITE_AUTH_CLIENT_ID=agroforms-web
+VITE_AUTH_REDIRECT_URL=http://localhost:5173
+
+# Telemetry (optional)
+VITE_SENTRY_DSN=
+
+# Feature flags
+VITE_ENABLE_MOCKS=false
+```
+
+### 4) Run in development
+```bash
+yarn dev
+```
+
+### 5) Build for production
+```bash
+yarn build
+```
+
+## 🙏 Thanks for Reading
+
+Thanks for taking the time to read this README and explore **Santa Ana AgroForms — Frontend**.  
 
