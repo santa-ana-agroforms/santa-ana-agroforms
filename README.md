@@ -157,3 +157,8 @@ yarn dev
 ```bash
 yarn build
 ```
+
+## 🙏 Thanks for Reading
+
+Thanks for taking the time to read this README and explore **Santa Ana AgroForms — Frontend**.  
+
