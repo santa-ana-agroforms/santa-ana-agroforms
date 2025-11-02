@@ -75,6 +75,8 @@ const PhoneMockup: React.FC<PhoneMockupProps> = ({
   if (isError) return <div>Cargando...</div>;
   if (!formulario) return <div>Cargando...</div>;
 
+  console.warn("selectedElements:", selectedElements);
+
   return (
     <div className="w-80 h-[600px] border border-gray-300 rounded-3xl shadow-lg flex flex-col overflow-hidden bg-white">
       {/* Header */}
@@ -102,6 +104,8 @@ const PhoneMockup: React.FC<PhoneMockupProps> = ({
         )}
 
         {selectedElements.map((element, index) => {
+          console.warn("Renderizando elemento:", element);
+
           // si es cabecera de grupo → actualizar "grupo actual" y renderizar bloque de grupo
           if (element.type === "grupo" || element.type === "group") {
             currentGroupName = element.name; // ← este será el grupo al que tabulamos después
@@ -172,19 +176,37 @@ const PhoneMockup: React.FC<PhoneMockupProps> = ({
                 </div>
               )}
 
-              {element.type === "combo" && (
+              {(element.type === "combo" ||
+                element.type === "list" ||
+                element.type === "dataset") && (
                 <div className="flex flex-row gap-4 items-center">
                   <HighlightOutlined
                     className="cursor-pointer"
                     onClick={() => onEditElement?.(index)}
                   />
+
                   <div className="flex flex-col w-full">
                     <Text>{element.values?.etiqueta}</Text>
-                    <Select
-                      placeholder="Selecciona una opción"
-                      style={{ width: "100%" }}
-                      disabled
-                    />
+
+                    {(() => {
+                      const valoresArray = element.values?.valores
+                        ?.split("\n")
+                        .map((v) => v.trim())
+                        .filter((v) => v !== "");
+
+                      return (
+                        <Select
+                          placeholder="Selecciona una opción"
+                          style={{ width: "100%" }}
+                        >
+                          {valoresArray?.map((valor: string) => (
+                            <Select.Option key={valor} value={valor}>
+                              {valor}
+                            </Select.Option>
+                          ))}
+                        </Select>
+                      );
+                    })()}
                   </div>
                 </div>
               )}

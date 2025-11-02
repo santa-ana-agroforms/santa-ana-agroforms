@@ -42,6 +42,7 @@ export interface FieldFormValues {
   reglaVisualizacion: string;
   min: number;
   max: number;
+  valores?: string;
 }
 
 export type VariantType =
@@ -105,6 +106,9 @@ const EditFieldModal: FC<EditFieldModalProps> = ({
 
   const tsEditorRef = useRef<TsEditorCodeRef>(null);
 
+  const [selectedDataset, setSelectedDataset] = useState<any>(null);
+  const [selectedColumn, setSelectedColumn] = useState<string | null>(null);
+
   const { mutateAsync: postCampoSingle, isPending: savingPost } =
     usePostCampoActualSingle();
 
@@ -128,6 +132,16 @@ const EditFieldModal: FC<EditFieldModalProps> = ({
   // 4) En handleFinish: construir y devolver el JSON + normalizar values.opciones
   const handleFinish = async (values: FieldFormValues) => {
     const normalizedName = normalizeFieldName(values.nombre);
+
+    // Dentro de handleFinish
+    let itemsList: string[] = [];
+
+    if (variant === "combo" && values.valores) {
+      itemsList = values.valores
+        .split("\n") // separa por salto de línea
+        .map((v) => v.trim()) // elimina espacios extra
+        .filter((v) => v !== ""); // descarta líneas vacías
+    }
 
     // OBTENER EL CÓDIGO DEL EDITOR SI EXISTE
     let codigoCalculado = "";
@@ -159,6 +173,8 @@ const EditFieldModal: FC<EditFieldModalProps> = ({
     } else {
       const { clase } = mapDatoToTipoClase(undefined, variant);
 
+      // console.warn("Variant:", variant, selectedDataset.id, selectedColumn);
+
       // JSON compilado
       const compiled = {
         clase,
@@ -169,14 +185,31 @@ const EditFieldModal: FC<EditFieldModalProps> = ({
         config:
           variant === "calc" ? { vars: propsList, operation: codigoCalculado }
           : variant === "numero" ? { min: values.min, max: values.max }
+          : variant === "combo" ? { items: itemsList }
+          : variant === "dataset" ?
+            {
+              fuente_id: selectedDataset?.id ?? "",
+              label_column: selectedColumn ?? "",
+            }
           : {},
         grupoTemporal: values.grupo || undefined,
         ...(variant === "calc" && { tipo: "texto" }),
       };
 
-      console.warn("Compiled field:", fieldsList);
+      console.warn("Compiled field:", fieldsList, compiled);
 
-      console.warn("Compiled field:", compiled);
+      // 🔍 Validar duplicado (insensible a mayúsculas/minúsculas)
+      const nameExists = fieldsList?.some(
+        (el) => el.name.toLowerCase() === normalizedName.toLowerCase()
+      );
+
+      if (nameExists) {
+        // aquí puedes usar AntD message.error o alert
+        message.warning(
+          `El nombre del campo: "${normalizedName}", ya existe en este formulario`
+        );
+        return;
+      }
 
       if (!initialValues) {
         // 🟢 Crear nuevo campo (uno por uno)
@@ -301,6 +334,7 @@ const EditFieldModal: FC<EditFieldModalProps> = ({
     if (variant === "calc") return { clase: "calc" };
     if (variant === "firma") return { clase: "firm" };
     if (variant === "combo") return { clase: "list" };
+    if (variant === "dataset") return { clase: "dataset" };
     return { clase: "string" };
   };
 
@@ -612,6 +646,14 @@ const EditFieldModal: FC<EditFieldModalProps> = ({
 
         {variant === "combo" && <ComboSection gruposList={gruposList} />}
 
+        {variant === "dataset" && (
+          <DatasetSection
+            gruposList={gruposList}
+            onDatasetChange={(ds) => setSelectedDataset(ds)}
+            onColumnChange={(col) => setSelectedColumn(col)}
+          />
+        )}
+
         <div className="flex flex-row w-full h-16 justify-end gap-5 pt-8">
           {initialValues && (
             <Form.Item className="text-right">
@@ -669,9 +711,62 @@ function ComboSection({ gruposList }: { gruposList: string[] }) {
         className="shadow-sm border"
       >
         <Form.Item label="Valores:" name="valores" className="w-full">
-          <TextArea rows={5} />
+          <TextArea
+            rows={7}
+            placeholder="Escribe los valores separados por filas"
+            className="overflow-x-auto whitespace-nowrap"
+          />
         </Form.Item>
+      </Card>
+    </div>
+  );
+}
 
+function DatasetSection({
+  gruposList,
+  onDatasetChange,
+  onColumnChange,
+}: {
+  gruposList: string[];
+  onDatasetChange?: (dataset: any) => void;
+  onColumnChange?: (column: string | null) => void;
+}) {
+  const { data: dataSources, isLoading, error } = useFuentesDatos();
+  const [selectedDataset, setSelectedDataset] = useState<any>(null);
+  const [selectedColumn, setSelectedColumn] = useState<string | null>(null);
+
+  if (isLoading) {
+    return <div>Cargando datos...</div>;
+  }
+
+  if (error) {
+    return <div>Error al cargar los datos: {error.message}</div>;
+  }
+
+  // Manejar selección del dataset
+  const handleDatasetChange = (datasetName: string) => {
+    const ds = dataSources?.find((d) => d.nombre === datasetName);
+    setSelectedDataset(ds || null);
+    setSelectedColumn(null);
+
+    onDatasetChange?.(ds || null);
+    onColumnChange?.(null);
+  };
+
+  const handleColumnChange = (col: string) => {
+    setSelectedColumn(col);
+    onColumnChange?.(col);
+  };
+
+  console.warn("Selected Dataset:", selectedDataset);
+
+  return (
+    <div className="flex flex-col w-full pl-2 gap-4">
+      <Card
+        size="small"
+        title={<span className="font-semibold">Datos</span>}
+        className="shadow-sm border"
+      >
         <Form.Item label="DataSet" name="dataset">
           <Select
             placeholder="Selecciona un dataset"
@@ -689,7 +784,11 @@ function ComboSection({ gruposList }: { gruposList: string[] }) {
         {/* Segundo Select: solo aparece cuando hay dataset seleccionado */}
         {selectedDataset && (
           <Form.Item label="Columna" name="columna">
-            <Select placeholder="Selecciona una columna">
+            <Select
+              placeholder="Selecciona una columna"
+              onChange={handleColumnChange}
+              allowClear
+            >
               {selectedDataset.columnas?.map((col: string) => (
                 <Option key={col} value={col}>
                   {col}

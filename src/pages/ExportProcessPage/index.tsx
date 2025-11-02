@@ -1,11 +1,14 @@
 // src/pages/AssignmentsProgressPage.tsx
 import React, { useMemo, useState } from "react";
 
-import { DeleteOutlined, FormOutlined, PlusOutlined } from "@ant-design/icons";
-import { Input, Tooltip, type TableProps } from "antd";
+import { DownloadOutlined, ExportOutlined } from "@ant-design/icons";
+import { Button, Input, Tooltip, type TableProps } from "antd";
 import type { ColumnsType } from "antd/es/table";
 
 import FlatTables from "@/components/FlatTables";
+import ExportAllModal from "@/features/export-data/components/ExportAllModal";
+import ExportSingleModal from "@/features/export-data/components/ExportSingleModal";
+import { useEntries } from "@/features/export-data/hooks/useEntries";
 
 import { filterEntries } from "./data";
 import { ExportProcessPage } from "./types";
@@ -16,29 +19,6 @@ const statusCategories = [
   { key: "pending", name: "En espera" },
   { key: "approved", name: "Aprobados" },
   { key: "rejected", name: "Rechazados" },
-];
-
-const mockEntries: ExportProcessPage[] = [
-  {
-    key: "1",
-    formulario: "Flujo Lineal",
-    intervalo: "5 min",
-    servidor: "Servidor A",
-    baseDatos: "BD_Produccion",
-    ultimoId: 101,
-    ultima_actualizacion: "2025-08-01 12:00",
-    ultimo_mensaje: "Proceso completado correctamente",
-  },
-  {
-    key: "2",
-    formulario: "Prueba",
-    intervalo: "10 min",
-    servidor: "Servidor B",
-    baseDatos: "BD_Pruebas",
-    ultimoId: 58,
-    ultima_actualizacion: "2025-08-02 09:30",
-    ultimo_mensaje: "Sin errores detectados",
-  },
 ];
 
 const buildCategorized = (entries: ExportProcessPage[]) =>
@@ -53,7 +33,23 @@ const ExportProcessPages: React.FC = () => {
   const [activeTab, setActiveTab] = useState<TabKey>("in-process");
   const [search, setSearch] = useState("");
 
-  const filtered = useMemo(() => filterEntries(mockEntries, search), [search]);
+  const { data: entries = [], isLoading, isError } = useEntries();
+
+  const [showSingleModal, setShowSingleModal] = useState(false);
+  const [showAllModal, setShowAllModal] = useState(false);
+  const [selectedFormId, setSelectedFormId] = useState<string | null>(null);
+
+  // Transformamos los datos de la API a lo que tu tabla espera
+  const mappedEntries: ExportProcessPage[] = entries.map((item) => ({
+    key: item.form_id,
+    formulario: item.form_name,
+    respuestas: item.respuestas,
+  }));
+
+  const filtered = useMemo(
+    () => filterEntries(mappedEntries, search),
+    [mappedEntries, search]
+  );
 
   const categorized = useMemo(() => buildCategorized(filtered), [filtered]);
 
@@ -65,68 +61,63 @@ const ExportProcessPages: React.FC = () => {
     console.log("Tabla cambió:", { pagination, filters, sorter });
   };
 
-  const handleApprove = (entry: ExportProcessPage) => {
-    console.log("Aprobar", entry);
+  const handleExport = (entry: ExportProcessPage) => {
+    setSelectedFormId(entry.key);
+    setShowSingleModal(true);
   };
-  const handleReject = (entry: ExportProcessPage) => {
-    console.log("Rechazar", entry);
-  };
-  const handleComment = (entry: ExportProcessPage) => {
-    console.log("Comentario", entry);
+
+  const handleExportAll = () => {
+    setShowAllModal(true);
   };
 
   const columns: ColumnsType<ExportProcessPage> = [
+    { title: "ID de Formulario", dataIndex: "key", key: "key" },
     {
-      title: (
-        <Tooltip title="Agregar">
-          <PlusOutlined />
-        </Tooltip>
-      ),
-      key: "actions",
+      title: "Nombre del Formulario",
+      dataIndex: "formulario",
+      key: "formulario",
+    },
+    { title: "Respuestas", dataIndex: "respuestas", key: "respuestas" },
+    {
+      title: "Exportar",
+      key: "export",
       render: (_, record) => (
-        <div className="flex gap-2">
-          <Tooltip title="Re-enviar notificación">
-            <FormOutlined />
-          </Tooltip>
-          <Tooltip title="Eliminar">
-            <DeleteOutlined />
-          </Tooltip>
-        </div>
+        <Tooltip title="Exportar formulario">
+          <ExportOutlined
+            style={{ cursor: "pointer", fontSize: 18 }}
+            onClick={() => handleExport(record)}
+          />
+        </Tooltip>
       ),
       width: 100,
     },
-    { title: "Formulario", dataIndex: "formulario", key: "formulario" },
-    { title: "Intervalo", dataIndex: "intervalo", key: "intervalo" },
-    { title: "Servidor", dataIndex: "servidor", key: "servidor" },
-    { title: "Base de Datos", dataIndex: "baseDatos", key: "baseDatos" },
-    { title: "Último ID", dataIndex: "ultimoId", key: "ultimoId" },
-    {
-      title: "Última Actualización",
-      dataIndex: "ultima_actualizacion",
-      key: "ultima_actualizacion",
-    },
-    {
-      title: "Último Mensaje",
-      dataIndex: "ultimo_mensaje",
-      key: "ultimo_mensaje",
-    },
   ];
+
+  if (isLoading) return <div className="p-4">Cargando formularios...</div>;
+  if (isError)
+    return <div className="p-4 text-red-600">Error al cargar formularios</div>;
 
   return (
     <div className="flex flex-col w-full h-full gap-0">
-      {/* Barra de búsqueda */}
-      <Input
-        placeholder="Introduzca el texto a buscar..."
-        value={search}
-        onChange={(e) => setSearch(e.target.value)}
-        className="max-w-lg m-4"
-        allowClear
-      />
+      {/* Barra superior */}
+      <div className="flex items-center justify-between max-w-lg m-4 gap-10">
+        <Input
+          placeholder="Introduzca el texto a buscar..."
+          value={search}
+          onChange={(e) => setSearch(e.target.value)}
+          allowClear
+        />
+        <Button
+          type="primary"
+          icon={<DownloadOutlined />}
+          onClick={handleExportAll}
+        >
+          Exportar todo
+        </Button>
+      </div>
 
       {/* Contenido */}
       <div className="flex-1 overflow-auto p-4 space-y-4">
-        {activeTab === "auth" && <></>}
-
         {activeTab === "in-process" && (
           <div className="border-1 border-gray-200">
             <FlatTables<ExportProcessPage>
@@ -137,6 +128,22 @@ const ExportProcessPages: React.FC = () => {
           </div>
         )}
       </div>
+
+      {/* 🔹 Modal de exportación individual */}
+      <ExportSingleModal
+        visible={showSingleModal}
+        onCancel={() => {
+          setShowSingleModal(false);
+          setSelectedFormId(null);
+        }}
+        formId={selectedFormId ?? ""}
+      />
+
+      {/* 🔹 Modal de exportación total */}
+      <ExportAllModal
+        visible={showAllModal}
+        onCancel={() => setShowAllModal(false)}
+      />
     </div>
   );
 };

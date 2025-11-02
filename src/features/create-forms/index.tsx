@@ -3,7 +3,7 @@ import React, { useEffect, useMemo, useState } from "react";
 
 import { ArrowLeftOutlined } from "@ant-design/icons";
 import { useQueryClient } from "@tanstack/react-query";
-import { Button, MenuProps, message } from "antd";
+import { Button, MenuProps } from "antd";
 
 import { useFormulario } from "../forms-list/hooks/useFormularios";
 import EditFieldModal, {
@@ -62,6 +62,7 @@ const CreateForms: React.FC<CreateFormsProps> = ({ formId, onBack }) => {
             opciones: campo.opciones ?? "",
             grupo: campo.grupo ?? "",
             reglaVisualizacion: campo.reglaVisualizacion ?? "",
+            valores: campo.valores ?? "",
           } satisfies Partial<FieldFormValues>, // 👈 importantísimo
         }));
       });
@@ -152,23 +153,6 @@ const CreateForms: React.FC<CreateFormsProps> = ({ formId, onBack }) => {
     groupName?: string,
     values?: FieldFormValues
   ) => {
-    const pageKey = selectedPage.sequence;
-    const currentList = accumulatedElements ?? [];
-    const newName = values?.nombre ?? key;
-
-    // 🔍 Validar duplicado (insensible a mayúsculas/minúsculas)
-    const nameExists = currentList.some(
-      (el) => el.name.toLowerCase() === newName.toLowerCase()
-    );
-
-    if (nameExists) {
-      // aquí puedes usar AntD message.error o alert
-      message.warning(
-        `El nombre del campo: "${newName}", ya existe en este formulario`
-      );
-      return; // cancela la adición
-    }
-
     setElementsByPage((prev) => {
       const pageKey = selectedPage.sequence;
       const prevList = prev[pageKey] ?? [];

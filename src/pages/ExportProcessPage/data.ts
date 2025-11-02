@@ -1,19 +1,16 @@
-import { ExportProcessPage } from "./types";
+export function filterEntries(entries: any[], search: string) {
+  if (!search) return entries;
 
-export const filterEntries = (entries: ExportProcessPage[], query: string) => {
-  if (!query) return entries;
-  const lower = query.toLowerCase();
+  const lowerSearch = search.toLowerCase();
 
-  return entries.filter((e) =>
-    [
-      e.key,
-      e.formulario,
-      e.intervalo,
-      e.servidor,
-      e.baseDatos,
-      e.ultimoId.toString(),
-      e.ultima_actualizacion || "",
-      e.ultimo_mensaje || "",
-    ].some((field) => field.toLowerCase().includes(lower))
-  );
-};
+  return entries.filter((e) => {
+    // Aseguramos que todos sean strings válidos antes de comparar
+    const values = [
+      e.key?.toString() ?? "",
+      e.formulario?.toString() ?? "",
+      e.respuestas?.toString() ?? "",
+    ];
+
+    return values.some((v) => v.toLowerCase().includes(lowerSearch));
+  });
+}
