@@ -19,7 +19,7 @@ const HelpSystemPage: React.FC = () => {
     setNumPages(numPages);
   };
 
-  const pdfPath = "/Manual_usuario_SantaAna.pdf";
+  const pdfPath = "/Manual_usuario_SantaAna2.0.pdf";
 
   return (
     <div className="flex justify-center items-center p-6 bg-gray-100 min-h-screen">

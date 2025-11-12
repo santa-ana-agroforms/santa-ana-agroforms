@@ -216,7 +216,7 @@ const DashboardPage: React.FC = () => {
             <div className="bg-white p-4 rounded shadow">
               <div className="text-xs text-gray-500">% Activos</div>
               <div className="text-2xl font-semibold">
-                {dashboard?.usuarios.prc_activos}%
+                {dashboard?.usuarios.prc_activos.toFixed(2)}%
               </div>
             </div>
           </div>
@@ -240,7 +240,7 @@ const DashboardPage: React.FC = () => {
             {/* gráfica derecha */}
             <div className="flex-1 bg-white p-4 rounded shadow">
               <h3 className="text-base font-semibold mb-2">
-                Cantidad de terminales por usuario (pendiente)
+                Cantidad de terminales por usuario
               </h3>
               <Column {...userTermsBarConfig} />
             </div>
@@ -250,7 +250,7 @@ const DashboardPage: React.FC = () => {
           <div className="flex gap-6">
             <div className="flex-1 bg-white p-4 rounded shadow">
               <h3 className="text-base font-semibold mb-2">
-                Cantidad de uso por terminal (pendiente)
+                Cantidad de uso por terminal
               </h3>
               <Column {...lastAccessConfig} />
             </div>
